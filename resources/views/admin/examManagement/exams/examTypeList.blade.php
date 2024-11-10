@@ -25,7 +25,7 @@
                         <div class="inner">
                             <h3>{{ $examType->exam_type_name }}</h3>
                         </div>
-                        <a href="{{ route('exams.syllabusList', ['yearId' => $year->id, 'examTypeID' => $examType->id]) }}"
+                        <a href="{{ route('exams.syllabusList', ['yearId' => $year->id, 'examTypeId' => $examType->id]) }}"
                             class="small-box-footer">
                             View Syllabus <i class="fas fa-arrow-circle-right"></i>
                         </a>

@@ -26,7 +26,7 @@
                         <div class="inner">
                             <h3>{{ $class->name }}</h3>
                         </div>
-                        <a href="{{ route('exams.marks', ['yearId' => $year->id, 'syllabusID' => $syllabus->id, 'examTypeID' => $examType->id, 'classId' => $class->id]) }}"
+                        <a href="{{ route('exams.marks', ['yearId' => $year->id, 'syllabusId' => $syllabus->id, 'examTypeId' => $examType->id, 'classId' => $class->id]) }}"
                             class="small-box-footer">
                             View Marks <i class="fas fa-arrow-circle-right"></i>
                         </a>

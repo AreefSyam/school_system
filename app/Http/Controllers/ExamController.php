@@ -185,41 +185,4 @@ class ExamController extends Controller
         $classes = ClassModel::where('academic_year_id', $yearId)->get(); // Fetch classes assigned to this exam
         return view('admin.examManagement.exams.classList', compact('year', 'examType', 'syllabus', 'classes'));
     }
-
-    public function marks($yearId, $examTypeID, $syllabusID, $classId)
-    {
-        // Fetch the necessary data
-        $class = ClassModel::findOrFail($classId);
-        $syllabus = SyllabusModel::findOrFail($syllabusID);
-        $examType = ExamTypeModel::findOrFail($examTypeID);
-        $year = AcademicYearModel::findOrFail($yearId);
-
-        // Fetch marks for all students in the class for the given syllabus and exam type
-        $marks = DB::table('marks')
-            ->where('class_id', $classId)
-            ->where('exam_type_id', $examTypeID)
-            ->where('syllabus_id', $syllabusID)
-            ->get();
-
-        // Fetch students for the class
-        $students = StudentModel::whereHas('classes', function ($query) use ($classId) {
-            $query->where('class_id', $classId);
-        })->get();
-
-
-        // {{ $examType->exam_type_name }} - {{ $syllabus->syllabus_name }}
-
-        // Fetch subjects for the syllabus
-        // $subjects = SubjectModel::where('syllabus_id', $syllabusID)->get();
-        // Fetch subjects for the syllabus and grade level
-        $subjects = DB::table('subject')
-            ->join('subject_grade', 'subject.id', '=', 'subject_grade.subject_id')
-            ->where('subject.syllabus_id', $syllabusID)
-            ->where('subject_grade.grade_level_id', $class->grade_level_id) // Assuming grade_level_id is linked to the class grade level
-            ->get();
-
-
-        // Return the view with the data
-        return view('admin.examManagement.exams.marks', compact('class', 'syllabus', 'examType', 'year', 'students', 'marks', 'subjects'));
-    }
 }

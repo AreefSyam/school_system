@@ -3,14 +3,15 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ExamController;
+use App\Http\Controllers\MarkController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ClassController;
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AcademicYearController;
-use App\Http\Controllers\ExportController;
 
 // Public (Guest) Routes
 Route::group(['middleware' => 'guest'], function () {
@@ -37,7 +38,6 @@ Route::group(['middleware' => 'guest'], function () {
     // Reset password
     Route::get('/reset/{token}', [AuthController::class, 'reset'])->name('reset');
     Route::post('/reset/{token}', [AuthController::class, 'postReset'])->name('reset.post');
-
 });
 
 
@@ -113,36 +113,52 @@ Route::group(['middleware' => 'auth'], function () {
         // Exam Management
         Route::prefix('examManagement')->group(function () {
 
-            // Search Exam
-            Route::get('/manages/list', [ExamController::class, 'list'])->name('examManagement.list');
-            Route::get('/manages/add', [ExamController::class, 'add'])->name('examManagement.add');
-            Route::post('/manages/add', [ExamController::class, 'postAdd'])->name('examManagement.add.post');
-            Route::get('/manages/edit/{id}', [ExamController::class, 'edit'])->name('examManagement.edit');
-            Route::put('/manages/edit/{id}', [ExamController::class, 'update'])->name('examManagement.edit.post');
-            Route::get('/manages/delete/{id}', [ExamController::class, 'delete'])->name('examManagement.delete');
+            // Exam Management Routes (CRUD operations for managing exams)
+            Route::prefix('manages')->group(function () {
+                Route::get('/list', [ExamController::class, 'list'])->name('examManagement.list');
+                Route::get('/add', [ExamController::class, 'add'])->name('examManagement.add');
+                Route::post('/add', [ExamController::class, 'postAdd'])->name('examManagement.add.post');
+                Route::get('/edit/{id}', [ExamController::class, 'edit'])->name('examManagement.edit');
+                Route::put('/edit/{id}', [ExamController::class, 'update'])->name('examManagement.edit.post');
+                Route::get('/delete/{id}', [ExamController::class, 'delete'])->name('examManagement.delete');
+            });
 
-            // Exam Folders
-            // Exam Management Routes
+            // Routes to display available options for exams (years, types, syllabi, classes, marks)
+            Route::prefix('exams')->group(function () {
+                // Display available academic years
+                Route::get('/years', [ExamController::class, 'yearList'])->name('exams.yearList');
+                // Display available exam types (PPT, PAT) for a specific academic year
+                Route::get('/{yearId}/types', [ExamController::class, 'examTypeList'])->name('exams.examTypeList');
+                // Display available syllabi (KAFA, YTP) for the selected academic year and exam type
+                Route::get('/{yearId}/{examTypeId}/syllabus', [ExamController::class, 'syllabusList'])->name('exams.syllabusList');
+                // Display classes for the selected academic year, exam type, and syllabus
+                Route::get('/{yearId}/{examTypeId}/{syllabusId}/classes', [ExamController::class, 'classList'])->name('exams.classList');
 
-            // Display available academic years
-            Route::get('/exams/years', [ExamController::class, 'yearList'])->name('exams.yearList');
-            // Display available exam types (PPT, PAT) for a specific academic year
-            Route::get('/exams/{yearId}/types', [ExamController::class, 'examTypeList'])->name('exams.examTypeList');
-            // Display available syllabi (KAFA, YTP) for the selected academic year and exam type
-            Route::get('/exams/{yearId}/{examTypeID}/syllabus', [ExamController::class, 'syllabusList'])->name('exams.syllabusList');
-            // Display classes for the selected academic year, exam type, and syllabus
-            Route::get('/exams/{yearId}/{examTypeID}/{syllabusID}/classes', [ExamController::class, 'classList'])->name('exams.classList');
-            // Display marks for a specific class, syllabus, and exam type
-            Route::get('/exams/{yearId}/{examTypeID}/{syllabusID}/{classId}/marks', [ExamController::class, 'marks'])->name('exams.marks');
+                // View and update marks for a specific class, syllabus, and exam type
+                Route::get('/{yearId}/{examTypeId}/{syllabusId}/{classId}/marks', [MarkController::class, 'index'])->name('exams.marks');
+                Route::get('/{yearId}/{examTypeId}/{syllabusId}/{classId}/marks/edit', [MarkController::class, 'edit'])->name('exams.marks.edit');
+                Route::put('/{yearId}/{examTypeId}/{syllabusId}/{classId}/marks/edit', [MarkController::class, 'updateAll'])->name('exam.marks.edit.updateAll');
 
-            Route::prefix('exports')->group(function () {
-                Route::get('/marks/csv', [ExportController::class, 'exportCSV'])->name('marks.csv');
-                Route::get('/marks/excel', [ExportController::class, 'exportExcel'])->name('marks.excel');
-                Route::get('/pdf/markPDF', [ExportController::class, 'exportPDF'])->name('exports.pdf.markPDF');
+                // // AJAX routes for creating or updating marks
+                // Route::prefix('marks')->group(function () {
+                //     Route::patch('/{markId}/update', [MarkController::class, 'update'])->name('marks.update');
+
+                //     Route::post('/store', [MarkController::class, 'store'])->name('marks.store');
+                //     Route::put('/{mark}', [MarkController::class, 'update'])->name('marks.update');
+                //     Route::delete('/{mark}', [MarkController::class, 'destroy'])->name('marks.destroy');
+                // });
+
             });
 
 
         });
+
+        // Uncomment and use if you need export functionalities
+        // Route::prefix('exports')->group(function () {
+        //     Route::get('/marks/csv', [ExportController::class, 'exportCSV'])->name('marks.csv');
+        //     Route::get('/marks/excel', [ExportController::class, 'exportExcel'])->name('marks.excel');
+        //     Route::get('/pdf/markPDF', [ExportController::class, 'exportPDF'])->name('exports.pdf.markPDF');
+        // });
     });
 
     // Teacher Routes
