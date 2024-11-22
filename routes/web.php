@@ -9,6 +9,7 @@ use App\Http\Controllers\ClassController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\AnalyticController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AcademicYearController;
 
@@ -111,7 +112,6 @@ Route::group(['middleware' => 'auth'], function () {
 
         // Exam Management
         Route::prefix('examManagement')->group(function () {
-
             // Exam Management Routes (CRUD operations for managing exams)
             Route::prefix('manages')->group(function () {
                 Route::get('/list', [ExamController::class, 'list'])->name('examManagement.list');
@@ -140,8 +140,17 @@ Route::group(['middleware' => 'auth'], function () {
                 // Route to generate PDF report for a specific student
                 Route::get('/examManagement/exams/{yearId}/{examTypeId}/{syllabusId}/{classId}/{studentId}/report', [MarkController::class, 'generateStudentReport'])->name('exams.marks.studentReport');
             });
+        });
 
+        Route::prefix('analyticManagement')->group(function () {
+            // Grade-level analytics
+            Route::get('/bySubject', [AnalyticController::class, 'subjectPerformance'])->name('analytic.subjectPerformance');
 
+            // Individual student analytics
+            Route::get('/byIndividual', [AnalyticController::class, 'individualPerformance'])->name('analytic.individualPerformance');
+
+            // Subject-level analytics
+            Route::get('/byGrade', [AnalyticController::class, 'gradePerformance'])->name('analytic.gradePerformance');
         });
 
         // Uncomment and use if you need export functionalities

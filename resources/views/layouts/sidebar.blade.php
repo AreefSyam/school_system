@@ -138,21 +138,21 @@
                     </a>
                     <ul class="nav nav-treeview" style="display: block;">
                         <li class="nav-item">
-                            <a href="{{ route('admin.list') }}"
+                            <a href="{{  route('analytic.subjectPerformance') }}"
                                 class="nav-link @if (Request::segment(3) == 'bySubject') active @endif">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Performance Subject</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{  route('analytic.gradePerformance') }}"
+                                class="nav-link @if (Request::segment(3) == 'byClass') active @endif">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Performance Grade</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('teacher.list') }}"
-                                class="nav-link @if (Request::segment(3) == 'byClass') active @endif">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Performance Class</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('teacher.list') }}"
+                            <a href="{{ route('analytic.individualPerformance') }}"
                                 class="nav-link @if (Request::segment(3) == 'byIndividual') active @endif">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Performance Individual</p>
@@ -161,16 +161,6 @@
                     </ul>
                 </li>
 
-                <!-- Logout Button as Sidebar Menu Item -->
-                {{-- <li class="nav-item">
-                    <form action="{{ route('logout') }}" method="POST" id="logout-form">
-                        @csrf
-                        <button type="submit" class="nav-link btn btn-link" style="color: white; text-align: left;">
-                            <i class="nav-icon fas fa-sign-out-alt"></i>
-                            <p>Logout</p>
-                        </button>
-                    </form>
-                </li> --}}
                 @endif
 
 

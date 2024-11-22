@@ -167,8 +167,14 @@ class MarkController extends Controller
 
         // Process each student's marks
         foreach ($marks as $studentId => $subjects) {
+            $numSubjects = count($subjects);
+            $maxMarks = $numSubjects * 100; // Maximum marks = 100 * number of subjects
+
             // Update student marks and calculate total marks
             $totalMarks = $this->updateStudentMarks($subjects, $studentId, $classId, $syllabusId, $examTypeId, $academicYearId);
+
+            // Calculate percentage
+            $percentage = $numSubjects > 0 ? ($totalMarks / $maxMarks) * 100 : 0;
 
             // Calculate the total grade
             $totalGrade = $this->calculateTotalGrade($subjects, $gradeThresholds);
@@ -186,6 +192,7 @@ class MarkController extends Controller
                     'attendance' => $attendance[$studentId] ?? null,
                     'total_marks' => $totalMarks,
                     'total_grade' => $totalGrade,
+                    'percentage' => round($percentage, 2), // Save percentage with 2 decimal points
                 ]
             );
         }
@@ -198,7 +205,7 @@ class MarkController extends Controller
             'examTypeId' => $examTypeId,
             'syllabusId' => $syllabusId,
             'classId' => $classId,
-        ])->with('success', 'Marks and summaries updated successfully.');
+        ])->with('success', 'Marks, percentages, and summaries updated successfully.');
     }
 
     // Update or create marks for a student and calculate total marks.

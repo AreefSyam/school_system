@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Repositories;
-
-use App\Models\MarkModel;
 use App\Models\StudentSummaryModel;
 
 class StudentSummaryRepository

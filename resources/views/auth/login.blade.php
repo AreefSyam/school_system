@@ -12,9 +12,26 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{ url('plugins/fontawesome-free/css/all.min.css') }}">
     <!-- icheck bootstrap -->
-    <link rel="stylesheet" href="{{ url('plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url('plugins/schick-bootstrap/icheck-bootstrap.min.css') }}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ url('dist/css/adminlte.min.css') }}">
+
+    <style>
+        body {
+            background-image: url('assets/images/Green Brown Modern Minimalist Neon Delicious Frappe Website UI Prototype.svg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+        }
+
+        .login-box {
+            background-color: rgba(169, 216, 184, 0.8);
+            /* Slight transparency */
+            padding: 10px;
+            border-radius: 10px;
+        }
+    </style>
 </head>
 
 <body class="hold-transition login-page">
@@ -22,7 +39,7 @@
         @include('messages.alert')
 
         <!-- Login Box -->
-        <div class="card card-outline card-primary">
+        <div class="card card-outline card-success">
             <div class="card-header text-center">
                 <a href="" class="h1"><b>Login</b></a>
             </div>
@@ -70,7 +87,7 @@
                         </div>
                         <!-- /.col -->
                         <div class="col-4">
-                            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                            <button type="submit" class="btn btn-success btn-block">Sign In</button>
                         </div>
                         <!-- /.col -->
                     </div>
@@ -83,12 +100,12 @@
                     </p>
                 </div>
 
-                <div class="row mt-0">
+                {{-- <div class="row mt-0">
                     <p class="col-7">Doesn't have an account?</p>
                     <div class="col-4">
                         <a href="{{ route('register') }}" class="text-primary text-decoration-none">Register</a>
                     </div>
-                </div>
+                </div> --}}
 
             </div>
             <!-- /.card-body -->
