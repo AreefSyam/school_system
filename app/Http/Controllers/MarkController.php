@@ -8,13 +8,49 @@ use App\Models\StudentModel;
 use Illuminate\Http\Request;
 use App\Models\ExamTypeModel;
 use App\Models\SyllabusModel;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\AcademicYearModel;
 use Illuminate\Support\Facades\DB;
+use App\Models\StudentSummaryModel;
+use App\Repositories\MarkRepository;
+use App\Repositories\StudentSummaryRepository;
 
 class MarkController extends Controller
 {
-    // Display marks for a specific class, syllabus, and exam type
+    protected $markRepository;
+    protected $summaryRepository;
+
+    public function __construct(MarkRepository $markRepository, StudentSummaryRepository $summaryRepository)
+    {
+        $this->markRepository = $markRepository;
+        $this->summaryRepository = $summaryRepository;
+    }
+
     public function index($yearId, $examTypeId, $syllabusId, $classId)
+    {
+        $class = ClassModel::findOrFail($classId);
+        $syllabus = SyllabusModel::findOrFail($syllabusId);
+        $examType = ExamTypeModel::findOrFail($examTypeId);
+        $year = AcademicYearModel::findOrFail($yearId);
+
+        $marks = $this->markRepository->getMarks($classId, $examTypeId, $syllabusId, $yearId);
+        $students = StudentModel::whereHas('classes', function ($query) use ($classId) {
+            $query->where('class_id', $classId);
+        })->get();
+
+        $subjects = DB::table('subject')
+            ->join('subject_grade', 'subject.id', '=', 'subject_grade.subject_id')
+            ->where('subject.syllabus_id', $syllabusId)
+            ->where('subject_grade.grade_level_id', $class->grade_level_id)
+            ->select('subject.id as subject_id', 'subject.subject_name')
+            ->get();
+
+        $studentsSummary = $this->summaryRepository->getSummaries($classId, $examTypeId, $syllabusId, $yearId);
+
+        return view('admin.examManagement.exams.marks.tableMarkClass', compact('class', 'syllabus', 'examType', 'year', 'students', 'marks', 'subjects', 'studentsSummary'));
+    }
+
+    public function edit($yearId, $examTypeId, $syllabusId, $classId)
     {
         // Fetch the related data
         $class = ClassModel::findOrFail($classId);
@@ -22,15 +58,10 @@ class MarkController extends Controller
         $examType = ExamTypeModel::findOrFail($examTypeId);
         $year = AcademicYearModel::findOrFail($yearId);
 
-        // Fetch marks for all students in the class for the given syllabus and exam type
-        $marks = DB::table('marks')
-            ->where('class_id', $classId)
-            ->where('exam_type_id', $examTypeId)
-            ->where('syllabus_id', $syllabusId)
-            ->get()
-            ->groupBy('student_id'); // Grouping marks by student_id for easy access in the view
+        // Get marks from the repository
+        $marks = $this->markRepository->getMarks($classId, $examTypeId, $syllabusId, $yearId);
 
-        // Fetch students for the class
+        // Fetch students in the class
         $students = StudentModel::whereHas('classes', function ($query) use ($classId) {
             $query->where('class_id', $classId);
         })->get();
@@ -43,29 +74,35 @@ class MarkController extends Controller
             ->select('subject.id as subject_id', 'subject.subject_name')
             ->get();
 
-        // Return the view with the data
-        return view('admin.examManagement.exams.marks.tableMarkClass', compact('class', 'syllabus', 'examType', 'year', 'students', 'marks', 'subjects'));
+        // Get student summaries for attendance and other details
+        $studentsSummary = $this->summaryRepository->getSummaries($classId, $examTypeId, $syllabusId, $yearId);
+
+        // Return the editable view
+        return view('admin.examManagement.exams.marks.tableMarkClassEditable', compact(
+            'class',
+            'syllabus',
+            'examType',
+            'year',
+            'students',
+            'marks',
+            'subjects',
+            'studentsSummary'
+        ));
     }
 
-    // Edit marks for a specific class, syllabus, and exam type
-    public function edit($yearId, $examTypeId, $syllabusId, $classId)
+    public function generateStudentReport($yearId, $examTypeId, $syllabusId, $classId, $studentId)
     {
+        // Fetch the related data using models
         $class = ClassModel::findOrFail($classId);
         $syllabus = SyllabusModel::findOrFail($syllabusId);
         $examType = ExamTypeModel::findOrFail($examTypeId);
         $year = AcademicYearModel::findOrFail($yearId);
+        $student = StudentModel::findOrFail($studentId);
 
-        $marks = DB::table('marks')
-            ->where('class_id', $classId)
-            ->where('exam_type_id', $examTypeId)
-            ->where('syllabus_id', $syllabusId)
-            ->get()
-            ->groupBy('student_id');
+        // Fetch marks for the student
+        $marks = $this->markRepository->getStudentMarks($studentId, $classId, $examTypeId, $syllabusId, $yearId);
 
-        $students = StudentModel::whereHas('classes', function ($query) use ($classId) {
-            $query->where('class_id', $classId);
-        })->get();
-
+        // Fetch subjects for the syllabus and grade level
         $subjects = DB::table('subject')
             ->join('subject_grade', 'subject.id', '=', 'subject_grade.subject_id')
             ->where('subject.syllabus_id', $syllabusId)
@@ -73,102 +110,140 @@ class MarkController extends Controller
             ->select('subject.id as subject_id', 'subject.subject_name')
             ->get();
 
-        return view('admin.examManagement.exams.marks.tableMarkClassEditable', compact('class', 'syllabus', 'examType', 'year', 'students', 'marks', 'subjects'));
+        // Fetch the student summary
+        $studentSummary = $this->summaryRepository->getStudentSummary($studentId, $classId, $examTypeId, $syllabusId, $yearId);
+
+        // Prepare data for the PDF
+        $data = [
+            'student' => $student,
+            'class' => $class,
+            'syllabus' => $syllabus,
+            'examType' => $examType,
+            'year' => $year,
+            'marks' => $marks->groupBy('subject_id'),
+            'subjects' => $subjects,
+            'studentSummary' => $studentSummary,
+        ];
+
+        // Load the PDF view and pass the data
+        $pdf = Pdf::loadView('admin.examManagement.exams.marks.studentReport', $data);
+
+        // Stream the PDF
+        return $pdf->stream('Student_Report_' . $student->full_name . '.pdf');
     }
 
-    // Update all marks for a specific class, syllabus, and exam type
     public function updateAll(Request $request)
     {
-        // Validate the necessary fields
+        // Validate request input
         $request->validate([
             'class_id' => 'required|integer',
             'syllabus_id' => 'required|integer',
             'exam_type_id' => 'required|integer',
             'academic_year_id' => 'required|integer',
+            'marks' => 'required|array',
+            'marks.*' => 'array',
+            'marks.*.*' => 'integer|min:0|max:100', // Assuming marks range from 0 to 100
+            'attendance' => 'array'
         ]);
 
+        // Extract data
         $marks = $request->input('marks', []);
+        $attendance = $request->input('attendance', []);
+        $classId = $request->class_id;
+        $examTypeId = $request->exam_type_id;
+        $syllabusId = $request->syllabus_id;
+        $academicYearId = $request->academic_year_id;
 
+        // Fetch the grade level ID of the class for position calculations
+        $gradeLevelId = ClassModel::findOrFail($classId)->grade_level_id;
+
+        // Define grade thresholds
+        $gradeThresholds = [
+            'A' => 80,
+            'B' => 60,
+            'C' => 40,
+            'D' => 0,
+        ];
+
+        // Process each student's marks
         foreach ($marks as $studentId => $subjects) {
-            foreach ($subjects as $subjectId => $mark) {
-                MarkModel::updateOrCreate(
-                    [
-                        'student_id' => $studentId,
-                        'subject_id' => $subjectId,
-                    ],
-                    [
-                        'mark' => $mark,
-                        'class_id' => $request->class_id,
-                        'syllabus_id' => $request->syllabus_id,
-                        'exam_type_id' => $request->exam_type_id,
-                        'academic_year_id' => $request->academic_year_id,
-                    ]
-                );
+            // Update student marks and calculate total marks
+            $totalMarks = $this->updateStudentMarks($subjects, $studentId, $classId, $syllabusId, $examTypeId, $academicYearId);
+
+            // Calculate the total grade
+            $totalGrade = $this->calculateTotalGrade($subjects, $gradeThresholds);
+
+            // Update attendance, total marks, and total grade
+            StudentSummaryModel::updateOrCreate(
+                [
+                    'student_id' => $studentId,
+                    'class_id' => $classId,
+                    'exam_type_id' => $examTypeId,
+                    'syllabus_id' => $syllabusId,
+                    'academic_year_id' => $academicYearId,
+                ],
+                [
+                    'attendance' => $attendance[$studentId] ?? null,
+                    'total_marks' => $totalMarks,
+                    'total_grade' => $totalGrade,
+                ]
+            );
+        }
+
+        // Calculate positions after updates
+        $this->summaryRepository->calculatePositions($classId, $examTypeId, $syllabusId, $academicYearId, $gradeLevelId);
+
+        return redirect()->route('exams.marks', [
+            'yearId' => $academicYearId,
+            'examTypeId' => $examTypeId,
+            'syllabusId' => $syllabusId,
+            'classId' => $classId,
+        ])->with('success', 'Marks and summaries updated successfully.');
+    }
+
+    // Update or create marks for a student and calculate total marks.
+    private function updateStudentMarks(array $subjects, int $studentId, int $classId, int $syllabusId, int $examTypeId, int $academicYearId): int
+    {
+        $totalMarks = 0;
+
+        foreach ($subjects as $subjectId => $mark) {
+            MarkModel::updateOrCreate(
+                [
+                    'student_id' => $studentId,
+                    'subject_id' => $subjectId,
+                    'class_id' => $classId,
+                    'syllabus_id' => $syllabusId,
+                    'exam_type_id' => $examTypeId,
+                    'academic_year_id' => $academicYearId,
+                ],
+                [
+                    'mark' => $mark,
+                ]
+            );
+
+            $totalMarks += $mark;
+        }
+
+        return $totalMarks;
+    }
+
+
+    // Calculate the total grade string for a student based on their marks.
+    private function calculateTotalGrade(array $subjects, array $gradeThresholds): string
+    {
+        $grades = array_fill_keys(array_keys($gradeThresholds), 0);
+
+        foreach ($subjects as $mark) {
+            foreach ($gradeThresholds as $grade => $threshold) {
+                if ($mark >= $threshold) {
+                    $grades[$grade]++;
+                    break;
+                }
             }
         }
 
-        return redirect()->route('exams.marks', [
-            $request->academic_year_id,
-            $request->exam_type_id,
-            $request->syllabus_id,
-            $request->class_id,
-        ])->with('success', 'Marks updated successfully.');
-    }
-
-    // Store a new mark
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'student_id' => 'required|integer',
-            'subject_id' => 'required|integer',
-            'mark' => 'nullable|integer'
-        ]);
-
-        $mark = MarkModel::where('student_id', $validated['student_id'])
-                    ->where('subject_id', $validated['subject_id'])
-                    ->first();
-
-        if ($mark) {
-            $mark->update(['mark' => $validated['mark']]);
-        } else {
-            MarkModel::create($validated);
-        }
-
-        return response()->json(['success' => true]);
-    }
-
-    // Update an existing mark
-    public function update(Request $request, $studentId, $subjectId)
-    {
-        $validated = $request->validate([
-            'mark' => 'nullable|integer',
-        ]);
-
-        $mark = MarkModel::where('student_id', $studentId)->where('subject_id', $subjectId)->first();
-
-        if ($mark) {
-            $mark->update(['mark' => $validated['mark']]);
-        } else {
-            MarkModel::create([
-                'student_id' => $studentId,
-                'subject_id' => $subjectId,
-                'class_id' => $request->class_id,
-                'syllabus_id' => $request->syllabus_id,
-                'exam_type_id' => $request->exam_type_id,
-                'academic_year_id' => $request->academic_year_id,
-                'mark' => $validated['mark'],
-            ]);
-        }
-
-        return response()->json(['success' => true]);
-    }
-
-    // Delete a mark
-    public function destroy($markId)
-    {
-        $mark = MarkModel::findOrFail($markId);
-        $mark->delete();
-
-        return response()->json(['success' => true]);
+        return collect($grades)
+            ->map(fn($count, $grade) => "{$count}{$grade}")
+            ->implode(' ');
     }
 }

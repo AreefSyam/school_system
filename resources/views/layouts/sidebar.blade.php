@@ -8,15 +8,6 @@
 
     <!-- Sidebar -->
     <div class="sidebar">
-        <!-- Sidebar user panel (optional) -->
-        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-            <div class="image">
-                <img src="{{url('dist/img/user2-160x160.jpg')}}" class="img-circle elevation-2" alt="User Image">
-            </div>
-            <div class="info font-weight-bold">
-                <a href="" class="d-block">{{ Auth::user()->name }}</a>
-            </div>
-        </div>
 
         <!-- Sidebar Menu -->
         <nav class="mt-2">
@@ -45,22 +36,10 @@
                     </a>
                 </li>
 
-
-
-                {{-- <li class="nav-item">
-                    <a href="{{ Route('examManagement.list') }}"
-                        class="nav-link @if (Request::segment(2) == 'examManagement') active @endif">
-                        <i class="nav-icon far bi bi-layout-text-sidebar active"></i>
-                        <p>
-                            Examination
-                        </p>
-                    </a>
-                </li> --}}
-
-                <!-- User menu with sub-items -->
+                <!-- Examination Menu -->
                 <li class="nav-item menu-is-opening menu-open">
                     <a href="" class="nav-link @if (Request::segment(2) == 'examManagement') active @endif">
-                        <i class="nav-icon fas fa-users"></i>
+                        <i class="nav-icon far bi bi-journal-bookmark active"></i>
                         <p>
                             Examination
                             <i class="right fas fa-angle-left"></i>
@@ -72,7 +51,7 @@
                             <a href="{{ route('exams.yearList') }}"
                                 class="nav-link @if (Request::segment(3) == 'exams') active @endif">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Data Exam</p>
+                                <p>Report Exam Data</p>
                             </a>
                         </li>
                         <!-- Teacher sub-item -->
@@ -86,12 +65,7 @@
                     </ul>
                 </li>
 
-
-
-
-
-
-                <!-- User menu with sub-items -->
+                <!-- User Management Menu -->
                 <li class="nav-item menu-is-opening menu-open">
                     <a href="" class="nav-link @if (Request::segment(2) == 'userManagement') active @endif">
                         <i class="nav-icon fas fa-users"></i>
@@ -120,6 +94,8 @@
                     </ul>
                 </li>
                 <li class="nav-item">
+
+                    {{-- subjectManagement --}}
                     <a href="{{ route('subjectManagement.list') }}"
                         class="nav-link @if (Request::segment(2) == 'subjectManagement') active @endif">
                         <i class="nav-icon far bi bi-book active"></i>
@@ -128,6 +104,8 @@
                         </p>
                     </a>
                 </li>
+
+                {{-- classManagement --}}
                 <li class="nav-item">
                     <a href="{{ route('class.list') }}"
                         class="nav-link @if (Request::segment(2) == 'classManagement') active @endif">
@@ -137,6 +115,8 @@
                         </p>
                     </a>
                 </li>
+
+                {{-- studentManagement --}}
                 <li class="nav-item">
                     <a href="{{ route('studentManagement.list') }}"
                         class="nav-link @if (Request::segment(2) == 'studentManagement') active @endif">
@@ -147,31 +127,42 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
-                    <a href="" class="nav-link @if (Request::segment(2) == 'reportManagement') active @endif">
-                        <i class="nav-icon far bi bi-journal-bookmark active"></i>
-                        <p>
-                            Report
-                        </p>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a href="" class="nav-link @if (Request::segment(2) == 'performanceManagement') active @endif">
+                {{-- analyticManagement --}}
+                <li class="nav-item menu-is-opening menu-open">
+                    <a href="" class="nav-link @if (Request::segment(2) == 'analyticManagement') active @endif">
                         <i class="nav-icon far bi bi-bar-chart-fill active"></i>
                         <p>
-                            Performance
+                            Graph Analytic
+                            <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
+                    <ul class="nav nav-treeview" style="display: block;">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.list') }}"
+                                class="nav-link @if (Request::segment(3) == 'bySubject') active @endif">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Performance Grade</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('teacher.list') }}"
+                                class="nav-link @if (Request::segment(3) == 'byClass') active @endif">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Performance Class</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('teacher.list') }}"
+                                class="nav-link @if (Request::segment(3) == 'byIndividual') active @endif">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Performance Individual</p>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
 
-
-
-
-
-
                 <!-- Logout Button as Sidebar Menu Item -->
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <form action="{{ route('logout') }}" method="POST" id="logout-form">
                         @csrf
                         <button type="submit" class="nav-link btn btn-link" style="color: white; text-align: left;">
@@ -179,7 +170,7 @@
                             <p>Logout</p>
                         </button>
                     </form>
-                </li>
+                </li> --}}
                 @endif
 
 

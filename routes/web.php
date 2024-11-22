@@ -6,7 +6,6 @@ use App\Http\Controllers\ExamController;
 use App\Http\Controllers\MarkController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ClassController;
-use App\Http\Controllers\ExportController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
@@ -138,16 +137,8 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::get('/{yearId}/{examTypeId}/{syllabusId}/{classId}/marks', [MarkController::class, 'index'])->name('exams.marks');
                 Route::get('/{yearId}/{examTypeId}/{syllabusId}/{classId}/marks/edit', [MarkController::class, 'edit'])->name('exams.marks.edit');
                 Route::put('/{yearId}/{examTypeId}/{syllabusId}/{classId}/marks/edit', [MarkController::class, 'updateAll'])->name('exam.marks.edit.updateAll');
-
-                // // AJAX routes for creating or updating marks
-                // Route::prefix('marks')->group(function () {
-                //     Route::patch('/{markId}/update', [MarkController::class, 'update'])->name('marks.update');
-
-                //     Route::post('/store', [MarkController::class, 'store'])->name('marks.store');
-                //     Route::put('/{mark}', [MarkController::class, 'update'])->name('marks.update');
-                //     Route::delete('/{mark}', [MarkController::class, 'destroy'])->name('marks.destroy');
-                // });
-
+                // Route to generate PDF report for a specific student
+                Route::get('/examManagement/exams/{yearId}/{examTypeId}/{syllabusId}/{classId}/{studentId}/report', [MarkController::class, 'generateStudentReport'])->name('exams.marks.studentReport');
             });
 
 
@@ -169,72 +160,3 @@ Route::group(['middleware' => 'auth'], function () {
     // Logout Route
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
-
-// // Protected Routes for Logged-In Users (Admin/Teacher/User)
-// Route::group(['middleware' => 'auth'], function () {
-
-//     // Admin-specific routes (restricted by role via middleware)
-//     Route::middleware('admin')->group(function () {
-//         // Admin Dashboard Route
-//         Route::get('/admin/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
-
-//         // Admin Management Route
-//         Route::get('/admin/userManagement/admin/list', [AdminController::class, 'list'])->name('admin.list');
-//         Route::get('/admin/userManagement/admin/add', [AdminController::class, 'add'])->name('admin.add');
-//         Route::post('/admin/userManagement/admin/add', [AdminController::class, 'postAdd'])->name('admin.add.post');
-//         Route::get('/admin/userManagement/admin/edit/{id}', [AdminController::class, 'edit'])->name('admin.edit');
-//         Route::put('/admin/userManagement/admin/edit/{id}', [AdminController::class, 'update'])->name('admin.edit.post');
-//         Route::get('/admin/userManagement/admin/delete/{id}', [AdminController::class, 'delete'])->name('admin.delete');
-
-//         // Teacher Management Route
-//         Route::get('/admin/userManagement/teacher/list', [TeacherController::class, 'list'])->name('teacher.list');
-//         Route::get('/admin/userManagement/teacher/add', [TeacherController::class, 'add'])->name('teacher.add');
-//         Route::post('/admin/userManagement/teacher/add', [TeacherController::class, 'postAdd'])->name('teacher.add.post');
-//         Route::get('/admin/userManagement/teacher/edit/{id}', [TeacherController::class, 'edit'])->name('teacher.edit');
-//         Route::put('/admin/userManagement/teacher/edit/{id}', [TeacherController::class, 'update'])->name('teacher.edit.post');
-//         Route::get('/admin/userManagement/teacher/delete/{id}', [TeacherController::class, 'delete'])->name('teacher.delete');
-
-//         // Class Management Route
-//         Route::get('/admin/classManagement/list', [ClassController::class, 'list'])->name('class.list');
-//         Route::get('/admin/classManagement/add', [ClassController::class, 'add'])->name('class.add');
-//         Route::post('/admin/classManagement/add', [ClassController::class, 'postAdd'])->name('class.add.post');
-//         Route::get('/admin/classManagement/edit/{id}', [ClassController::class, 'edit'])->name('class.edit');
-//         Route::put('/admin/classManagement/edit/{id}', [ClassController::class, 'update'])->name('class.edit.post');
-//         Route::get('/admin/classManagement/delete/{id}', [ClassController::class, 'delete'])->name('class.delete');
-
-//         // Academic Year Management Route
-//         Route::get('/admin/academicYearManagement/list', [AcademicYearController::class, 'list'])->name('academicYear.list');
-//         Route::get('/admin/academicYearManagement/add', [AcademicYearController::class, 'add'])->name('academicYear.add');
-//         Route::post('/admin/academicYearManagement/add', [AcademicYearController::class, 'postAdd'])->name('academicYear.add.post');
-//         Route::get('/admin/academicYearManagement/edit/{id}', [AcademicYearController::class, 'edit'])->name('academicYear.edit');
-//         Route::put('/admin/academicYearManagement/edit/{id}', [AcademicYearController::class, 'update'])->name('academicYear.edit.post');
-//         Route::get('/admin/academicYearManagement/delete/{id}', [AcademicYearController::class, 'delete'])->name('academicYear.delete');
-
-//         // Academic Year Management Route
-//         Route::get('/admin/academicYearManagement/list', [AcademicYearController::class, 'list'])->name('academicYear.list');
-//         Route::get('/admin/academicYearManagement/add', [AcademicYearController::class, 'add'])->name('academicYear.add');
-//         Route::post('/admin/academicYearManagement/add', [AcademicYearController::class, 'postAdd'])->name('academicYear.add.post');
-//         Route::get('/admin/academicYearManagement/edit/{id}', [AcademicYearController::class, 'edit'])->name('academicYear.edit');
-//         Route::put('/admin/academicYearManagement/edit/{id}', [AcademicYearController::class, 'update'])->name('academicYear.edit.post');
-//         Route::get('/admin/academicYearManagement/delete/{id}', [AcademicYearController::class, 'delete'])->name('academicYear.delete');
-
-//         // Academic Year Management Route
-//         Route::get('/admin/studentManagement/list', [StudentController::class, 'list'])->name('studentManagement.list');
-//         Route::get('/admin/studentManagement/add', [StudentController::class, 'add'])->name('studentManagement.add');
-//         Route::post('/admin/studentManagement/add', [StudentController::class, 'postAdd'])->name('studentManagement.add.post');
-//         Route::get('/admin/studentManagement/edit/{id}', [StudentController::class, 'edit'])->name('studentManagement.edit');
-//         Route::put('/admin/studentManagement/edit/{id}', [StudentController::class, 'update'])->name('studentManagement.edit.post');
-//         Route::get('/admin/studentManagement/delete/{id}', [StudentController::class, 'delete'])->name('studentManagement.delete');
-//     });
-
-//     // Teacher-specific routes (restricted by role via middleware)
-//     Route::middleware('teacher')->group(function () {
-//         // Teacher Dashboard Route
-//         Route::get('/teacher/dashboard', [DashboardController::class, 'dashboard'])->name('teacher.dashboard');
-
-//         // Other teacher-specific routes can go here
-//     });
-
-//     // Logout Route (available to all authenticated users)
-//     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-// });

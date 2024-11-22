@@ -17,7 +17,34 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
-
+        <!-- User Profile Dropdown -->
+        <li class="nav-item dropdown">
+            <a class="nav-link d-flex align-items-center" data-toggle="dropdown" href="#" role="button">
+                <!-- User Image -->
+                <img src="{{ url('dist/img/user2-160x160.jpg') }}" class="img-circle img-bordered-sm" alt="User Image" style="width: 30px; height: 30px; margin-right: 8px;">
+                <!-- Full Name -->
+                <span class="font-weight-bold">{{ Auth::user()->name }}</span>
+                <!-- Dropdown Icon -->
+                <i class="fas fa-caret-down ml-2"></i>
+            </a>
+            <!-- Dropdown Menu -->
+            <div class="dropdown-menu dropdown-menu-right">
+                <a href="#" class="dropdown-item">
+                    <i class="fas fa-user mr-2"></i> Profile
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="#" class="dropdown-item">
+                    <i class="fas fa-cog mr-2"></i> Settings
+                </a>
+                <div class="dropdown-divider"></div>
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="dropdown-item text-danger">
+                        <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                    </button>
+                </form>
+            </div>
+        </li>
 
         <!-- Messages Dropdown Menu -->
         <li class="nav-item dropdown">

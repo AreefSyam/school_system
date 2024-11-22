@@ -66,7 +66,6 @@
                                         <option value="" disabled>Select Gender</option>
                                         <option value="Male" {{ old('gender', $student->gender) == 'Male' ? 'selected' : '' }}>Male</option>
                                         <option value="Female" {{ old('gender', $student->gender) == 'Female' ? 'selected' : '' }}>Female</option>
-                                        <option value="Other" {{ old('gender', $student->gender) == 'Other' ? 'selected' : '' }}>Other</option>
                                     </select>
                                     @if($errors->has('gender'))
                                     <span class="text-danger">{{ $errors->first('gender') }}</span>
