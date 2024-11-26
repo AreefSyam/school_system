@@ -140,21 +140,21 @@
                         <li class="nav-item">
                             <a href="{{  route('analytic.subjectPerformance') }}"
                                 class="nav-link @if (Request::segment(3) == 'bySubject') active @endif">
-                                <i class="far fa-circle nav-icon"></i>
+                                <i class="far fa-circle nav-icon active"></i>
                                 <p>Performance Subject</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{  route('analytic.gradePerformance') }}"
+                            <a href="{{  route('analytic.classPerformance') }}"
                                 class="nav-link @if (Request::segment(3) == 'byClass') active @endif">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Performance Grade</p>
+                                <i class="far fa-circle nav-icon active"></i>
+                                <p>Performance Class</p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('analytic.individualPerformance') }}"
                                 class="nav-link @if (Request::segment(3) == 'byIndividual') active @endif">
-                                <i class="far fa-circle nav-icon"></i>
+                                <i class="far fa-circle nav-icon active"></i>
                                 <p>Performance Individual</p>
                             </a>
                         </li>

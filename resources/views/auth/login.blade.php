@@ -9,6 +9,8 @@
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="icon" type="image/x-icon" href="{{ asset('assets\icons\logo4.png') }}" />
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{ url('plugins/fontawesome-free/css/all.min.css') }}">
     <!-- icheck bootstrap -->
@@ -18,7 +20,7 @@
 
     <style>
         body {
-            background-image: url('assets/images/Green Brown Modern Minimalist Neon Delicious Frappe Website UI Prototype.svg');
+            background-image: url('{{ asset('assets/images/bg23.svg') }}');
             background-size: cover;
             background-repeat: no-repeat;
             background-attachment: fixed;
@@ -45,7 +47,6 @@
             </div>
             <div class="card-body">
                 <p class="login-box-msg">Sign in to start your session</p>
-
                 <form action="{{ route('login.post') }}" method="post">
                     @csrf
                     <!-- Email Input -->
@@ -99,21 +100,11 @@
                         <a href="{{ route('forgot-password') }}">Forgot Password</a>
                     </p>
                 </div>
-
-                {{-- <div class="row mt-0">
-                    <p class="col-7">Doesn't have an account?</p>
-                    <div class="col-4">
-                        <a href="{{ route('register') }}" class="text-primary text-decoration-none">Register</a>
-                    </div>
-                </div> --}}
-
             </div>
             <!-- /.card-body -->
         </div>
         <!-- /.card -->
     </div>
-    <!-- /.login-box -->
-
     <!-- jQuery -->
     <script src="{{ url('plugins/jquery/jquery.min.js') }}"></script>
     <!-- Bootstrap 4 -->

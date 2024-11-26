@@ -17,6 +17,11 @@ class ClassModel extends Model
         return $this->belongsToMany(StudentModel::class, 'class_student', 'class_id', 'student_id');
     }
 
+    public function gradeLevel()
+    {
+        return $this->belongsTo(GradeLevelModel::class, 'grade_level_id');
+    }
+
     // Relationship with AcademicYearModel
     public function academicYear()
     {

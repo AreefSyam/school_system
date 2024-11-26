@@ -21,9 +21,14 @@ class SubjectModel extends Model
     ];
 
     // Define the relationship with the Syllabus model
+    // public function syllabus()
+    // {
+    //     return $this->belongsTo(SyllabusModel::class);
+    // }
+
     public function syllabus()
     {
-        return $this->belongsTo(SyllabusModel::class);
+        return $this->belongsTo(SyllabusModel::class, 'syllabus_id');
     }
 
     // Define the relationship with the User model

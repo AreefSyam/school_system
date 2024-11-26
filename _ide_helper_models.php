@@ -51,6 +51,7 @@ namespace App\Models{
  * @property int|null $grade_level_id
  * @property int $academic_year_id
  * @property-read \App\Models\AcademicYearModel $academicYear
+ * @property-read \App\Models\GradeLevelModel|null $gradeLevel
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\StudentModel> $students
  * @property-read int|null $students_count
  * @method static \Illuminate\Database\Eloquent\Builder|ClassModel newModelQuery()
@@ -305,6 +306,40 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|SyllabusModel whereUpdatedAt($value)
  */
 	class SyllabusModel extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * 
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property int $subject_id
+ * @property int $grade_level_id
+ * @property int $class_id
+ * @property int $academic_year_id
+ * @property int $syllabus_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\AcademicYearModel $academicYear
+ * @property-read \App\Models\ClassModel $class
+ * @property-read \App\Models\GradeLevelModel $gradeLevel
+ * @property-read \App\Models\SubjectModel $subject
+ * @property-read \App\Models\SyllabusModel $syllabus
+ * @method static \Illuminate\Database\Eloquent\Builder|TeacherAssignClasses newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TeacherAssignClasses newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TeacherAssignClasses query()
+ * @method static \Illuminate\Database\Eloquent\Builder|TeacherAssignClasses whereAcademicYearId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TeacherAssignClasses whereClassId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TeacherAssignClasses whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TeacherAssignClasses whereGradeLevelId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TeacherAssignClasses whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TeacherAssignClasses whereSubjectId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TeacherAssignClasses whereSyllabusId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TeacherAssignClasses whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TeacherAssignClasses whereUserId($value)
+ */
+	class TeacherAssignClasses extends \Eloquent {}
 }
 
 namespace App\Models{

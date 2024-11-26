@@ -50,9 +50,7 @@
                                         <a href="{{ route('teacher.list') }}" class="btn btn-success"
                                             style="margin-top: 30px">Reset</a>
                                     </div>
-
                                 </div>
-
                             </div>
                             <!-- /.card-body -->
                         </form>
@@ -101,19 +99,17 @@
                                         <td>{{ date('d-m-Y H:i A', strtotime($value->updated_at)) }}</td>
                                         <td><a href="{{ route('teacher.edit', $value->id) }}"
                                                 class="btn btn-primary">Edit</a>
+                                            <a href="{{ route('teacher.classAssignments', $value->id) }}" class="btn btn-warning">View Class</a>
                                             <!-- Add confirmation on delete button -->
                                             <a href="{{ route('teacher.delete', $value->id) }}" class="btn btn-danger"
                                                 onclick="return confirm('Are you sure you want to delete this teacher? This action cannot be undone.');">
                                                 Delete
                                             </a>
                                         </td>
-
                                     </tr>
                                     @endforeach
-
                                 </tbody>
                             </table>
-
                             <div style="padding: 10px; float: right;">
                                 {!! $get_record->appends(Illuminate\Support\Facades\Request::except('page'))->links()
                                 !!}

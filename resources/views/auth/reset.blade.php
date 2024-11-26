@@ -15,22 +15,31 @@
     <link rel="stylesheet" href="{{ url('icheck-bootstrap/icheck-bootstrap.min.css') }}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ url('dist/css/adminlte.min.css') }}">
+
+    <style>
+        body {
+            background-image: url('{{ asset('assets/images/bg23.svg') }}');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+        }
+
+        .register-box {
+            background-color: rgba(169, 216, 184, 0.8);
+            /* Slight transparency */
+            padding: 10px;
+            border-radius: 10px;
+        }
+    </style>
 </head>
 
 <body class="hold-transition register-page">
     <div class="register-box">
         <!-- /.login-logo -->
-        <div class="card card-outline card-primary">
+        <div class="card card-outline card-success">
             {{-- Alert Message --}}
             @include('messages.alert')
-
-            {{-- <div class="row">
-                <div class="card-header text-center">
-                    <a href="" class="h1"><b>Forgot Password</b></a>
-                </div>
-            </div> --}}
-
-
 
             <!-- Header Title Centered -->
             <div class="card-header text-center">
@@ -81,7 +90,7 @@
                         </div>
                         <!-- Submit Button -->
                         <div class="col-4">
-                            <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                            <button type="submit" class="btn btn-success btn-block">Submit</button>
                         </div>
                     </div>
 

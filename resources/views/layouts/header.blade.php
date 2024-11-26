@@ -8,7 +8,7 @@
         <li class="nav-item">
             <!-- Wrap the image inside an anchor tag for the dashboard link -->
             <a href="{{ route('admin.dashboard') }}">
-                <img src="{{ url('dist/img/iPerform.png') }}" alt="logo" class="brand-logo" style="height: 40px; margin-right: 15px;">
+                <img src="{{ url('dist/img/iPerform.png') }}" alt="logo" class="brand-logo" style="height: 50px; margin-right: 15px;">
             </a>
         </li>
     </ul>

@@ -4,16 +4,17 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>  {{ !empty($header_title) ? $header_title : 'School' }}</title>
+    <title> {{ !empty($header_title) ? $header_title : 'School' }}</title>
     <!-- Google Font: Source Sans Pro -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-
     <link rel="stylesheet" href="{{ url('assets/css/styles.css') }}">
-
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{url('plugins/fontawesome-free/css/all.min.css')}}">
+
+    {{-- logo --}}
+    <link rel="icon" type="image/x-icon" href="{{ asset('assets\icons\logo4.png') }}" />
     <!-- Ionicons -->
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <!-- Tempusdominus Bootstrap 4 -->
@@ -37,20 +38,13 @@
 
         <!-- Preloader -->
         @include('layouts.preloader')
-
         {{-- header --}}
         @include('layouts.header')
-
         {{-- main sidebar --}}
         @include('layouts.sidebar')
-
-
         @yield('content')
-
         {{-- footer --}}
         @include('layouts.footer')
-
-
     </div>
 
 

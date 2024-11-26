@@ -30,7 +30,8 @@
                                 <select class="form-control" name="subject_id">
                                     <option value="" disabled selected>-- Select Subject --</option>
                                     @foreach($subjects as $subject)
-                                    <option value="{{ $subject->id }}" {{ request('subject_id') == $subject->id ? 'selected' : '' }}>
+                                    <option value="{{ $subject->id }}" {{ request('subject_id')==$subject->id ?
+                                        'selected' : '' }}>
                                         {{ $subject->subject_name }}
                                     </option>
                                     @endforeach
@@ -42,7 +43,8 @@
                                 <select class="form-control" name="syllabus_id">
                                     <option value="" disabled selected>-- Select Syllabus --</option>
                                     @foreach($syllabuses as $syllabus)
-                                    <option value="{{ $syllabus->id }}" {{ request('syllabus_id') == $syllabus->id ? 'selected' : '' }}>
+                                    <option value="{{ $syllabus->id }}" {{ request('syllabus_id')==$syllabus->id ?
+                                        'selected' : '' }}>
                                         {{ $syllabus->syllabus_name }}
                                     </option>
                                     @endforeach
@@ -54,7 +56,8 @@
                                 <select class="form-control" name="grade_level_id">
                                     <option value="" disabled selected>-- Select Grade Level --</option>
                                     @foreach($gradeLevels as $grade)
-                                    <option value="{{ $grade->id }}" {{ request('grade_level_id') == $grade->id ? 'selected' : '' }}>
+                                    <option value="{{ $grade->id }}" {{ request('grade_level_id')==$grade->id ?
+                                        'selected' : '' }}>
                                         {{ $grade->grade_name }}
                                     </option>
                                     @endforeach
@@ -66,7 +69,8 @@
                                 <select class="form-control" name="academic_year_id">
                                     <option value="" disabled selected>-- Select Academic Year --</option>
                                     @foreach($academicYears as $year)
-                                    <option value="{{ $year->id }}" {{ request('academic_year_id') == $year->id ? 'selected' : '' }}>
+                                    <option value="{{ $year->id }}" {{ request('academic_year_id')==$year->id ?
+                                        'selected' : '' }}>
                                         {{ $year->academic_year_name }}
                                     </option>
                                     @endforeach
@@ -78,16 +82,17 @@
                                 <select class="form-control" name="exam_type_id">
                                     <option value="" disabled selected>-- Select Exam Type --</option>
                                     @foreach($examTypes as $examType)
-                                    <option value="{{ $examType->id }}" {{ request('exam_type_id') == $examType->id ? 'selected' : '' }}>
+                                    <option value="{{ $examType->id }}" {{ request('exam_type_id')==$examType->id ?
+                                        'selected' : '' }}>
                                         {{ $examType->exam_type_name }}
                                     </option>
                                     @endforeach
                                 </select>
                             </div>
                             <!-- Filter Buttons -->
-                            <div class="form-group col-md-2 mt-3">
-                                <button type="submit" class="btn btn-primary">Filter</button>
-                                <a href="{{ route('analytic.subjectPerformance') }}" class="btn btn-success">Reset</a>
+                            <div class="form-group col-md-2">
+                                <button type="submit" class="btn btn-primary" style="margin-top: 30px">Filter</button>
+                                <a href="{{ route('analytic.subjectPerformance') }}" class="btn btn-success" style="margin-top: 30px">Reset</a>
                             </div>
                         </div>
                     </div>
@@ -101,7 +106,7 @@
         <div class="container-fluid">
             <div class="card ">
                 <div class="card-header">
-                    <h3 class="card-title">Grade Performance Chart</h3>
+                    <h3 class="card-title">Subject Performance Chart</h3>
                 </div>
                 <div class="card-body">
                     @if($data->isNotEmpty())
@@ -119,7 +124,7 @@
         <div class="container-fluid">
             <div class="card ">
                 <div class="card-header">
-                    <h3 class="card-title">Grade Performance Counts</h3>
+                    <h3 class="card-title">Subject Performance Counts</h3>
                 </div>
                 <div class="card-body">
                     @if($data->isNotEmpty())

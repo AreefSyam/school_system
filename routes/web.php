@@ -1,27 +1,29 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AcademicYearController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AnalyticController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClassController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\MarkController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\ClassController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
-use App\Http\Controllers\AnalyticController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\AcademicYearController;
+use Illuminate\Support\Facades\Route;
 
 // Public (Guest) Routes
 Route::group(['middleware' => 'guest'], function () {
     // Home or welcome page
+// Home or welcome page
     Route::get('/', function () {
         return view('pages.welcome');
     });
+
     Route::get('/welcome', function () {
         return view('pages.welcome');
-    });
+    })->name('welcome');
 
     // Login routes
     Route::get('/login', [AuthController::class, 'login'])->name('login');
@@ -39,7 +41,6 @@ Route::group(['middleware' => 'guest'], function () {
     Route::get('/reset/{token}', [AuthController::class, 'reset'])->name('reset');
     Route::post('/reset/{token}', [AuthController::class, 'postReset'])->name('reset.post');
 });
-
 
 // Protected Routes for Logged-In Users
 Route::group(['middleware' => 'auth'], function () {
@@ -65,6 +66,38 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/edit/{id}', [TeacherController::class, 'edit'])->name('teacher.edit');
             Route::put('/edit/{id}', [TeacherController::class, 'update'])->name('teacher.edit.post');
             Route::get('/delete/{id}', [TeacherController::class, 'delete'])->name('teacher.delete');
+
+            // Assign Class to teacher
+            // Route::get('/teacher/class-assignments/{id}', [TeacherController::class, 'classAssignments'])->name('teacher.classAssignments');
+            // Route::get('/assignClass/{id}', [TeacherController::class, 'assignClass'])->name('teacher.assignClass');
+            // Route::post('/assignClass/{id}', [TeacherController::class, 'postAssignClass'])->name('teacher.assignClass.post');
+            // Route::delete('/teacher/class-assignments/{assignmentId}', [TeacherController::class, 'deleteAssignment'])->name('teacher.deleteAssignment');
+            // // Use this route for fetching classes dynamically by academic year via GET request
+            // Route::post('/teacher/get-classes', [TeacherController::class, 'getClassesByAcademicYear'])->name('teacher.getClasses');
+            // Route::post('/teacher/get-subjects', [TeacherController::class, 'getSubjectsByAcademicYear'])->name('teacher.getSubjects');
+            // // Handle form submission for assigning classes
+            // Route::post('/teacher/get-syllabus', [TeacherController::class, 'getSyllabusBySubject'])->name('teacher.getSyllabus');
+            // Route::post('/teacher/get-grade-level', [TeacherController::class, 'getGradeLevelByClass'])->name('teacher.getGradeLevel');
+
+            // Routes for Teacher Class Assignments
+            // View all class assignments for a specific teacher
+            Route::get('/teacher/class-assignments/{id}', [TeacherController::class, 'classAssignments'])->name('teacher.classAssignments');
+            // Assign a new class to a specific teacher (form page)
+            Route::get('/assignClass/{id}', [TeacherController::class, 'assignClass'])->name('teacher.assignClass');
+            // Handle form submission for assigning a new class to a teacher
+            Route::post('/assignClass/{id}', [TeacherController::class, 'postAssignClass'])->name('teacher.assignClass.post');
+            // Delete a specific class assignment for a teacher
+            Route::delete('/teacher/class-assignments/{assignmentId}', [TeacherController::class, 'deleteAssignment'])->name('teacher.deleteAssignment');
+
+            // AJAX Routes for Dynamic Dropdowns
+            // Fetch classes dynamically based on the selected academic year
+            Route::post('/teacher/get-classes', [TeacherController::class, 'getClassesByAcademicYear'])->name('teacher.getClasses');
+            // Fetch subjects dynamically based on the selected academic year
+            Route::post('/teacher/get-subjects', [TeacherController::class, 'getSubjectsByAcademicYear'])->name('teacher.getSubjects');
+            // Fetch the syllabus dynamically based on the selected subject
+            Route::post('/teacher/get-syllabus', [TeacherController::class, 'getSyllabusBySubject'])->name('teacher.getSyllabus');
+            // Fetch the grade level dynamically based on the selected class
+            Route::post('/teacher/get-grade-level', [TeacherController::class, 'getGradeLevelByClass'])->name('teacher.getGradeLevel');
         });
 
         // Class Management
@@ -145,20 +178,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::prefix('analyticManagement')->group(function () {
             // Grade-level analytics
             Route::get('/bySubject', [AnalyticController::class, 'subjectPerformance'])->name('analytic.subjectPerformance');
-
             // Individual student analytics
             Route::get('/byIndividual', [AnalyticController::class, 'individualPerformance'])->name('analytic.individualPerformance');
-
             // Subject-level analytics
-            Route::get('/byGrade', [AnalyticController::class, 'gradePerformance'])->name('analytic.gradePerformance');
+            Route::get('/byClass', [AnalyticController::class, 'classPerformance'])->name('analytic.classPerformance');
         });
-
-        // Uncomment and use if you need export functionalities
-        // Route::prefix('exports')->group(function () {
-        //     Route::get('/marks/csv', [ExportController::class, 'exportCSV'])->name('marks.csv');
-        //     Route::get('/marks/excel', [ExportController::class, 'exportExcel'])->name('marks.excel');
-        //     Route::get('/pdf/markPDF', [ExportController::class, 'exportPDF'])->name('exports.pdf.markPDF');
-        // });
     });
 
     // Teacher Routes

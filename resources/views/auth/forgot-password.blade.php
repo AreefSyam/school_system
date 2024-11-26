@@ -9,42 +9,48 @@
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="icon" type="image/x-icon" href="{{ asset('assets\icons\logo4.png') }}" />
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{ url('plugins/fontawesome-free/css/all.min.css') }}">
     <!-- icheck bootstrap -->
     <link rel="stylesheet" href="{{ url('icheck-bootstrap/icheck-bootstrap.min.css') }}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ url('dist/css/adminlte.min.css') }}">
+
+    <style>
+        body {
+            background-image: url('{{ asset('assets/images/bg23.svg') }}');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+        }
+
+        .register-box {
+            background-color: rgba(169, 216, 184, 0.8);
+            /* Slight transparency */
+            padding: 10px;
+            border-radius: 10px;
+        }
+    </style>
+    </style>
 </head>
 
 <body class="hold-transition register-page">
     <div class="register-box">
         <!-- /.login-logo -->
-        <div class="card card-outline card-primary">
+        <div class="card card-outline card-success">
             {{-- Alert Message --}}
             @include('messages.alert')
-
-            {{-- <div class="row">
-                <div class="card-header text-center">
-                    <a href="" class="h1"><b>Forgot Password</b></a>
-                </div>
-            </div> --}}
-
-
-
             <!-- Header Title Centered -->
             <div class="card-header text-center">
                 <p href="" class="h1"><b>Forgot Password</b></p>
             </div>
-
-
-
             <div class="card-body">
                 <p class="login-box-msg">Write your email address</p>
-
                 <form action="{{ route('forgot-password.post') }}" method="post">
                     @csrf
-
                     <!-- Email Field -->
                     <div class="input-group mb-3">
                         <input type="email" name="email" class="form-control" placeholder="Email"
@@ -60,23 +66,16 @@
                     @enderror
 
                     <div class="row justify-content-end">
-                        <!-- Back Button (Cancel) -->
                         <div class="col-4">
                             <a href="{{ route('login') }}" class="btn btn-light btn-block">
                                 Cancel
                             </a>
                         </div>
-                        <!-- Submit Button -->
                         <div class="col-4">
-                            <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                            <button type="submit" class="btn btn-success btn-block">Submit</button>
                         </div>
                     </div>
-
-
                 </form>
-
-
-
             </div>
         </div>
     </div>
