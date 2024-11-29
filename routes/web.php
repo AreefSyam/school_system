@@ -66,19 +66,6 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/edit/{id}', [TeacherController::class, 'edit'])->name('teacher.edit');
             Route::put('/edit/{id}', [TeacherController::class, 'update'])->name('teacher.edit.post');
             Route::get('/delete/{id}', [TeacherController::class, 'delete'])->name('teacher.delete');
-
-            // Assign Class to teacher
-            // Route::get('/teacher/class-assignments/{id}', [TeacherController::class, 'classAssignments'])->name('teacher.classAssignments');
-            // Route::get('/assignClass/{id}', [TeacherController::class, 'assignClass'])->name('teacher.assignClass');
-            // Route::post('/assignClass/{id}', [TeacherController::class, 'postAssignClass'])->name('teacher.assignClass.post');
-            // Route::delete('/teacher/class-assignments/{assignmentId}', [TeacherController::class, 'deleteAssignment'])->name('teacher.deleteAssignment');
-            // // Use this route for fetching classes dynamically by academic year via GET request
-            // Route::post('/teacher/get-classes', [TeacherController::class, 'getClassesByAcademicYear'])->name('teacher.getClasses');
-            // Route::post('/teacher/get-subjects', [TeacherController::class, 'getSubjectsByAcademicYear'])->name('teacher.getSubjects');
-            // // Handle form submission for assigning classes
-            // Route::post('/teacher/get-syllabus', [TeacherController::class, 'getSyllabusBySubject'])->name('teacher.getSyllabus');
-            // Route::post('/teacher/get-grade-level', [TeacherController::class, 'getGradeLevelByClass'])->name('teacher.getGradeLevel');
-
             // Routes for Teacher Class Assignments
             // View all class assignments for a specific teacher
             Route::get('/teacher/class-assignments/{id}', [TeacherController::class, 'classAssignments'])->name('teacher.classAssignments');
