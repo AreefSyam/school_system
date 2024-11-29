@@ -3,6 +3,7 @@
 @section('content')
 <div class="content-wrapper">
 
+
     <!-- Content Header -->
     <section class="content-header">
         <div class="container-fluid">
@@ -24,50 +25,12 @@
                 <form method="get" action="{{ route('analytic.subjectPerformance') }}">
                     <div class="card-body">
                         <div class="row">
-                            <!-- Subject -->
+
+                            {{-- Academic Year --}}
                             <div class="form-group col-md-2">
-                                <label>Subject</label>
-                                <select class="form-control" name="subject_id">
-                                    <option value="" disabled selected>-- Select Subject --</option>
-                                    @foreach($subjects as $subject)
-                                    <option value="{{ $subject->id }}" {{ request('subject_id')==$subject->id ?
-                                        'selected' : '' }}>
-                                        {{ $subject->subject_name }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <!-- Syllabus -->
-                            <div class="form-group col-md-2">
-                                <label>Syllabus</label>
-                                <select class="form-control" name="syllabus_id">
-                                    <option value="" disabled selected>-- Select Syllabus --</option>
-                                    @foreach($syllabuses as $syllabus)
-                                    <option value="{{ $syllabus->id }}" {{ request('syllabus_id')==$syllabus->id ?
-                                        'selected' : '' }}>
-                                        {{ $syllabus->syllabus_name }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <!-- Grade Level -->
-                            <div class="form-group col-md-2">
-                                <label>Grade Level</label>
-                                <select class="form-control" name="grade_level_id">
-                                    <option value="" disabled selected>-- Select Grade Level --</option>
-                                    @foreach($gradeLevels as $grade)
-                                    <option value="{{ $grade->id }}" {{ request('grade_level_id')==$grade->id ?
-                                        'selected' : '' }}>
-                                        {{ $grade->grade_name }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <!-- Academic Year -->
-                            <div class="form-group col-md-2">
-                                <label>Academic Year</label>
-                                <select class="form-control" name="academic_year_id">
-                                    <option value="" disabled selected>-- Select Academic Year --</option>
+                                <label>Academic Year (First)</label>
+                                <select id="academic_year_id" name="academic_year_id" class="form-control" required>
+                                    <option value="">-- Select Year --</option>
                                     @foreach($academicYears as $year)
                                     <option value="{{ $year->id }}" {{ request('academic_year_id')==$year->id ?
                                         'selected' : '' }}>
@@ -76,11 +39,43 @@
                                     @endforeach
                                 </select>
                             </div>
+
+                            <!-- Subject Dropdown -->
+                            <div class="form-group col-md-2">
+                                <label>Subject</label>
+                                <select id="subject_id" name="subject_id" class="form-control" required>
+                                    <option value="">-- Select Subject --</option>
+                                    @foreach($subjects as $subject)
+                                    <option value="{{ $subject->id }}" {{ request('subject_id')==$subject->id ?
+                                        'selected' : '' }}>
+                                        {{ $subject->subject_name }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Syllabus -->
+                            <div class="form-group col-md-2">
+                                <label for="syllabus_id">Syllabus</label>
+                                <select class="form-control" id="syllabus_id" name="syllabus_id">
+                                    <option value="" disabled selected>-- Select Syllabus --</option>
+                                    <!-- Dynamic options populated via JavaScript -->
+                                    @if(request('syllabus_id') && $syllabuses->isNotEmpty())
+                                    @foreach($syllabuses as $syllabus)
+                                    <option value="{{ $syllabus->id }}" {{ request('syllabus_id')==$syllabus->id ?
+                                        'selected' : '' }}>
+                                        {{ $syllabus->syllabus_name }}
+                                    </option>
+                                    @endforeach
+                                    @endif
+                                </select>
+                            </div>
+
                             <!-- Exam Type -->
                             <div class="form-group col-md-2">
-                                <label>Exam Type</label>
-                                <select class="form-control" name="exam_type_id">
-                                    <option value="" disabled selected>-- Select Exam Type --</option>
+                                <label for="exam_type_id">Exam Type</label>
+                                <select class="form-control" id="exam_type_id" name="exam_type_id">
+                                    <option value="" disabled selected>-- Select Exam --</option>
                                     @foreach($examTypes as $examType)
                                     <option value="{{ $examType->id }}" {{ request('exam_type_id')==$examType->id ?
                                         'selected' : '' }}>
@@ -89,10 +84,39 @@
                                     @endforeach
                                 </select>
                             </div>
+
+                            <!-- Grade Levels Section -->
+                            <div class="form-group col-md-6">
+                                <label for="grade_level_id">Grade Levels</label>
+                                <div class="card p-3 border">
+                                    <!-- Select All Option -->
+                                    <div class="form-check mb-2">
+                                        <input type="checkbox" class="form-check-input" id="select_all_grade_levels">
+                                        <label class="form-check-label font-weight-bold"
+                                            for="select_all_grade_levels">Select All</label>
+                                    </div>
+                                    <!-- Grade Level Checkboxes -->
+                                    <div class="d-flex flex-wrap">
+                                        @foreach($gradeLevels as $grade)
+                                        <div class="form-check mr-3 mb-2">
+                                            <input type="checkbox" class="form-check-input grade_level_checkbox"
+                                                id="grade_level_{{ $grade->id }}" name="grade_level_id[]"
+                                                value="{{ $grade->id }}" {{ in_array($grade->id,
+                                            (array)request('grade_level_id')) ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="grade_level_{{ $grade->id }}">
+                                                {{ $grade->grade_name }}
+                                            </label>
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <!-- Filter Buttons -->
                             <div class="form-group col-md-2">
-                                <button type="submit" class="btn btn-primary" style="margin-top: 30px">Filter</button>
-                                <a href="{{ route('analytic.subjectPerformance') }}" class="btn btn-success" style="margin-top: 30px">Reset</a>
+                                <button type="submit" class="btn btn-primary" style="margin-top: 30px;">Filter</button>
+                                <a href="{{ route('analytic.subjectPerformance') }}" class="btn btn-success"
+                                    style="margin-top: 30px;">Reset</a>
                             </div>
                         </div>
                     </div>
@@ -100,6 +124,7 @@
             </div>
         </div>
     </section>
+
 
     <!-- Performance Chart -->
     <section class="content">
@@ -131,18 +156,20 @@
                     <table class="table table-bordered table-striped">
                         <thead>
                             <tr>
+                                <th>#</th>
                                 <th>Year</th>
                                 <th>Grade Year</th>
                                 <th>Subject</th>
-                                <th>Count A</th>
-                                <th>Count B</th>
-                                <th>Count C</th>
-                                <th>Count D</th>
+                                <th>Total A</th>
+                                <th>Total B</th>
+                                <th>Total C</th>
+                                <th>Total D</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($data as $row)
                             <tr>
+                                <td>{{ $loop->iteration }}</td>
                                 <td>{{ $row->academic_year_name }}</td>
                                 <td>{{ $row->grade_name }}</td>
                                 <td>{{ $row->subject_name }}</td>
@@ -209,4 +236,101 @@
         });
     @endif
 </script>
+
+<script>
+    document.getElementById('academic_year_id').addEventListener('change', function () {
+    const academicYearId = this.value;
+
+    // Clear dropdowns
+    const subjectDropdown = document.getElementById('subject_id');
+    subjectDropdown.innerHTML = '<option>Loading...</option>';
+
+    if (academicYearId) {
+
+        // Fetch subjects dynamically
+        fetch("{{ route('teacher.getSubjects') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({ academic_year_id: academicYearId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            subjectDropdown.innerHTML = '<option value="">-- Select Subject --</option>'; // Reset options
+            if (data.length === 0) {
+                const option = document.createElement('option');
+                option.value = '';
+                option.textContent = 'No subjects available';
+                subjectDropdown.appendChild(option);
+            } else {
+                data.forEach(subjectItem => {
+                    const option = document.createElement('option');
+                    option.value = subjectItem.id;
+                    option.textContent = subjectItem.name;
+                    subjectDropdown.appendChild(option);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching subjects:', error);
+            subjectDropdown.innerHTML = '<option value="">Failed to load subjects</option>';
+        });
+    }
+});
+
+
+document.getElementById('subject_id').addEventListener('change', function () {
+    const subjectId = this.value;
+
+    const syllabusDropdown = document.getElementById('syllabus_id');
+    syllabusDropdown.innerHTML = '<option>Loading syllabus...</option>';
+
+    if (subjectId) {
+        fetch("{{ route('teacher.getSyllabus') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({ subject_id: subjectId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            syllabusDropdown.innerHTML = '<option value="">-- Select Syllabus --</option>';
+            if (data.error) {
+                syllabusDropdown.innerHTML += '<option>No syllabus available</option>';
+            } else {
+                syllabusDropdown.innerHTML += `<option value="${data.id}">${data.name}</option>`;
+            }
+        })
+        .catch(error => console.error('Error fetching syllabus:', error));
+    }
+});
+document.addEventListener('DOMContentLoaded', function () {
+    const selectAllCheckbox = document.getElementById('select_all_grade_levels');
+    const gradeLevelCheckboxes = document.querySelectorAll('.grade_level_checkbox');
+
+    // Event listener for "Select All"
+    selectAllCheckbox.addEventListener('change', function () {
+        gradeLevelCheckboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+    });
+
+    // Sync "Select All" checkbox with individual checkboxes
+    gradeLevelCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+            const allChecked = Array.from(gradeLevelCheckboxes).every(cb => cb.checked);
+            selectAllCheckbox.checked = allChecked;
+
+            const anyChecked = Array.from(gradeLevelCheckboxes).some(cb => cb.checked);
+            selectAllCheckbox.indeterminate = !allChecked && anyChecked;
+        });
+    });
+});
+
+</script>
+
 @endsection

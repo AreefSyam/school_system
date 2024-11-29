@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MarkModel;
-use App\Models\ClassModel;
-use App\Models\StudentModel;
-use Illuminate\Http\Request;
-use App\Models\ExamTypeModel;
-use App\Models\SyllabusModel;
-use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\AcademicYearModel;
-use Illuminate\Support\Facades\DB;
+use App\Models\ClassModel;
+use App\Models\ExamTypeModel;
+use App\Models\MarkModel;
+use App\Models\StudentModel;
 use App\Models\StudentSummaryModel;
+use App\Models\SyllabusModel;
 use App\Repositories\MarkRepository;
 use App\Repositories\StudentSummaryRepository;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class MarkController extends Controller
 {
@@ -40,6 +40,7 @@ class MarkController extends Controller
 
         $subjects = DB::table('subject')
             ->join('subject_grade', 'subject.id', '=', 'subject_grade.subject_id')
+            ->where('academic_year_id', $yearId) // Filter by year
             ->where('subject.syllabus_id', $syllabusId)
             ->where('subject_grade.grade_level_id', $class->grade_level_id)
             ->select('subject.id as subject_id', 'subject.subject_name')
@@ -143,7 +144,7 @@ class MarkController extends Controller
             'marks' => 'required|array',
             'marks.*' => 'array',
             'marks.*.*' => 'integer|min:0|max:100', // Assuming marks range from 0 to 100
-            'attendance' => 'array'
+            'attendance' => 'array',
         ]);
 
         // Extract data
@@ -233,7 +234,6 @@ class MarkController extends Controller
 
         return $totalMarks;
     }
-
 
     // Calculate the total grade string for a student based on their marks.
     private function calculateTotalGrade(array $subjects, array $gradeThresholds): string

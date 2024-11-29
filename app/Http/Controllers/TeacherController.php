@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AcademicYearModel;
-use App\Models\ClassModel;
-use App\Models\GradeLevelModel;
-use App\Models\SubjectModel;
-use App\Models\SyllabusModel;
-use App\Models\TeacherAssignClasses;
 use App\Models\User;
+use App\Models\ClassModel;
+use App\Models\SubjectModel;
 use Illuminate\Http\Request;
+use App\Models\SyllabusModel;
+use App\Models\GradeLevelModel;
+use App\Models\AcademicYearModel;
+use Illuminate\Support\Facades\DB;
+use App\Models\TeacherAssignClasses;
 use Illuminate\Support\Facades\Hash;
 
 class TeacherController extends Controller
@@ -101,41 +102,6 @@ class TeacherController extends Controller
         return view('admin.userManagement.teacher.assignClass', $data);
     }
 
-    // Fetch classes dynamically based on academic year
-    public function getClassesByAcademicYear(Request $request)
-    {
-        $academicYearId = $request->academic_year_id;
-        $classes = ClassModel::where('academic_year_id', $academicYearId)
-            ->with('gradeLevel')
-            ->get(['id', 'name', 'grade_level_id']);
-        return response()->json($classes->map(function ($classes) {
-            return [
-                'id' => $classes->id,
-                'name' => "{$classes->name} ({$classes->gradeLevel->grade_name})",
-            ];
-        }));
-    }
-
-    public function getSubjectsByAcademicYear(Request $request)
-    {
-        $academicYearId = $request->academic_year_id;
-
-        // Validate academic_year_id to ensure it's valid
-        if (!$academicYearId) {
-            return response()->json(['error' => 'Invalid academic year'], 400);
-        }
-        $subjects = SubjectModel::where('academic_year_id', $academicYearId)
-            ->with('syllabus') // Eager load syllabus relationship
-            ->get();
-        // Format response with subject and syllabus details
-        return response()->json($subjects->map(function ($subject) {
-            return [
-                'id' => $subject->id,
-                'name' => "{$subject->subject_name} ({$subject->syllabus->syllabus_name})",
-            ];
-        }));
-    }
-
     public function postAssignClass(Request $request, $id)
     {
         // Retrieve the teacher with the specified ID and role
@@ -184,6 +150,67 @@ class TeacherController extends Controller
             ->with('success', 'Class assigned to teacher successfully.');
     }
 
+    public function classAssignments($id)
+    {
+        $teacher = User::where('id', $id)->where('role', 'teacher')->firstOrFail();
+
+        $classAssignments = TeacherAssignClasses::with([
+            'academicYear',
+            'class',
+            'gradeLevel',
+            'subject',
+            'syllabus',
+        ])->where('user_id', $teacher->id)->get();
+
+        return view('admin.userManagement.teacher.teacherClassList', [
+            'teacher' => $teacher,
+            'classAssignments' => $classAssignments,
+        ]);
+    }
+
+    public function deleteAssignment($assignmentId)
+    {
+        $assignment = TeacherAssignClasses::findOrFail($assignmentId);
+        $assignment->delete();
+
+        return back()->with('success', 'Class assignment deleted successfully.');
+    }
+
+    // Fetch classes dynamically based on academic year
+    public function getClassesByAcademicYear(Request $request)
+    {
+        $academicYearId = $request->academic_year_id;
+        $classes = ClassModel::where('academic_year_id', $academicYearId)
+            ->with('gradeLevel')
+            ->get(['id', 'name', 'grade_level_id']);
+        return response()->json($classes->map(function ($classes) {
+            return [
+                'id' => $classes->id,
+                'name' => "{$classes->name} ({$classes->gradeLevel->grade_name})",
+            ];
+        }));
+    }
+
+    public function getSubjectsByAcademicYear(Request $request)
+    {
+        $academicYearId = $request->academic_year_id;
+
+        // Validate academic_year_id to ensure it's valid
+        if (!$academicYearId) {
+            return response()->json(['error' => 'Invalid academic year'], 400);
+        }
+        $subjects = SubjectModel::where('academic_year_id', $academicYearId)
+            ->with('syllabus') // Eager load syllabus relationship
+            ->get();
+        // Format response with subject and syllabus details
+        return response()->json($subjects->map(function ($subject) {
+            return [
+                'id' => $subject->id,
+                'name' => "{$subject->subject_name} ({$subject->syllabus->syllabus_name})",
+            ];
+        }));
+    }
+
     public function getSyllabusBySubject(Request $request)
     {
         $subjectId = $request->subject_id;
@@ -226,30 +253,25 @@ class TeacherController extends Controller
         ]);
     }
 
-    public function classAssignments($id)
+    public function getStudentsByClass(Request $request)
     {
-        $teacher = User::where('id', $id)->where('role', 'teacher')->firstOrFail();
+        $classId = $request->class_id;
+        $academicYearId = $request->academic_year_id;
 
-        $classAssignments = TeacherAssignClasses::with([
-            'academicYear',
-            'class',
-            'gradeLevel',
-            'subject',
-            'syllabus',
-        ])->where('user_id', $teacher->id)->get();
+        // Validate inputs
+        if (!$classId || !$academicYearId) {
+            return response()->json(['error' => 'Invalid class or academic year'], 400);
+        }
 
-        return view('admin.userManagement.teacher.teacherClassList', [
-            'teacher' => $teacher,
-            'classAssignments' => $classAssignments,
-        ]);
-    }
+        // Fetch students from the class_student table based on class_id and academic_year_id
+        $students = DB::table('class_student')
+            ->where('class_id', $classId)
+            ->where('academic_year_id', $academicYearId)
+            ->select('student_id as id', 'student_name as full_name') // Use aliases for consistency
+            ->get();
 
-    public function deleteAssignment($assignmentId)
-    {
-        $assignment = TeacherAssignClasses::findOrFail($assignmentId);
-        $assignment->delete();
-
-        return back()->with('success', 'Class assignment deleted successfully.');
+        // Return the list of students
+        return response()->json($students);
     }
 
 }

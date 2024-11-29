@@ -24,11 +24,11 @@
                 <form method="get" action="{{ route('analytic.classPerformance') }}">
                     <div class="card-body">
                         <div class="row">
-                            <!-- Academic Year -->
+                            {{-- Academic Year --}}
                             <div class="form-group col-md-2">
-                                <label>Academic Year</label>
-                                <select class="form-control" name="academic_year_id">
-                                    <option value="" disabled selected>-- Select Academic Year --</option>
+                                <label>Academic Year (First)</label>
+                                <select id="academic_year_id" name="academic_year_id" class="form-control" required>
+                                    <option value="">-- Select Year --</option>
                                     @foreach($academicYears as $year)
                                     <option value="{{ $year->id }}" {{ request('academic_year_id')==$year->id ?
                                         'selected' : '' }}>
@@ -38,20 +38,19 @@
                                 </select>
                             </div>
                             <!-- Class Dropdown -->
+
                             <div class="form-group col-md-2">
                                 <label>Class</label>
-                                <select class="form-control" name="class_id">
-                                    <option value="" disabled selected>-- Select Class --</option>
+                                <select id="class_id" name="class_id" class="form-control" required>
+                                    <option value="">-- Select Class --</option>
                                     @foreach($classes as $class)
-                                    <option value="{{ $class->id }}" {{ request('class_id')==$class->id ? 'selected' :
-                                        '' }}>
+                                    <option value="{{ $class->id }}" {{ request('class_id')==$class->id ?
+                                        'selected' : '' }}>
                                         {{ $class->name }}
                                     </option>
                                     @endforeach
                                 </select>
                             </div>
-
-
 
                             <!-- Syllabus -->
                             <div class="form-group col-md-2">
@@ -123,6 +122,7 @@
                     <table class="table table-bordered table-striped">
                         <thead>
                             <tr>
+                                <th>#</th>
                                 <th>Year</th>
                                 <th>Class Name</th>
                                 <th>Subject</th>
@@ -135,6 +135,7 @@
                         <tbody>
                             @foreach($data as $row)
                             <tr>
+                                <td>{{ $loop->iteration }}</td>
                                 <td>{{ $row->academic_year_name }}</td>
                                 <td>{{ $row->class_name }}</td> <!-- Display class name -->
                                 <td>{{ $row->subject_name }}</td>
@@ -160,47 +161,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    // @if($data->isNotEmpty())
-    //     const labels = @json($data->pluck('subject_name')->unique());
-    //     const datasets = [
-    //         {
-    //             label: 'Count A',
-    //             data: @json($data->pluck('count_A')),
-    //             backgroundColor: 'rgba(75, 192, 192, 0.7)',
-    //         },
-    //         {
-    //             label: 'Count B',
-    //             data: @json($data->pluck('count_B')),
-    //             backgroundColor: 'rgba(54, 162, 235, 0.7)',
-    //         },
-    //         {
-    //             label: 'Count C',
-    //             data: @json($data->pluck('count_C')),
-    //             backgroundColor: 'rgba(255, 206, 86, 0.7)',
-    //         },
-    //         {
-    //             label: 'Count D',
-    //             data: @json($data->pluck('count_D')),
-    //             backgroundColor: 'rgba(255, 99, 132, 0.7)',
-    //         },
-    //     ];
-
-    //     new Chart(document.getElementById('gradePerformanceChart'), {
-    //         type: 'bar',
-    //         data: { labels: labels, datasets: datasets },
-    //         options: {
-    //             responsive: true,
-    //             plugins: {
-    //                 legend: { position: 'top' },
-    //                 title: { display: false, text: 'Grade Performance Counts' },
-    //             },
-    //             scales: {
-    //                 y: { beginAtZero: true },
-    //             },
-    //         },
-    //     });
-    // @endif
-
     @if($data->isNotEmpty())
     const labels = @json($data->pluck('subject_name')); // Use subject names as labels
     const datasets = [
@@ -251,6 +211,43 @@
         },
     });
 @endif
+</script>
 
+<script>
+    document.getElementById('academic_year_id').addEventListener('change', function () {
+    const academicYearId = this.value;
+    const classDropdown = document.getElementById('class_id');
+    classDropdown.innerHTML = '<option>Loading...</option>';
+
+    if (academicYearId) {
+        fetch("{{ route('teacher.getClasses') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({ academic_year_id: academicYearId })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch classes');
+            }
+            return response.json();
+        })
+        .then(data => {
+            classDropdown.innerHTML = '<option value="">-- Select Class --</option>';
+            data.forEach(classItem => {
+                const option = document.createElement('option');
+                option.value = classItem.id;
+                option.textContent = classItem.name;
+                classDropdown.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error(error);
+            classDropdown.innerHTML = '<option value="">Failed to load classes</option>';
+        });
+    }
+});
 </script>
 @endsection

@@ -86,26 +86,27 @@
 <!-- Add JavaScript for Dynamic Dropdown -->
 <script>
     document.getElementById('academic_year_id').addEventListener('change', function () {
-        const academicYearId = this.value;
+    const academicYearId = this.value;
 
-        // Clear dropdowns
-        const classDropdown = document.getElementById('class_id');
-        const subjectDropdown = document.getElementById('subject_id');
-        classDropdown.innerHTML = '<option value="">-- Select Class --</option>';
-        subjectDropdown.innerHTML = '<option value="">-- Select Subject --</option>';
+    // Clear dropdowns
+    const classDropdown = document.getElementById('class_id');
+    const subjectDropdown = document.getElementById('subject_id');
+    classDropdown.innerHTML = '<option>Loading...</option>';
+    subjectDropdown.innerHTML = '<option>Loading...</option>';
 
-        if (academicYearId) {
-            // Fetch classes dynamically
-            fetch("{{ route('teacher.getClasses') }}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({ academic_year_id: academicYearId })
-            })
-            .then(response => response.json())
-            .then(data => {
+    if (academicYearId) {
+        // Fetch classes dynamically
+        fetch("{{ route('teacher.getClasses') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({ academic_year_id: academicYearId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            classDropdown.innerHTML = '<option value="">-- Select Class --</option>'; // Reset options
             if (data.length === 0) {
                 const option = document.createElement('option');
                 option.value = '';
@@ -119,20 +120,24 @@
                     classDropdown.appendChild(option);
                 });
             }
-            })
-            .catch(error => console.error('Error fetching classes:', error));
+        })
+        .catch(error => {
+            console.error('Error fetching classes:', error);
+            classDropdown.innerHTML = '<option value="">Failed to load classes</option>';
+        });
 
-            // Fetch subjects dynamically
-            fetch("{{ route('teacher.getSubjects') }}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({ academic_year_id: academicYearId })
-            })
-            .then(response => response.json())
-            .then(data => {
+        // Fetch subjects dynamically
+        fetch("{{ route('teacher.getSubjects') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({ academic_year_id: academicYearId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            subjectDropdown.innerHTML = '<option value="">-- Select Subject --</option>'; // Reset options
             if (data.length === 0) {
                 const option = document.createElement('option');
                 option.value = '';
@@ -146,13 +151,13 @@
                     subjectDropdown.appendChild(option);
                 });
             }
-            })
-            .catch(error => {
-                console.error('Error fetching subjects:', error)
-                alert('Failed to load classes. Please try again.');
-            });
-        }
-    });
+        })
+        .catch(error => {
+            console.error('Error fetching subjects:', error);
+            subjectDropdown.innerHTML = '<option value="">Failed to load subjects</option>';
+        });
+    }
+});
 
     document.getElementById('subject_id').addEventListener('change', function () {
     const subjectId = this.value;

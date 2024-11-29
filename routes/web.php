@@ -85,6 +85,8 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/teacher/get-syllabus', [TeacherController::class, 'getSyllabusBySubject'])->name('teacher.getSyllabus');
             // Fetch the grade level dynamically based on the selected class
             Route::post('/teacher/get-grade-level', [TeacherController::class, 'getGradeLevelByClass'])->name('teacher.getGradeLevel');
+            // Fetch the student name dynamically based on the selected class
+            Route::post('/teacher/get-students', [TeacherController::class, 'getStudentsByClass'])->name('teacher.getStudents');
         });
 
         // Class Management
