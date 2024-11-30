@@ -22,7 +22,7 @@
                         class="nav-link @if (Request::segment(2) == 'dashboard') active @endif">
                         <i class="nav-icon far bi bi-speedometer"></i>
                         <p>
-                            Dashboard
+                            Home
                         </p>
                     </a>
                 </li>
@@ -37,16 +37,17 @@
                 </li>
 
                 <!-- Examination Menu -->
-                <li class="nav-item menu-is-opening menu-open">
-                    <a href="" class="nav-link @if (Request::segment(2) == 'examManagement') active @endif">
-                        <i class="nav-icon far bi bi-journal-bookmark active"></i>
+                <li class="nav-item @if (Request::segment(2) == 'examManagement') menu-is-opening menu-open @endif">
+                    <a href="#" class="nav-link @if (Request::segment(2) == 'examManagement') active @endif">
+                        <i class="nav-icon far bi bi-journal-bookmark"></i>
                         <p>
                             Examination
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
-                    <ul class="nav nav-treeview" style="display: block;">
-                        <!-- Admin as a sub-item -->
+                    <ul class="nav nav-treeview" @if (Request::segment(2) !='examManagement' ) style="display: none;"
+                        @endif>
+                        <!-- Report Exam Data -->
                         <li class="nav-item">
                             <a href="{{ route('exams.yearList') }}"
                                 class="nav-link @if (Request::segment(3) == 'exams') active @endif">
@@ -54,7 +55,7 @@
                                 <p>Report Exam Data</p>
                             </a>
                         </li>
-                        <!-- Teacher sub-item -->
+                        <!-- Manage Exam -->
                         <li class="nav-item">
                             <a href="{{ route('examManagement.list') }}"
                                 class="nav-link @if (Request::segment(3) == 'manages') active @endif">
@@ -65,16 +66,18 @@
                     </ul>
                 </li>
 
+
                 <!-- User Management Menu -->
-                <li class="nav-item menu-is-opening menu-open">
-                    <a href="" class="nav-link @if (Request::segment(2) == 'userManagement') active @endif">
+                <li class="nav-item @if (Request::segment(2) == 'userManagement') menu-is-opening menu-open @endif">
+                    <a href="#" class="nav-link @if (Request::segment(2) == 'userManagement') active @endif">
                         <i class="nav-icon fas fa-users"></i>
                         <p>
                             User
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
-                    <ul class="nav nav-treeview" style="display: block;">
+                    <ul class="nav nav-treeview" @if (Request::segment(2) !='userManagement' ) style="display: none;"
+                        @endif>
                         <!-- Admin as a sub-item -->
                         <li class="nav-item">
                             <a href="{{ route('admin.list') }}"
@@ -93,9 +96,9 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item">
 
-                    {{-- subjectManagement --}}
+                {{-- Subject Management --}}
+                <li class="nav-item">
                     <a href="{{ route('subjectManagement.list') }}"
                         class="nav-link @if (Request::segment(2) == 'subjectManagement') active @endif">
                         <i class="nav-icon far bi bi-book active"></i>
@@ -105,7 +108,7 @@
                     </a>
                 </li>
 
-                {{-- classManagement --}}
+                {{-- Class Management --}}
                 <li class="nav-item">
                     <a href="{{ route('class.list') }}"
                         class="nav-link @if (Request::segment(2) == 'classManagement') active @endif">
@@ -116,7 +119,7 @@
                     </a>
                 </li>
 
-                {{-- studentManagement --}}
+                {{-- Student Management --}}
                 <li class="nav-item">
                     <a href="{{ route('studentManagement.list') }}"
                         class="nav-link @if (Request::segment(2) == 'studentManagement') active @endif">
@@ -128,38 +131,40 @@
                 </li>
 
                 {{-- analyticManagement --}}
-                <li class="nav-item menu-is-opening menu-open">
-                    <a href="" class="nav-link @if (Request::segment(2) == 'analyticManagement') active @endif">
-                        <i class="nav-icon far bi bi-bar-chart-fill active"></i>
+                <li class="nav-item @if (Request::segment(2) == 'analyticManagement') menu-is-opening menu-open @endif">
+                    <a href="#" class="nav-link @if (Request::segment(2) == 'analyticManagement') active @endif">
+                        <i class="nav-icon far bi bi-bar-chart-fill"></i>
                         <p>
                             Graph Analytic
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
-                    <ul class="nav nav-treeview" style="display: block;">
+                    <ul class="nav nav-treeview" @if (Request::segment(2) !='analyticManagement' )
+                        style="display: none;" @endif>
                         <li class="nav-item">
-                            <a href="{{  route('analytic.subjectPerformance') }}"
+                            <a href="{{ route('analytic.subjectPerformance') }}"
                                 class="nav-link @if (Request::segment(3) == 'bySubject') active @endif">
-                                <i class="far fa-circle nav-icon active"></i>
+                                <i class="far fa-circle nav-icon"></i>
                                 <p>Performance Subject</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{  route('analytic.classPerformance') }}"
+                            <a href="{{ route('analytic.classPerformance') }}"
                                 class="nav-link @if (Request::segment(3) == 'byClass') active @endif">
-                                <i class="far fa-circle nav-icon active"></i>
+                                <i class="far fa-circle nav-icon"></i>
                                 <p>Performance Class</p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('analytic.individualPerformance') }}"
                                 class="nav-link @if (Request::segment(3) == 'byIndividual') active @endif">
-                                <i class="far fa-circle nav-icon active"></i>
+                                <i class="far fa-circle nav-icon"></i>
                                 <p>Performance Individual</p>
                             </a>
                         </li>
                     </ul>
                 </li>
+
 
                 @endif
 
@@ -174,7 +179,7 @@
                     <a href="{{ url('admin/dashboard') }}" class="nav-link active">
                         <i class="nav-icon far bi bi-speedometer"></i>
                         <p>
-                            Dashboard {{ Request::segment(1) }}
+                            Home {{ Request::segment(1) }}
                         </p>
                     </a>
                 </li>
@@ -196,3 +201,30 @@
     </div>
     <!-- /.sidebar -->
 </aside>
+
+<script>
+    //     document.querySelectorAll('.nav-item > a').forEach(link => {
+//     link.addEventListener('click', function (e) {
+//         const parent = this.parentElement;
+//         const subMenu = parent.querySelector('.nav-treeview');
+
+//         if (subMenu) {
+//             e.preventDefault();
+
+//             // Toggle open/close
+//             const isOpen = parent.classList.contains('menu-open');
+//             document.querySelectorAll('.nav-item.menu-open').forEach(item => {
+//                 item.classList.remove('menu-open', 'menu-is-opening');
+//                 const openSubMenu = item.querySelector('.nav-treeview');
+//                 if (openSubMenu) openSubMenu.style.display = 'none';
+//             });
+
+//             if (!isOpen) {
+//                 parent.classList.add('menu-is-opening', 'menu-open');
+//                 subMenu.style.display = 'block';
+//             }
+//         }
+//     });
+// });
+
+</script>
