@@ -146,7 +146,7 @@
                         </tbody>
                     </table>
                     @else
-                    <p class="text-center">No data available for PPT.</p>
+                    <p class="text-center">No PPT data available for the selected filters.</p>
                     @endif
                 </div>
             </div>
@@ -181,7 +181,7 @@
                         </tbody>
                     </table>
                     @else
-                    <p class="text-center">No data available for PAT.</p>
+                    <p class="text-center">No PAT data available for the selected filters.</p>
                     @endif
                 </div>
             </div>

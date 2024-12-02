@@ -4,11 +4,11 @@
 
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <div class="content-header">
+    {{-- <div class="content-header">
         <div class="col-12 text-center mb-1">
-            <h3 class="font-weight-bold">Performance Metrics</h3>
+            <h3 class="font-weight-bold">School Insight</h3>
         </div>
-    </div>
+    </div> --}}
     <!-- /.content-header -->
 
 
@@ -18,7 +18,7 @@
             <!-- Summary Metrics Section -->
             <div class="row mb-4">
                 <div class="col-12 mb-1">
-                    <h4 class="text">Summary Metrics</h4>
+                    <h4 class="font-weight-bold">Summary Metrics</h4>
                 </div>
                 <!-- Total Students -->
                 <div class="col-md-6 col-lg-4">
@@ -72,7 +72,7 @@
             <!-- Performance Metrics Section -->
             <div class="row">
                 <div class="col-12 mb-1">
-                    <h4 class="text">Performance Metrics</h4>
+                    <h4 class="font-weight-bold">Performance Metrics</h4>
                 </div>
 
                 <!-- Class Performance -->

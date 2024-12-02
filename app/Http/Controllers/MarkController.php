@@ -32,12 +32,10 @@ class MarkController extends Controller
         $syllabus = SyllabusModel::findOrFail($syllabusId);
         $examType = ExamTypeModel::findOrFail($examTypeId);
         $year = AcademicYearModel::findOrFail($yearId);
-
         $marks = $this->markRepository->getMarks($classId, $examTypeId, $syllabusId, $yearId);
         $students = StudentModel::whereHas('classes', function ($query) use ($classId) {
             $query->where('class_id', $classId);
         })->get();
-
         $subjects = DB::table('subject')
             ->join('subject_grade', 'subject.id', '=', 'subject_grade.subject_id')
             ->where('academic_year_id', $yearId) // Filter by year
@@ -45,9 +43,7 @@ class MarkController extends Controller
             ->where('subject_grade.grade_level_id', $class->grade_level_id)
             ->select('subject.id as subject_id', 'subject.subject_name')
             ->get();
-
         $studentsSummary = $this->summaryRepository->getSummaries($classId, $examTypeId, $syllabusId, $yearId);
-
         return view('admin.examManagement.exams.marks.tableMarkClass', compact('class', 'syllabus', 'examType', 'year', 'students', 'marks', 'subjects', 'studentsSummary'));
     }
 
@@ -58,15 +54,12 @@ class MarkController extends Controller
         $syllabus = SyllabusModel::findOrFail($syllabusId);
         $examType = ExamTypeModel::findOrFail($examTypeId);
         $year = AcademicYearModel::findOrFail($yearId);
-
         // Get marks from the repository
         $marks = $this->markRepository->getMarks($classId, $examTypeId, $syllabusId, $yearId);
-
         // Fetch students in the class
         $students = StudentModel::whereHas('classes', function ($query) use ($classId) {
             $query->where('class_id', $classId);
         })->get();
-
         // Fetch subjects for the syllabus and grade level
         $subjects = DB::table('subject')
             ->join('subject_grade', 'subject.id', '=', 'subject_grade.subject_id')
@@ -74,10 +67,8 @@ class MarkController extends Controller
             ->where('subject_grade.grade_level_id', $class->grade_level_id)
             ->select('subject.id as subject_id', 'subject.subject_name')
             ->get();
-
         // Get student summaries for attendance and other details
         $studentsSummary = $this->summaryRepository->getSummaries($classId, $examTypeId, $syllabusId, $yearId);
-
         // Return the editable view
         return view('admin.examManagement.exams.marks.tableMarkClassEditable', compact(
             'class',
@@ -99,10 +90,8 @@ class MarkController extends Controller
         $examType = ExamTypeModel::findOrFail($examTypeId);
         $year = AcademicYearModel::findOrFail($yearId);
         $student = StudentModel::findOrFail($studentId);
-
         // Fetch marks for the student
         $marks = $this->markRepository->getStudentMarks($studentId, $classId, $examTypeId, $syllabusId, $yearId);
-
         // Fetch subjects for the syllabus and grade level
         $subjects = DB::table('subject')
             ->join('subject_grade', 'subject.id', '=', 'subject_grade.subject_id')
@@ -110,10 +99,8 @@ class MarkController extends Controller
             ->where('subject_grade.grade_level_id', $class->grade_level_id)
             ->select('subject.id as subject_id', 'subject.subject_name')
             ->get();
-
         // Fetch the student summary
         $studentSummary = $this->summaryRepository->getStudentSummary($studentId, $classId, $examTypeId, $syllabusId, $yearId);
-
         // Prepare data for the PDF
         $data = [
             'student' => $student,
@@ -125,10 +112,8 @@ class MarkController extends Controller
             'subjects' => $subjects,
             'studentSummary' => $studentSummary,
         ];
-
         // Load the PDF view and pass the data
         $pdf = Pdf::loadView('admin.examManagement.exams.marks.studentReport', $data);
-
         // Stream the PDF
         return $pdf->stream('Student_Report_' . $student->full_name . '.pdf');
     }
@@ -146,7 +131,6 @@ class MarkController extends Controller
             'marks.*.*' => 'integer|min:0|max:100', // Assuming marks range from 0 to 100
             'attendance' => 'array',
         ]);
-
         // Extract data
         $marks = $request->input('marks', []);
         $attendance = $request->input('attendance', []);
@@ -154,10 +138,8 @@ class MarkController extends Controller
         $examTypeId = $request->exam_type_id;
         $syllabusId = $request->syllabus_id;
         $academicYearId = $request->academic_year_id;
-
         // Fetch the grade level ID of the class for position calculations
         $gradeLevelId = ClassModel::findOrFail($classId)->grade_level_id;
-
         // Define grade thresholds
         $gradeThresholds = [
             'A' => 80,
@@ -165,21 +147,16 @@ class MarkController extends Controller
             'C' => 40,
             'D' => 0,
         ];
-
         // Process each student's marks
         foreach ($marks as $studentId => $subjects) {
             $numSubjects = count($subjects);
             $maxMarks = $numSubjects * 100; // Maximum marks = 100 * number of subjects
-
             // Update student marks and calculate total marks
             $totalMarks = $this->updateStudentMarks($subjects, $studentId, $classId, $syllabusId, $examTypeId, $academicYearId);
-
             // Calculate percentage
             $percentage = $numSubjects > 0 ? ($totalMarks / $maxMarks) * 100 : 0;
-
             // Calculate the total grade
             $totalGrade = $this->calculateTotalGrade($subjects, $gradeThresholds);
-
             // Update attendance, total marks, and total grade
             StudentSummaryModel::updateOrCreate(
                 [
@@ -197,10 +174,8 @@ class MarkController extends Controller
                 ]
             );
         }
-
         // Calculate positions after updates
         $this->summaryRepository->calculatePositions($classId, $examTypeId, $syllabusId, $academicYearId, $gradeLevelId);
-
         return redirect()->route('exams.marks', [
             'yearId' => $academicYearId,
             'examTypeId' => $examTypeId,
@@ -213,7 +188,6 @@ class MarkController extends Controller
     private function updateStudentMarks(array $subjects, int $studentId, int $classId, int $syllabusId, int $examTypeId, int $academicYearId): int
     {
         $totalMarks = 0;
-
         foreach ($subjects as $subjectId => $mark) {
             MarkModel::updateOrCreate(
                 [
@@ -228,10 +202,8 @@ class MarkController extends Controller
                     'mark' => $mark,
                 ]
             );
-
             $totalMarks += $mark;
         }
-
         return $totalMarks;
     }
 
@@ -239,7 +211,6 @@ class MarkController extends Controller
     private function calculateTotalGrade(array $subjects, array $gradeThresholds): string
     {
         $grades = array_fill_keys(array_keys($gradeThresholds), 0);
-
         foreach ($subjects as $mark) {
             foreach ($gradeThresholds as $grade => $threshold) {
                 if ($mark >= $threshold) {
@@ -248,9 +219,21 @@ class MarkController extends Controller
                 }
             }
         }
-
         return collect($grades)
             ->map(fn($count, $grade) => "{$count}{$grade}")
             ->implode(' ');
+    }
+
+    public function subjectAssignedTeacher()
+    {
+        // Fetch the current academic year
+        $currentAcademicYear = AcademicYearModel::where('is_current', 1)->first();
+
+        // Fetch the marks (example) based on other parameters if needed
+        // For now, we will keep the marks part commented out since you might not need it yet
+        // $marks = MarkModel::where('academic_year_id', $currentAcademicYear->id)->get();
+
+        // Return the view with the necessary data
+        return view('teacher.examData.subjectAssigned', compact('currentAcademicYear'));
     }
 }

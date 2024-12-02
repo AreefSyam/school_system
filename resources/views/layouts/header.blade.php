@@ -5,11 +5,20 @@
         <li class="nav-item">
             <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
-        <li class="nav-item">
-            <!-- Wrap the image inside an anchor tag for the dashboard link -->
-            <a href="{{ route('admin.dashboard') }}">
-                <img src="{{ url('dist/img/iPerform.png') }}" alt="logo" class="brand-logo" style="height: 50px; margin-right: 15px;">
+        <li class="nav-item d-flex align-items-center">
+            @if(auth()->user()->hasRole('admin'))
+            <a href="{{ route('admin.dashboard') }}" class="d-flex align-items-center">
+                <img src="{{ url('dist/img/iPerform.png') }}" alt="Logo" class="brand-logo"
+                    style="height: 50px; margin-right: 15px;">
             </a>
+            @endif
+
+            @if(auth()->user()->hasRole('teacher'))
+            <a href="{{ route('teacher.dashboard') }}" class="d-flex align-items-center">
+                <img src="{{ url('dist/img/iPerform.png') }}" alt="Logo" class="brand-logo"
+                    style="height: 50px; margin-right: 15px;">
+            </a>
+            @endif
         </li>
     </ul>
 
@@ -17,11 +26,49 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
+
+        {{--
+        <!-- Academic Year Selector -->
+        @if(auth()->user()->hasRole('teacher'))
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button">
+                <i class="fas fa-calendar-alt"></i>
+                {{ session('academic_year', 'Select Year') }}
+            </a>
+            <div class="dropdown-menu dropdown-menu-right">
+                @foreach($academicYears as $year)
+                <a href="{{ route('navBar.setAcademicYear', $year->id) }}" class="dropdown-item">
+                    {{ session('academic_year', 'Select Year') }}
+                </a>
+                @endforeach
+            </div>
+        </li>
+        @endif --}}
+        <!-- Academic Year Selector -->
+        @if(auth()->user()->hasRole('teacher'))
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button">
+                <i class="fas fa-calendar-alt"></i>
+                {{ session('academic_year', 'Select Year') }}
+            </a>
+            <div class="dropdown-menu dropdown-menu-right">
+                @foreach($academicYears as $year)
+                <a href="{{ route('navBar.setAcademicYear', $year->id) }}" class="dropdown-item">
+                    {{ $year->academic_year_name }}
+                    <!-- Ensure this matches your DB column -->
+                </a>
+                @endforeach
+            </div>
+        </li>
+        @endif
+
+
         <!-- User Profile Dropdown -->
         <li class="nav-item dropdown">
             <a class="nav-link d-flex align-items-center" data-toggle="dropdown" href="#" role="button">
                 <!-- User Image -->
-                <img src="{{ url('dist/img/user2-160x160.jpg') }}" class="img-circle img-bordered-sm" alt="User Image" style="width: 30px; height: 30px; margin-right: 8px;">
+                <img src="{{ url('dist/img/user2-160x160.jpg') }}" class="img-circle img-bordered-sm" alt="User Image"
+                    style="width: 30px; height: 30px; margin-right: 8px;">
                 <!-- Full Name -->
                 <span class="font-weight-bold">{{ Auth::user()->name }}</span>
                 <!-- Dropdown Icon -->

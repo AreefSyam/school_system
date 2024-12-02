@@ -23,6 +23,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property int|null $created_by
+ * @property int $is_current 1: Current Academic Year, 0: Not Current
  * @method static \Illuminate\Database\Eloquent\Builder|AcademicYearModel newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AcademicYearModel newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AcademicYearModel query()
@@ -31,6 +32,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AcademicYearModel whereCreatedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AcademicYearModel whereEndDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AcademicYearModel whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AcademicYearModel whereIsCurrent($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AcademicYearModel whereStartDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AcademicYearModel whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AcademicYearModel whereUpdatedAt($value)

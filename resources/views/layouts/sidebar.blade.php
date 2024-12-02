@@ -1,19 +1,26 @@
 <aside class="main-sidebar sidebar-dark-olive bg-navy elevation-4">
+
     <!-- Brand Logo -->
+    @if(auth()->user()->hasRole('admin'))
     <a href="{{ route('admin.dashboard') }}" class="brand-link">
-        <img src="{{url('dist/img/AbimPahang.png')}}" alt="logo" class="brand-image img-circle elevation-3"
+        <img src="{{ url('dist/img/AbimPahang.png') }}" alt="Logo" class="brand-image img-circle elevation-3"
             style="background-color: white; opacity: 100">
         <span class="brand-text font-weight-bold">KAFA As-Saadah</span>
     </a>
+    @endif
+    @if(auth()->user()->hasRole('teacher'))
+    <a href="{{ route('teacher.dashboard') }}" class="brand-link">
+        <img src="{{ url('dist/img/AbimPahang.png') }}" alt="Logo" class="brand-image img-circle elevation-3"
+            style="background-color: white; opacity: 100">
+        <span class="brand-text font-weight-bold">KAFA As-Saadah</span>
+    </a>
+    @endif
 
     <!-- Sidebar -->
     <div class="sidebar">
-
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                <!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
-
                 {{-- Admin Modules --}}
                 @if (Auth::user()->role == 'admin')
                 <li class="nav-header">MENU</li>
@@ -22,7 +29,7 @@
                         class="nav-link @if (Request::segment(2) == 'dashboard') active @endif">
                         <i class="nav-icon far bi bi-speedometer"></i>
                         <p>
-                            Home
+                            Home {{ Request::segment(1) }}
                         </p>
                     </a>
                 </li>
@@ -35,7 +42,6 @@
                         </p>
                     </a>
                 </li>
-
                 <!-- Examination Menu -->
                 <li class="nav-item @if (Request::segment(2) == 'examManagement') menu-is-opening menu-open @endif">
                     <a href="#" class="nav-link @if (Request::segment(2) == 'examManagement') active @endif">
@@ -65,8 +71,6 @@
                         </li>
                     </ul>
                 </li>
-
-
                 <!-- User Management Menu -->
                 <li class="nav-item @if (Request::segment(2) == 'userManagement') menu-is-opening menu-open @endif">
                     <a href="#" class="nav-link @if (Request::segment(2) == 'userManagement') active @endif">
@@ -96,7 +100,6 @@
                         </li>
                     </ul>
                 </li>
-
                 {{-- Subject Management --}}
                 <li class="nav-item">
                     <a href="{{ route('subjectManagement.list') }}"
@@ -107,7 +110,6 @@
                         </p>
                     </a>
                 </li>
-
                 {{-- Class Management --}}
                 <li class="nav-item">
                     <a href="{{ route('class.list') }}"
@@ -118,7 +120,6 @@
                         </p>
                     </a>
                 </li>
-
                 {{-- Student Management --}}
                 <li class="nav-item">
                     <a href="{{ route('studentManagement.list') }}"
@@ -129,7 +130,6 @@
                         </p>
                     </a>
                 </li>
-
                 {{-- analyticManagement --}}
                 <li class="nav-item @if (Request::segment(2) == 'analyticManagement') menu-is-opening menu-open @endif">
                     <a href="#" class="nav-link @if (Request::segment(2) == 'analyticManagement') active @endif">
@@ -164,11 +164,7 @@
                         </li>
                     </ul>
                 </li>
-
-
                 @endif
-
-
 
 
 
@@ -176,7 +172,8 @@
                 @if (Auth::user()->role == 'teacher')
                 <li class="nav-header">MENU</li>
                 <li class="nav-item">
-                    <a href="{{ url('admin/dashboard') }}" class="nav-link active">
+                    <a href="{{ route('teacher.dashboard') }}"
+                        class="nav-link @if (Request::segment(2) == 'dashboard') active @endif">
                         <i class="nav-icon far bi bi-speedometer"></i>
                         <p>
                             Home {{ Request::segment(1) }}
@@ -184,15 +181,15 @@
                     </a>
                 </li>
 
-                <!-- Logout Button as Sidebar Menu Item -->
+                {{-- Student Management --}}
                 <li class="nav-item">
-                    <form action="{{ route('logout') }}" method="POST" id="logout-form">
-                        @csrf
-                        <button type="submit" class="nav-link btn btn-link" style="color: white; text-align: left;">
-                            <i class="nav-icon fas fa-sign-out-alt"></i>
-                            <p>Logout</p>
-                        </button>
-                    </form>
+                    <a href="{{ route('teacher.subject.list') }}"
+                        class="nav-link @if (Request::segment(2) == 'examData') active @endif">
+                        <i class="nav-icon far bi bi-clipboard-data active"></i>
+                        <p>
+                            Exam Data
+                        </p>
+                    </a>
                 </li>
                 @endif
             </ul>
@@ -201,30 +198,3 @@
     </div>
     <!-- /.sidebar -->
 </aside>
-
-<script>
-    //     document.querySelectorAll('.nav-item > a').forEach(link => {
-//     link.addEventListener('click', function (e) {
-//         const parent = this.parentElement;
-//         const subMenu = parent.querySelector('.nav-treeview');
-
-//         if (subMenu) {
-//             e.preventDefault();
-
-//             // Toggle open/close
-//             const isOpen = parent.classList.contains('menu-open');
-//             document.querySelectorAll('.nav-item.menu-open').forEach(item => {
-//                 item.classList.remove('menu-open', 'menu-is-opening');
-//                 const openSubMenu = item.querySelector('.nav-treeview');
-//                 if (openSubMenu) openSubMenu.style.display = 'none';
-//             });
-
-//             if (!isOpen) {
-//                 parent.classList.add('menu-is-opening', 'menu-open');
-//                 subMenu.style.display = 'block';
-//             }
-//         }
-//     });
-// });
-
-</script>

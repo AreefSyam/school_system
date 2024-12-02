@@ -43,10 +43,4 @@ class AcademicYearModel extends Model
 
         return $data;
     }
-
-    // public function examTypes()
-    // {
-    //     return $this->belongsToMany(ExamTypeModel::class, 'exam_type_syllabus_year', 'academic_year_id', 'exam_type_id')
-    //         ->withPivot('syllabus_id');
-    // }
 }

@@ -7,8 +7,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Request;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
@@ -45,22 +45,22 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    static public function getIdSingle($id)
+    public static function getIdSingle($id)
     {
         return User::find($id);
     }
 
-    static public function getEmailSingle($email)
+    public static function getEmailSingle($email)
     {
         return User::where('email', $email)->first();
     }
 
-    static public function getTokenSingle($remember_token)
+    public static function getTokenSingle($remember_token)
     {
         return User::where('remember_token', $remember_token)->first();
     }
 
-    static public function getRecordAdmin()
+    public static function getRecordAdmin()
     {
         $data = User::select('users.*')
             ->where('role', '=', 'admin');
@@ -78,7 +78,7 @@ class User extends Authenticatable
         return $data;
     }
 
-    static public function getRecordTeacher()
+    public static function getRecordTeacher()
     {
         $data = User::select('users.*')
             ->where('role', '=', 'teacher');
@@ -95,4 +95,10 @@ class User extends Authenticatable
             ->paginate(10);
         return $data;
     }
+
+    public function hasRole($role)
+    {
+        return $this->role === $role;
+    }
+
 }

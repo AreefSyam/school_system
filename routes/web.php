@@ -1,17 +1,18 @@
 <?php
 
-use App\Http\Controllers\AcademicYearController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\AnalyticController;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ClassController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\MarkController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ClassController;
+use App\Http\Controllers\NavBarController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AnalyticController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AcademicYearController;
 
 // Public (Guest) Routes
 Route::group(['middleware' => 'guest'], function () {
@@ -175,10 +176,17 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     // Teacher Routes
-    Route::middleware('teacher')->group(function () {
-        Route::get('/teacher/dashboard', [DashboardController::class, 'dashboard'])->name('teacher.dashboard');
-    });
+    Route::middleware('teacher')->prefix('teacher')->group(function () {
+        // Dashboard
+        Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('teacher.dashboard');
+        // Set Academic Year on Navigation bar
+        Route::get('/set-academic-year/{id}', [NavBarController::class, 'setAcademicYear'])->name('navBar.setAcademicYear');
 
+        Route::prefix('examData')->group(function () {
+            // Grade-level analytics
+            Route::get('/subjectAssigned', [MarkController::class, 'subjectAssignedTeacher'])->name('teacher.subject.list');
+        });
+    });
     // Logout Route
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
