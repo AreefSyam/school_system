@@ -26,24 +26,6 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
-
-        {{--
-        <!-- Academic Year Selector -->
-        @if(auth()->user()->hasRole('teacher'))
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button">
-                <i class="fas fa-calendar-alt"></i>
-                {{ session('academic_year', 'Select Year') }}
-            </a>
-            <div class="dropdown-menu dropdown-menu-right">
-                @foreach($academicYears as $year)
-                <a href="{{ route('navBar.setAcademicYear', $year->id) }}" class="dropdown-item">
-                    {{ session('academic_year', 'Select Year') }}
-                </a>
-                @endforeach
-            </div>
-        </li>
-        @endif --}}
         <!-- Academic Year Selector -->
         @if(auth()->user()->hasRole('teacher'))
         <li class="nav-item dropdown">
@@ -61,7 +43,6 @@
             </div>
         </li>
         @endif
-
 
         <!-- User Profile Dropdown -->
         <li class="nav-item dropdown">
@@ -186,3 +167,101 @@
     </ul>
 </nav>
 <!-- /.navbar -->
+
+<!-- Floating Flash Messages -->
+<div class="flash-messages-container">
+    @if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    @endif
+
+    @if(session('info'))
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        {{ session('info') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    @endif
+
+    @if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ session('error') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    @endif
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.change-year').forEach(item => {
+        item.addEventListener('click', function (event) {
+            event.preventDefault();
+            const yearId = this.getAttribute('data-year-id');
+            fetch(`/set-academic-year/${yearId}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ yearId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload(); // Reload the page to fetch new data
+                }
+            })
+            .catch(error => {
+                console.error('Error updating academic year:', error);
+            });
+        });
+    });
+});
+
+</script>
+
+<!-- JavaScript to auto-dismiss alerts after 3 seconds -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.classList.add('fade-out'); // Add fade-out animation
+                setTimeout(() => alert.remove(), 500); // Remove element after animation
+            });
+        }, 3000); // Dismiss after 3 seconds
+    });
+</script>
+
+<!-- CSS for floating and animations -->
+<style>
+    .flash-messages-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1050;
+        /* Ensure it appears above other elements */
+        width: 300px;
+    }
+
+    .alert {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        margin-bottom: 10px;
+        transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .alert.fade-out {
+        opacity: 0;
+        transform: translateY(-20px);
+        /* Slight upward animation */
+    }
+</style>
+

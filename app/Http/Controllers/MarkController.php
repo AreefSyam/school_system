@@ -9,6 +9,7 @@ use App\Models\MarkModel;
 use App\Models\StudentModel;
 use App\Models\StudentSummaryModel;
 use App\Models\SyllabusModel;
+use App\Models\TeacherAssignClasses;
 use App\Repositories\MarkRepository;
 use App\Repositories\StudentSummaryRepository;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -224,16 +225,79 @@ class MarkController extends Controller
             ->implode(' ');
     }
 
-    public function subjectAssignedTeacher()
+    //TEACHER
+
+    // public function subjectAssignedTeacher()
+    // {
+    //     // Fetch the current academic year
+    //     $currentAcademicYear = AcademicYearModel::where('is_current', 1)->first();
+
+    //     // Ensure the academic year is set
+    //     if (!$currentAcademicYear) {
+    //         return redirect()->back()->with('error', 'No academic year is currently active.');
+    //     }
+
+    //     // Fetch classes assigned to the authenticated teacher in the current academic year
+    //     $classes = DB::table('teacherassignclasses')
+    //         ->join('class', 'teacherassignclasses.class_id', '=', 'class.id')
+    //         ->select('class.id', 'class.name')
+    //         ->where('teacherassignclasses.user_id', auth()->id())
+    //         ->where('teacherassignclasses.academic_year_id', $currentAcademicYear->id)
+    //         ->distinct()
+    //         ->get();
+
+    //     // Return the view with the necessary data
+    //     return view('teacher.examData.subjectAssigned', compact('currentAcademicYear', 'classes'));
+    // }
+
+    // Step 4: View and update marks
+    public function teacherSubjectClassMark($yearId, $examTypeId, $syllabusId, $classId)
     {
-        // Fetch the current academic year
-        $currentAcademicYear = AcademicYearModel::where('is_current', 1)->first();
+        $teacherId = auth()->id();
 
-        // Fetch the marks (example) based on other parameters if needed
-        // For now, we will keep the marks part commented out since you might not need it yet
-        // $marks = MarkModel::where('academic_year_id', $currentAcademicYear->id)->get();
+        $subjects = TeacherAssignClasses::join('subject', 'teacherassignclasses.subject_id', '=', 'subject.id')
+            ->select('subject.id', 'subject.name')
+            ->where('teacherassignclasses.user_id', $teacherId)
+            ->where('teacherassignclasses.class_id', $classId)
+            ->where('teacherassignclasses.academic_year_id', $yearId)
+            ->where('teacherassignclasses.syllabus_id', $syllabusId)
+            ->distinct()
+            ->get();
 
-        // Return the view with the necessary data
-        return view('teacher.examData.subjectAssigned', compact('currentAcademicYear'));
+        $marks = MarkModel::where('class_id', $classId)
+            ->where('exam_type_id', $examTypeId)
+            ->where('syllabus_id', $syllabusId)
+            ->where('academic_year_id', $yearId)
+            ->get();
+
+        return view('teacher.exams.marks', compact('subjects', 'marks', 'yearId', 'examTypeId', 'syllabusId', 'classId'));
     }
+
+    // Save marks
+    public function teacherSubjectClassMarkEdit(Request $request, $yearId, $examTypeId, $syllabusId, $classId)
+    {
+        // Validation
+        $request->validate([
+            'marks.*.student_id' => 'required|exists:students,id',
+            'marks.*.subject_id' => 'required|exists:subjects,id',
+            'marks.*.score' => 'required|numeric|min:0|max:100',
+        ]);
+
+        foreach ($request->marks as $markData) {
+            MarkModel::updateOrCreate(
+                [
+                    'student_id' => $markData['student_id'],
+                    'subject_id' => $markData['subject_id'],
+                    'class_id' => $classId,
+                    'exam_type_id' => $examTypeId,
+                    'syllabus_id' => $syllabusId,
+                    'academic_year_id' => $yearId,
+                ],
+                ['score' => $markData['score']]
+            );
+        }
+
+        return redirect()->back()->with('success', 'Marks updated successfully!');
+    }
+
 }

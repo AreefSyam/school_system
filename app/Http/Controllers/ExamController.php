@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ExamModel;
+use App\Models\AcademicYearModel;
 use App\Models\ClassModel;
-use App\Models\StudentModel;
-use App\Models\SubjectModel;
-use Illuminate\Http\Request;
+use App\Models\ExamModel;
 use App\Models\ExamTypeModel;
 use App\Models\SyllabusModel;
-use App\Models\AcademicYearModel;
+use App\Models\TeacherAssignClasses;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
 
 class ExamController extends Controller
 {
@@ -24,7 +23,6 @@ class ExamController extends Controller
         $data['syllabuses'] = SyllabusModel::all(); // Fetch all syllabus options
         $data['academic_years'] = AcademicYearModel::all(); // Fetch all academic years
         $data['get_record'] = ExamModel::getRecordExam(); // Use the search function
-
 
         return view('admin.examManagement.manages.list', $data);
     }
@@ -185,4 +183,115 @@ class ExamController extends Controller
         $classes = ClassModel::where('academic_year_id', $yearId)->get(); // Fetch classes assigned to this exam
         return view('admin.examManagement.exams.classList', compact('year', 'examType', 'syllabus', 'classes'));
     }
+
+    //TEACHER
+    // Step 1: Display available exam types
+    // public function examTypeListTeacher($yearId)
+    // {
+    //     // Fetch the current academic year or return a fallback
+    //     $currentAcademicYear = AcademicYearModel::where('is_current', 1)->first();
+
+    //     // If no current academic year is found, redirect with an error message
+    //     if (!$currentAcademicYear) {
+    //         return redirect()->back()->with('error', 'No academic year is set as current. Please select an academic year.');
+    //     }
+
+    //     // Fetch distinct exam types for the given academic year
+    //     $examTypes = DB::table('examination')
+    //         ->join('exam_type', 'examination.exam_type_id', '=', 'exam_type.id')
+    //         ->where('examination.academic_year_id', $currentAcademicYear->id) // Filter by academic year
+    //         ->select('exam_type.id', 'exam_type.exam_type_name') // Fetch only relevant fields
+    //         ->distinct() // Ensure no duplicates
+    //         ->get();
+
+    //     return view('teacher.examData.examTypeList', compact('currentAcademicYear', 'examTypes'));
+    // }
+
+    public function examTypeListTeacher($yearId)
+    {
+        // Get the academic year from the session
+        $currentAcademicYear = AcademicYearModel::findOrFail(session('academic_year_id'));
+
+        // If no current academic year is found, redirect with an error message
+        if (!$currentAcademicYear) {
+            return redirect()->back()->with('error', 'No academic year is set as current. Please select an academic year.');
+        }
+
+        // Fetch distinct exam types for the given academic year
+        $examTypes = DB::table('examination')
+            ->join('exam_type', 'examination.exam_type_id', '=', 'exam_type.id')
+            ->where('examination.academic_year_id', $currentAcademicYear->id) // Filter by academic year
+            ->select('exam_type.id', 'exam_type.exam_type_name') // Fetch only relevant fields
+            ->distinct() // Ensure no duplicates
+            ->get();
+
+        return view('teacher.examData.examTypeList', compact('currentAcademicYear', 'examTypes'));
+    }
+
+    // Step 2: Display available syllabi
+    public function syllabusListTeacher($yearId = null, $examTypeId)
+    {
+        $yearId = session('academic_year_id'); // Use session year ID if no parameter provided
+
+        // $selectedAcademicYear = AcademicYearModel::where('is_current', 1)->first();
+        $selectedAcademicYear = AcademicYearModel::findOrFail($yearId);
+
+        $examTypeName = DB::table('exam_type')
+            ->where('id', $examTypeId)
+            ->value('exam_type_name');
+
+        $syllabi = DB::table('examination')
+            ->join('syllabus', 'examination.syllabus_id', '=', 'syllabus.id')
+            ->where('examination.academic_year_id', $selectedAcademicYear->id)
+            ->where('examination.exam_type_id', $examTypeId)
+            ->select('syllabus.id', 'syllabus.syllabus_name')
+            ->distinct()
+            ->get();
+
+        return view('teacher.examData.syllabusList', compact('syllabi', 'yearId', 'examTypeId', 'selectedAcademicYear', 'examTypeName'));
+    }
+
+    // public function syllabusListTeacher($examTypeId)
+    // {
+    //     // Get the current academic year from the session
+    //     $yearId = $yearId ?? session('academic_year_id'); // Use session year ID if no parameter provided
+
+    //     // Validate that the session year exists
+    //     if (!$yearId) {
+    //         return redirect()->back()->with('error', 'No academic year selected. Please select a year.');
+    //     }
+
+    //     $selectedAcademicYear = AcademicYearModel::findOrFail($yearId);
+
+    //     $examTypeName = DB::table('exam_type')
+    //         ->where('id', $examTypeId)
+    //         ->value('exam_type_name');
+
+    //     $syllabi = DB::table('examination')
+    //         ->join('syllabus', 'examination.syllabus_id', '=', 'syllabus.id')
+    //         ->where('examination.academic_year_id', $selectedAcademicYear->id)
+    //         ->where('examination.exam_type_id', $examTypeId)
+    //         ->select('syllabus.id', 'syllabus.syllabus_name')
+    //         ->distinct()
+    //         ->get();
+
+    //     return view('teacher.examData.syllabusList', compact('syllabi', 'selectedAcademicYear', 'examTypeName', 'examTypeId'));
+    // }
+
+    // Step 3: Display assigned classes
+    public function classListTeacher($yearId, $examTypeId, $syllabusId)
+    {
+        $teacherId = auth()->id();
+
+        $classes = TeacherAssignClasses::join('class', 'teacherassignclasses.class_id', '=', 'class.id')
+            ->select('class.id', 'class.name')
+            ->where('teacherassignclasses.user_id', $teacherId)
+            ->where('teacherassignclasses.academic_year_id', $yearId)
+            ->where('teacherassignclasses.syllabus_id', $syllabusId)
+            ->distinct()
+            ->get();
+
+        return view('teacher.examData.classList', compact('classes', 'yearId', 'examTypeId', 'syllabusId'));
+    }
+
 }

@@ -2,12 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\AcademicYearModel;
 use App\Repositories\MarkRepository;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
-use App\Models\AcademicYearModel;
-
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -28,20 +28,28 @@ class AppServiceProvider extends ServiceProvider
     {
         Paginator::useBootstrap();
 
-        // // Share academic years with the navigation bar view
-        // View::composer('layouts.header', function ($view) {
-        //     $view->with('academicYears', AcademicYearModel::where('status', 0)->select('id', 'academic_year_name')->get());
-        // });
+        // Share academic years for teachers globally
+        View::composer('*', function ($view) {
+            if (auth()->check() && auth()->user()->hasRole('teacher')) {
+                // Fetch all active academic years
+                $academicYears = AcademicYearModel::where('status', 0)->select('id', 'academic_year_name')->get();
+                // Retrieve the current academic year from the session
+                $currentAcademicYearId = session('academic_year_id');
+                $currentAcademicYear = null;
+                if ($currentAcademicYearId) {
+                    // Try to fetch the current academic year based on the session
+                    $currentAcademicYear = AcademicYearModel::find($currentAcademicYearId);
+                }
+                if (!$currentAcademicYear && $academicYears->isNotEmpty()) {
+                    // Fallback to the first available academic year if session is empty or invalid
+                    $currentAcademicYear = $academicYears->first();
+                    Session::put('academic_year', $currentAcademicYear->academic_year_name);
+                    Session::put('academic_year_id', $currentAcademicYear->id);
+                }
+                // Share the data with all views
+                $view->with(compact('academicYears', 'currentAcademicYear'));
+            }
+        });
 
-    // Share academic years for teachers globally
-    View::composer('*', function ($view) {
-        // dd(auth()->user());  // This will dump the user data
-        if (auth()->check() && auth()->user()->hasRole('teacher')) {
-            $academicYears = AcademicYearModel::where('status', 0)->select('id', 'academic_year_name')->get();
-            $currentAcademicYear = AcademicYearModel::where('is_current', 1)->first();
-
-            $view->with(compact('academicYears', 'currentAcademicYear'));
-        }
-    });
     }
 }

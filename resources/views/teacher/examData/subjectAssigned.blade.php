@@ -1,75 +1,88 @@
-{{-- @extends('layouts.app')
+@extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h2>Subject Assignment</h2>
 
-    <!-- Academic Year Dropdown -->
-    <div class="form-group">
-        <label for="academicYearDropdown">Select Academic Year: {{ $year->academic_year_name }}
-        </label>
-        <select id="academicYearDropdown" class="form-control">
-            @foreach($academicYears as $year)
-            <option value="{{ $year->id }}">
-                {{ $year->academic_year_name }}
-            </option>
-            @endforeach
-        </select>
-    </div>
+<div class="content-wrapper">
+    <section>
+        <div class="content-header">
+            <div class="col-12 text mb-1">
+                <h3 class="font-weight-bold">Teacher Insight</h3>
+                <label>Current Academic Year: <strong>{{ $currentAcademicYear->academic_year_name }}</strong></label>
+            </div>
+        </div>
+    </section>
 
-    <p>Assign subjects based on the selected academic year.</p>
+    <!-- Assigned Class List -->
+    <section class="content">
+        <div class="container-fluid">
+            @if($classes->isEmpty())
+            <p class="text-center text-muted">No classes assigned for the current academic year.</p>
+            @else
+            <div class="row">
+                @foreach ($classes as $class)
+                <div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+                    <div class="card border-success">
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-success font-weight-bold">{{ $class->name }}</h5>
+                            <p class="card-text">Click below to view marks for this class.</p>
+                            {{-- <a href="{{ route('exams.marks', ['yearId' => $currentAcademicYear->id, 'classId' => $class->id]) }}"
+                                class="btn btn-success btn-sm">
+                                View Marks <i class="fas fa-arrow-circle-right"></i>
+                            </a> --}}
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            @endif
+        </div>
+    </section>
+
 </div>
 
-@endsection --}}
+@endsection
 
-{{-- @extends('layouts.app')
 
-@section('content')
-<div class="container">
-    <h2>Subject Assignment</h2>
 
-    <!-- Display the current academic year -->
-    <div class="form-group">
-        <label for="academicYearDropdown">Select Academic Year: {{ $currentAcademicYear->academic_year_name }}</label>
-    </div>
-
-    <!-- Academic Year Dropdown -->
-    <div class="form-group">
-        <label for="academicYearDropdown">Choose an Academic Year</label>
-        <select id="academicYearDropdown" class="form-control">
-            @foreach($academicYears as $year)
-                <option value="{{ $year->id }}" {{ $year->id == $currentAcademicYear->id ? 'selected' : '' }}>
-                    {{ $year->academic_year_name }}
-                </option>
-            @endforeach
-        </select>
-    </div>
-
-    <p>Assign subjects based on the selected academic year.</p>
-
-    <!-- Example of marks data (you can display the data from $marks here) -->
-    <div>
-        <h4>Marks for the Selected Year</h4>
-        <ul>
-            @foreach($marks as $mark)
-                <li>{{ $mark->subject_name }}: {{ $mark->marks }}</li>
-            @endforeach
-        </ul>
-    </div>
-</div>
-@endsection --}}
+{{--
 
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h2>Subject Assignment</h2>
 
-    <!-- Display the Current Academic Year -->
-    <div class="form-group">
-        <label for="academicYearDropdown">Current Academic Year: {{ $currentAcademicYear->academic_year_name }}</label>
-    </div>
+<div class="content-wrapper">
+    <section>
+        <div class="content-header">
+            <div class="col-12 text mb-1">
+                <h3 class="font-weight-bold">Teacher Insight</h3>
+                <label for="academicYearDropdown">Current Academic Year: {{ $currentAcademicYear->academic_year_name
+                    }}</label>
+            </div>
+        </div>
+    </section>
+
+    // display all the assigned class to this teacher
+    <!-- Class List Content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                @foreach ($classes as $class)
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-success">
+                        <div class="inner">
+                            <h3>{{ $class->name }}</h3>
+                        </div>
+                        <a href="{{ route('exams.marks', ['yearId' => $year->id, 'syllabusId' => $syllabus->id, 'examTypeId' => $examType->id, 'classId' => $class->id]) }}"
+                            class="small-box-footer">
+                            View Marks <i class="fas fa-arrow-circle-right"></i>
+                        </a>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
 </div>
-@endsection
 
-
+@endsection --}}

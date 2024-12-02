@@ -183,7 +183,7 @@
 
                 {{-- Student Management --}}
                 <li class="nav-item">
-                    <a href="{{ route('teacher.subject.list') }}"
+                    <a href="{{ route('teacher.exams.examTypeList', ['yearId' => $currentAcademicYear->id ?? '']) }}"
                         class="nav-link @if (Request::segment(2) == 'examData') active @endif">
                         <i class="nav-icon far bi bi-clipboard-data active"></i>
                         <p>
