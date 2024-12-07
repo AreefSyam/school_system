@@ -1,16 +1,17 @@
 <?php
 
 namespace App\Repositories;
+
 use App\Models\StudentSummaryModel;
 
 class StudentSummaryRepository
 {
-    public function getSummaries($classId, $examTypeId, $syllabusId, $academicYearId)
+
+    public function getSummaries($examId, $classId)
     {
-        return StudentSummaryModel::where('class_id', $classId)
-            ->where('exam_type_id', $examTypeId)
-            ->where('syllabus_id', $syllabusId)
-            ->where('academic_year_id', $academicYearId)
+        return StudentSummaryModel::with(['student', 'class', 'examType', 'syllabus', 'academicYear'])
+            ->where('exam_id', $examId)
+            ->where('class_id', $classId)
             ->get();
     }
 
@@ -23,7 +24,6 @@ class StudentSummaryRepository
             ->where('academic_year_id', $academicYearId)
             ->first();
     }
-
 
     public function upsertSummaries(array $summaries)
     {

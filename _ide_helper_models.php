@@ -156,6 +156,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property int|null $created_by
+ * @property string|null $status
  * @property-read \App\Models\AcademicYearModel $academicYear
  * @property-read \App\Models\ClassModel $class
  * @property-read \App\Models\ExamTypeModel $examType
@@ -172,6 +173,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|MarkModel whereExamTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MarkModel whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MarkModel whereMark($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MarkModel whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MarkModel whereStudentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MarkModel whereSubjectId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MarkModel whereSyllabusId($value)
@@ -224,6 +226,7 @@ namespace App\Models{
  * @property int $class_id
  * @property int $exam_type_id
  * @property int $syllabus_id
+ * @property int|null $exam_id
  * @property int $academic_year_id
  * @property int|null $total_marks
  * @property string|null $percentage
@@ -236,6 +239,7 @@ namespace App\Models{
  * @property-read \App\Models\AcademicYearModel $academicYear
  * @property-read \App\Models\ClassModel $class
  * @property-read \App\Models\ExamTypeModel $examType
+ * @property-read \App\Models\ExamModel|null $examination
  * @property-read \App\Models\StudentModel $student
  * @property-read \App\Models\SyllabusModel $syllabus
  * @method static \Illuminate\Database\Eloquent\Builder|StudentSummaryModel newModelQuery()
@@ -245,6 +249,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|StudentSummaryModel whereAttendance($value)
  * @method static \Illuminate\Database\Eloquent\Builder|StudentSummaryModel whereClassId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|StudentSummaryModel whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|StudentSummaryModel whereExamId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|StudentSummaryModel whereExamTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|StudentSummaryModel whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|StudentSummaryModel wherePercentage($value)
@@ -271,6 +276,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property int $academic_year_id
  * @property-read \App\Models\AcademicYearModel $academicYear
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ClassModel> $classes
+ * @property-read int|null $classes_count
  * @property-read \App\Models\User|null $creator
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GradeLevelModel> $gradeLevels
  * @property-read int|null $grade_levels_count

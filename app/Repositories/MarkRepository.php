@@ -6,6 +6,7 @@ use App\Models\MarkModel;
 
 class MarkRepository
 {
+
     public function getMarks($classId, $examTypeId, $syllabusId, $academicYearId)
     {
         return MarkModel::where('class_id', $classId)
@@ -30,4 +31,17 @@ class MarkRepository
             ->where('academic_year_id', $academicYearId)
             ->get();
     }
+
+    public function updateMarkStatus($studentId, $subjectId, $classId, $syllabusId, $examTypeId, $academicYearId, $status)
+    {
+        return MarkModel::where([
+            'student_id' => $studentId,
+            'subject_id' => $subjectId,
+            'class_id' => $classId,
+            'syllabus_id' => $syllabusId,
+            'exam_type_id' => $examTypeId,
+            'academic_year_id' => $academicYearId,
+        ])->update(['status' => $status]);
+    }
+
 }

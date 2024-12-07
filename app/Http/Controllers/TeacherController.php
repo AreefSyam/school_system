@@ -146,7 +146,8 @@ class TeacherController extends Controller
 
         // Redirect back with a success message
         return redirect()
-            ->route('teacher.list')
+            // ->route('teacher.list')
+            ->route('teacher.classAssignments', $teacher->id)
             ->with('success', 'Class assigned to teacher successfully.');
     }
 

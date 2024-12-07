@@ -5,14 +5,27 @@
     <!-- Content Header -->
     <section class="content-header">
         <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
+            <div class="row">
+                <div class="col-sm-12">
                     <h1> Select Exam Types for {{ $year->academic_year_name }}</h1>
                 </div>
             </div>
-            <a>Data Exam / {{ $year->academic_year_name }} / </a>
+            {{-- <a>Data Exam / {{ $year->academic_year_name }}  </a> --}}
         </div>
     </section>
+
+    {{-- breadcrumb --}}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <!-- Home -->
+            <li class="breadcrumb-item">
+                <a href="{{ route('exams.yearList') }}">Exam Data </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ route('exams.examTypeList',  ['yearId' => $year->id]) }}"> {{ $year->academic_year_name }}</a>
+            </li>
+        </ol>
+    </nav>
 
     <!-- Exam Type Content -->
     <section class="content">

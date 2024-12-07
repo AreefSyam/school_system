@@ -5,14 +5,24 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
+            <div class="row">
+                <div class="col-sm-12">
                     <h1>Select Examination Year</h1>
                 </div>
             </div>
-            <a>Data Exam /  </a>
         </div><!-- /.container-fluid -->
     </section>
+
+    {{-- breadcrumb --}}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <!-- Home -->
+            <li class="breadcrumb-item">
+                <a href="{{ route('exams.yearList') }}">Exam Data</a>
+            </li>
+        </ol>
+    </nav>
+
 
     <!-- Main content -->
     <section class="content">

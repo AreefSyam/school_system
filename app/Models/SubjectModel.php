@@ -20,12 +20,6 @@ class SubjectModel extends Model
         'created_by' // Add created_by here
     ];
 
-    // Define the relationship with the Syllabus model
-    // public function syllabus()
-    // {
-    //     return $this->belongsTo(SyllabusModel::class);
-    // }
-
     public function syllabus()
     {
         return $this->belongsTo(SyllabusModel::class, 'syllabus_id');
@@ -36,12 +30,6 @@ class SubjectModel extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
-
-    // Define the many-to-many relationship with the AcademicYear model
-    // public function academicYears()
-    // {
-    //     return $this->belongsToMany(AcademicYearModel::class, 'subject_academic_year', 'subject_id', 'academic_year_id');
-    // }
 
     // Define the many-to-many relationship with the GradeLevel model
     public function gradeLevels()
@@ -55,6 +43,10 @@ class SubjectModel extends Model
         return $this->belongsTo(AcademicYearModel::class, 'academic_year_id');
     }
 
+    public function classes()
+    {
+        return $this->belongsToMany(ClassModel::class, 'class_student', 'student_id', 'class_id');
+    }
 
     public static function getRecordSubject()
     {

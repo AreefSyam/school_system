@@ -182,7 +182,13 @@ class AnalyticController extends Controller
         $students = StudentModel::when($student, function ($query) use ($student) {
             return $query->where('id', $student); // Filter to the selected student
         })->get();
-        $subjects = SubjectModel::all();
+        // $subjects = SubjectModel::all();
+        // Fetch subjects filtered by the selected syllabus
+        $subjects = SubjectModel::when($syllabus, function ($query) use ($syllabus, $year) {
+            return $query->where('syllabus_id', $syllabus)
+                ->where('academic_year_id', $year);
+            ;
+        })->get();
 
         // Return view with data
         return view('admin.analyticManagement.byIndividual.individualAnalytic', compact(

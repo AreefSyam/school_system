@@ -1,18 +1,18 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AcademicYearController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AnalyticController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClassController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\MarkController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\ClassController;
 use App\Http\Controllers\NavBarController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
-use App\Http\Controllers\AnalyticController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\AcademicYearController;
+use Illuminate\Support\Facades\Route;
 
 // Public (Guest) Routes
 Route::group(['middleware' => 'guest'], function () {
@@ -157,9 +157,14 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::get('/{yearId}/{examTypeId}/{syllabusId}/classes', [ExamController::class, 'classList'])->name('exams.classList');
 
                 // View and update marks for a specific class, syllabus, and exam type
-                Route::get('/{yearId}/{examTypeId}/{syllabusId}/{classId}/marks', [MarkController::class, 'index'])->name('exams.marks');
-                Route::get('/{yearId}/{examTypeId}/{syllabusId}/{classId}/marks/edit', [MarkController::class, 'edit'])->name('exams.marks.edit');
-                Route::put('/{yearId}/{examTypeId}/{syllabusId}/{classId}/marks/edit', [MarkController::class, 'updateAll'])->name('exam.marks.edit.updateAll');
+                // Route::get('/{yearId}/{examTypeId}/{syllabusId}/{classId}/marks', [MarkController::class, 'index'])->name('exams.marks');
+                Route::get('/{yearId}/{examTypeId}/{syllabusId}/{classId}/{examId}/marks', [MarkController::class, 'index'])->name('exams.marks');
+
+                // Route::get('/{yearId}/{examTypeId}/{syllabusId}/{classId}/marks/edit', [MarkController::class, 'edit'])->name('exams.marks.edit');
+                // Route::put('/{yearId}/{examTypeId}/{syllabusId}/{classId}/marks/edit', [MarkController::class, 'updateAll'])->name('exam.marks.edit.updateAll');
+                Route::get('/{yearId}/{examTypeId}/{syllabusId}/{classId}/{examId}/marks/edit', [MarkController::class, 'edit'])->name('exams.marks.edit');
+                Route::put('/{yearId}/{examTypeId}/{syllabusId}/{classId}/{examId}/marks/edit', [MarkController::class, 'updateAll'])->name('exam.marks.edit.updateAll');
+
                 // Route to generate PDF report for a specific student
                 Route::get('/examManagement/exams/{yearId}/{examTypeId}/{syllabusId}/{classId}/{studentId}/report', [MarkController::class, 'generateStudentReport'])->name('exams.marks.studentReport');
             });
@@ -183,9 +188,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/set-academic-year/{id}', [NavBarController::class, 'setAcademicYear'])->name('navBar.setAcademicYear');
         Route::post('/set-academic-year/{id}', [NavBarController::class, 'setAcademicYear'])->name('navBar.setAcademicYear');
 
-
-
-
         Route::prefix('examData')->group(function () {
             // Grade-level analytics
             // Route::get('/subjectAssigned', [MarkController::class, 'subjectAssignedTeacher'])->name('teacher.subject.list');
@@ -193,11 +195,17 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/{yearId}/types', [ExamController::class, 'examTypeListTeacher'])->name('teacher.exams.examTypeList');
             // Step 2: Display syllabi for the selected exam type
             Route::get('/{yearId}/{examTypeId}/syllabus', [ExamController::class, 'syllabusListTeacher'])->name('teacher.exams.syllabusList');
+            // **New Step: Display subjects for the selected syllabus**
+            Route::get('/{yearId}/{examTypeId}/{syllabusId}/subjects', [ExamController::class, 'subjectListTeacher'])->name('teacher.exams.subjectList');
+
             // Step 3: Display classes assigned to the teacher
-            Route::get('/{yearId}/{examTypeId}/{syllabusId}/classes', [ExamController::class, 'classListTeacher'])->name('teacher.exams.classList');
+            // Route::get('/{yearId}/{examTypeId}/{syllabusId}/classes', [ExamController::class, 'classListTeacher'])->name('teacher.exams.classList');
+
+            // Step 3: Display classes assigned to the teacher
+            Route::get('/{yearId}/{examTypeId}/{syllabusId}/{subjectId}/classes', [ExamController::class, 'classListTeacher'])->name('teacher.exams.classList');
             // Step 4: View and update marks for students in a specific class
-            Route::get('/{yearId}/{examTypeId}/{syllabusId}/{classId}/marks', [MarkController::class, 'teacherSubjectClassMark'])->name('teacher.exams.marks');
-            Route::post('/{yearId}/{examTypeId}/{syllabusId}/{classId}/marks', [MarkController::class, 'teacherSubjectClassMarkEdit'])->name('teacher.exams.marks.store');
+            Route::get('/{yearId}/{examTypeId}/{syllabusId}/{subjectId}/{classId}/marks', [MarkController::class, 'teacherSubjectClassMark'])->name('teacher.exams.marks');
+            Route::post('/{yearId}/{examTypeId}/{syllabusId}/{subjectId}/{classId}/marks', [MarkController::class, 'teacherSubjectClassMarkEdit'])->name('teacher.exams.marks.store');
         });
     });
     // Logout Route

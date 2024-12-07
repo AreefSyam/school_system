@@ -51,7 +51,7 @@
                 <img src="{{ url('dist/img/user2-160x160.jpg') }}" class="img-circle img-bordered-sm" alt="User Image"
                     style="width: 30px; height: 30px; margin-right: 8px;">
                 <!-- Full Name -->
-                <span class="font-weight-bold">{{ Auth::user()->name }}</span>
+                <span class="font-weight-bold username">{{ Auth::user()->name }}</span>
                 <!-- Dropdown Icon -->
                 <i class="fas fa-caret-down ml-2"></i>
             </a>
@@ -74,6 +74,7 @@
             </div>
         </li>
 
+        {{--
         <!-- Messages Dropdown Menu -->
         <li class="nav-item dropdown">
             <a class="nav-link" data-toggle="dropdown" href="#">
@@ -161,7 +162,7 @@
                 <div class="dropdown-divider"></div>
                 <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
             </div>
-        </li>
+        </li> --}}
 
 
     </ul>
@@ -243,6 +244,12 @@
 
 <!-- CSS for floating and animations -->
 <style>
+    @media (max-width: 767.98px) {
+        .username {
+            display: none;
+        }
+    }
+
     .flash-messages-container {
         position: fixed;
         top: 20px;
@@ -264,4 +271,3 @@
         /* Slight upward animation */
     }
 </style>
-

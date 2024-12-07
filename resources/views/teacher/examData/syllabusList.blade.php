@@ -10,7 +10,7 @@
                     <h1>Syllabi for Exam Type: <strong>{{ $examTypeName }}</strong></h1>
                 </div>
             </div>
-            <p>Exam Data / {{ $selectedAcademicYear->academic_year_name }} / {{ $examTypeName }}</p>
+            <a>Exam Data / {{ $selectedAcademicYear->academic_year_name }} / {{ $examTypeName }}</a>
         </div>
     </section>
 
@@ -28,10 +28,13 @@
                         <div class="inner">
                             <h3>{{ $syllabus->syllabus_name }}</h3>
                         </div>
-                        <a href="{{ route('teacher.exams.classList', ['yearId' => $yearId, 'examTypeId' => $examTypeId, 'syllabusId' => $syllabus->id]) }}"
-                            class="small-box-footer">
-                            View Classes <i class="fas fa-arrow-circle-right"></i>
-                        </a>
+                        {{-- <a
+                            href="{{ route('teacher.exams.classList', ['yearId' => $yearId, 'examTypeId' => $examTypeId, 'syllabusId' => $syllabus->id],'subjectId' => $subject->id]) }}"
+                            class="small-box-footer"> --}}
+                            <a href="{{ route('teacher.exams.subjectList', ['yearId' => $yearId, 'examTypeId' => $examTypeId, 'syllabusId' => $syllabus->id]) }}"
+                                class="small-box-footer">
+                                View Subject <i class="fas fa-arrow-circle-right"></i>
+                            </a>
                     </div>
                 </div>
                 @endforeach
@@ -41,4 +44,3 @@
     </section>
 </div>
 @endsection
-

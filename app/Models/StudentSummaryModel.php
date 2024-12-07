@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\ExamModel;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class StudentSummaryModel extends Model
 {
@@ -23,8 +24,14 @@ class StudentSummaryModel extends Model
         'total_grade',
         'position_in_class',
         'position_in_grade',
-        'attendance'
+        'attendance',
+        'exam_id',
     ];
+
+    public function examination()
+    {
+        return $this->belongsTo(ExamModel::class, 'exam_id');
+    }
 
     // Define relationships if necessary
     public function student()
@@ -32,7 +39,7 @@ class StudentSummaryModel extends Model
         return $this->belongsTo(StudentModel::class, 'student_id');
     }
 
-    public function class()
+    public function class ()
     {
         return $this->belongsTo(ClassModel::class, 'class_id');
     }

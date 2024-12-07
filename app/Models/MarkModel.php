@@ -14,7 +14,7 @@ class MarkModel extends Model
     protected $fillable = [
         'student_id', 'class_id', 'subject_id',
         'syllabus_id', 'exam_type_id',
-        'academic_year_id', 'mark'
+        'academic_year_id', 'mark', 'status'
     ];
 
     public function student()

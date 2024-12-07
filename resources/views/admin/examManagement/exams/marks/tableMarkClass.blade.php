@@ -5,16 +5,43 @@
     <!-- Content Header -->
     <section class="content-header">
         <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
+            <div class="row">
+                <div class="col-sm-12">
                     <h1>Marks for {{ $examType->exam_type_name }} - {{ $syllabus->syllabus_name }}
                         ({{ $year->academic_year_name }}) : {{ $class->name }}</h1>
                 </div>
             </div>
-            <a>Data Exam / {{ $year->academic_year_name }} / {{ $examType->exam_type_name }} /
-                {{ $syllabus->syllabus_name }} / {{ $class->name }}</a>
         </div>
     </section>
+
+    {{-- breadcrumb --}}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <!-- Home -->
+            <li class="breadcrumb-item">
+                <a href="{{ route('exams.yearList') }}">Exam Data </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ route('exams.examTypeList',  ['yearId' => $year->id]) }}"> {{ $year->academic_year_name
+                    }}</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ route('exams.syllabusList',  ['yearId' => $year->id, 'examTypeId' => $examType->id]) }}"> {{
+                    $examType->exam_type_name }}</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a
+                    href="{{ route('exams.classList',  ['yearId' => $year->id, 'syllabusId' => $syllabus->id, 'examTypeId' => $examType->id]) }}">
+                    {{
+                    $syllabus->syllabus_name }}</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a
+                    href="{{ route('exams.marks',  ['yearId' => $year->id, 'syllabusId' => $syllabus->id, 'examTypeId' => $examType->id, 'classId' => $class->id, 'examId' => $exam->id]) }}">
+                    {{ $class->name }}</a>
+            </li>
+        </ol>
+    </nav>
 
     <!-- Individual Marks Table -->
     <section class="content">
@@ -40,16 +67,17 @@
 
                             @foreach ($subjects as $subject)
                             @php
-                                $studentMark = $marks->get($student->id)?->firstWhere('subject_id', $subject->subject_id);
-                                $markValue = $studentMark->mark ?? 'N/A';
+                            $studentMark = $marks->get($student->id)?->firstWhere('subject_id', $subject->subject_id);
+                            $markValue = $studentMark->mark ?? 'N/A';
                             @endphp
-                            <td class="{{ is_numeric($markValue) ? ($markValue >= 80 ? 'text-success' : ($markValue < 40 ? 'text-danger' : '')) : '' }}">
+                            <td
+                                class="{{ is_numeric($markValue) ? ($markValue >= 80 ? 'text-success' : ($markValue < 40 ? 'text-danger' : '')) : '' }}">
                                 {{ $markValue }}
                             </td>
                             @endforeach
 
                             @php
-                                $summary = $studentsSummary->firstWhere('student_id', $student->id);
+                            $summary = $studentsSummary->firstWhere('student_id', $student->id);
                             @endphp
                             <td>{{ $summary->attendance ?? '0' }} days</td>
                             <td>
@@ -63,7 +91,7 @@
 
                 <!-- Right-aligned button for editing -->
                 <div class="d-flex justify-content-end mt-3">
-                    <a href="{{ route('exams.marks.edit', [$year->id, $examType->id, $syllabus->id, $class->id]) }}"
+                    <a href="{{ route('exams.marks.edit', [$year->id, $examType->id, $syllabus->id, $class->id, $exam->id]) }}"
                         class="btn btn-primary">Edit Marks</a>
                 </div>
             </div>
@@ -71,6 +99,7 @@
     </section>
 
     <!-- Summary Table -->
+    @if($studentsSummary->isNotEmpty() && $studentsSummary->first()->academicYear->id == $year->id)
     <section class="content">
         <div class="card">
             <div class="card-body">
@@ -100,9 +129,10 @@
                         @endforeach
                     </tbody>
                 </table>
-
             </div>
         </div>
     </section>
+    @endif
+
 </div>
 @endsection

@@ -37,7 +37,23 @@ class SubjectController extends Controller
     {
         // Validate inputs
         $request->validate([
-            'subject_name' => 'required|string|max:255|unique:subject,subject_name',
+            // 'subject_name' => 'required|string|max:255',
+            'subject_name' => [
+                'required',
+                'string',
+                'max:255',
+                // Custom rule to ensure unique combination of subject_name, syllabus_id, and academic_year_id
+                function ($attribute, $value, $fail) use ($request) {
+                    $exists = SubjectModel::where('subject_name', $value)
+                        ->where('syllabus_id', $request->syllabus_id)
+                        ->where('academic_year_id', $request->academic_year_id)
+                        ->exists();
+
+                    if ($exists) {
+                        $fail('The subject with the same name and syllabus already exists for the selected academic year.');
+                    }
+                },
+            ],
             'syllabus_id' => 'required|exists:syllabus,id',
             'grade_level_id' => 'required|array|min:1', // Ensure at least one grade level is selected
             'grade_level_id.*' => 'exists:grade_level,id', // Ensure all grade levels exist

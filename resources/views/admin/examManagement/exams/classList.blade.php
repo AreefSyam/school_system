@@ -5,15 +5,38 @@
     <!-- Content Header -->
     <section class="content-header">
         <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
+            <div class="row">
+                <div class="col-sm-12">
                     <h1>Select Class for Exam [{{ $examType->exam_type_name }} - {{ $syllabus->syllabus_name }} - {{
                         $year->academic_year_name }}] </h1>
                 </div>
             </div>
-            <a>Data Exam / {{ $year->academic_year_name }} / {{ $examType->exam_type_name }} / {{ $syllabus->syllabus_name }}</a>
+            {{-- <a>Data Exam / {{ $year->academic_year_name }} / {{ $examType->exam_type_name }} / {{
+                $syllabus->syllabus_name }}</a> --}}
         </div>
     </section>
+
+    {{-- breadcrumb --}}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <!-- Home -->
+            <li class="breadcrumb-item">
+                <a href="{{ route('exams.yearList') }}">Exam Data </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ route('exams.examTypeList',  ['yearId' => $year->id]) }}"> {{ $year->academic_year_name
+                    }}</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ route('exams.syllabusList',  ['yearId' => $year->id, 'examTypeId' => $examType->id]) }}"> {{
+                    $examType->exam_type_name }}</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ route('exams.classList',  ['yearId' => $year->id, 'syllabusId' => $syllabus->id, 'examTypeId' => $examType->id]) }}"> {{
+                $syllabus->syllabus_name }}</a>
+            </li>
+        </ol>
+    </nav>
 
     <!-- Class List Content -->
     <section class="content">
@@ -26,7 +49,11 @@
                         <div class="inner">
                             <h3>{{ $class->name }}</h3>
                         </div>
-                        <a href="{{ route('exams.marks', ['yearId' => $year->id, 'syllabusId' => $syllabus->id, 'examTypeId' => $examType->id, 'classId' => $class->id]) }}"
+                        {{-- <a href="{{ route('exams.marks', ['yearId' => $year->id, 'examTypeId' => $examType->id, 'syllabusId' => $syllabus->id, 'classId' => $class->id]) }}"
+                            class="small-box-footer">
+                            View Marks <i class="fas fa-arrow-circle-right"></i>
+                        </a> --}}
+                        <a href="{{ route('exams.marks', ['yearId' => $year->id, 'examTypeId' => $examType->id, 'syllabusId' => $syllabus->id, 'classId' => $class->id, 'examId' => $exam->id]) }}"
                             class="small-box-footer">
                             View Marks <i class="fas fa-arrow-circle-right"></i>
                         </a>
