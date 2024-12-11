@@ -9,6 +9,7 @@ use App\Models\ExamTypeModel;
 use App\Models\MarkModel;
 use App\Models\StudentModel;
 use App\Models\StudentSummaryModel;
+use App\Models\SubjectModel;
 use App\Models\SyllabusModel;
 use App\Repositories\MarkRepository;
 use App\Repositories\StudentSummaryRepository;
@@ -62,7 +63,7 @@ class MarkController extends Controller
         $year = AcademicYearModel::findOrFail($yearId);
 
         // Get marks from the repository using the examId
-        $marks = $this->markRepository->getMarks($classId, $examTypeId, $syllabusId, $yearId, $examId);
+        $marks = $this->markRepository->getMarks($classId, $examTypeId, $syllabusId, $yearId);
         // Fetch students in the class
         $students = StudentModel::whereHas('classes', function ($query) use ($classId) {
             $query->where('class_id', $classId);
@@ -285,15 +286,6 @@ class MarkController extends Controller
             }
         }
         // Prepare the formatted output for each grade, including 'TH'
-        // return collect($grades)
-        //     ->map(function ($count, $grade) {
-        //         if ($count != 0) {
-        //             return "{$count}{$grade}";
-        //         }
-
-        //     })
-        //     ->implode(' ');
-
         return collect($grades)
             ->filter(function ($count) {
                 return $count > 0; // Only include grades with a count greater than 0
@@ -308,9 +300,13 @@ class MarkController extends Controller
     public function teacherSubjectClassMark($yearId = null, $examTypeId, $syllabusId, $subjectId, $classId)
     {
         $teacherId = auth()->id();
-
         $yearId = session('academic_year_id');
-
+        $selectedAcademicYear = AcademicYearModel::findOrFail($yearId);
+        // Fetch main data
+        $examType = ExamTypeModel::findOrFail($examTypeId);
+        $syllabus = SyllabusModel::findOrFail($syllabusId);
+        $subject = SubjectModel::findOrFail($subjectId);
+        $class = ClassModel::findOrFail($classId);
         // Fetch marks for the given class, subject, exam type, and academic year
         $marks = MarkModel::with('student') // Load the related student data
             ->where('class_id', $classId)
@@ -320,64 +316,81 @@ class MarkController extends Controller
             ->where('subject_id', $subjectId)
             ->get();
 
+        // $marks = $this->markRepository->getMarks($classId, $examTypeId, $syllabusId, $yearId);
+
         // Fetch all students in the class, regardless of marks
-        $students = StudentModel::whereHas('classes', function ($query) use ($classId) {
-            $query->where('class_id', $classId);
-        })->get();
-
-        // $students = StudentModel::whereHas('classes', function ($query) use ($classId, $yearId) {
-        //     $query->where('class_id', $classId)
-        //         ->where('academic_year_id', $yearId);
-        // })->get();
-
+        $students = StudentModel::whereHas('classes', fn($query) => $query->where('class_id', $classId))->get();
         // Fetch additional details for the breadcrumb
-        $selectedAcademicYear = AcademicYearModel::findOrFail($yearId);
-        $examTypeName = DB::table('exam_type')->where('id', $examTypeId)->value('exam_type_name');
-        $syllabusName = DB::table('syllabus')->where('id', $syllabusId)->value('syllabus_name');
-        $className = DB::table('class')->where('id', $classId)->value('name');
-        $subjectName = DB::table('subject')->where('id', $subjectId)->value('subject_name');
-
+        $breadcrumbData = [
+            'examTypeName' => $examType->exam_type_name,
+            'syllabusName' => $syllabus->syllabus_name,
+            'className' => $class->name,
+            'subjectName' => $subject->subject_name,
+        ];
         return view('teacher.examData.marks', compact(
-            'marks',
-            'students',
-            'subjectName',
-            'yearId',
-            'examTypeId',
-            'syllabusId',
-            'subjectId',
-            'classId',
-            'selectedAcademicYear',
-            'examTypeName',
-            'syllabusName',
-            'className'
+            'marks', 'students', 'yearId', 'selectedAcademicYear', 'examType', 'syllabus', 'subject', 'class', 'breadcrumbData'
         ));
     }
 
-    // Save marks
-    public function teacherSubjectClassMarkEdit(Request $request, $yearId, $examTypeId, $syllabusId, $classId)
+    public function teacherSubjectClassMarkEdit(Request $request)
     {
-        // Validation
-        $request->validate([
-            'marks.*.student_id' => 'required|exists:students,id',
-            'marks.*.subject_id' => 'required|exists:subjects,id',
-            'marks.*.score' => 'required|numeric|min:0|max:100',
+        \Log::info('Request Parameters:', $request->all());
+
+        // Validate incoming request
+        $validatedData = $request->validate([
+            'marks.*.student_id' => 'required|exists:student,id',
+            'marks.*.mark' => 'required|integer|min:0|max:100',
+            'status' => 'array',
+            'status.*.*' => 'in:present,absent', // Nested array validation
+            'class_id' => 'required|integer',
+            'syllabus_id' => 'required|integer',
+            'exam_type_id' => 'required|integer',
+            'academic_year_id' => 'required|integer',
+            'subject_id' => 'required|integer',
         ]);
 
-        foreach ($request->marks as $markData) {
+        $classId = $validatedData['class_id'];
+        $syllabusId = $validatedData['syllabus_id'];
+        $examTypeId = $validatedData['exam_type_id'];
+        $academicYearId = $validatedData['academic_year_id'];
+        $subjectId = $validatedData['subject_id'];
+        $marks = $validatedData['marks'];
+        $statuses = $request->input('status', []);
+
+        foreach ($marks as $markData) {
+            $studentId = $markData['student_id'];
+            $status = $statuses[$studentId][$subjectId] ?? 'present'; // Retrieve status by student and subject
+
+            \Log::info("Processing student ID: {$studentId}, Subject ID: {$subjectId}", [
+                'status' => $status,
+                'mark' => $markData['mark'],
+            ]);
+
+            $finalMark = ($status === 'absent') ? 0 : $markData['mark'];
+
             MarkModel::updateOrCreate(
                 [
-                    'student_id' => $markData['student_id'],
-                    'subject_id' => $markData['subject_id'],
+                    'student_id' => $studentId,
+                    'subject_id' => $subjectId,
                     'class_id' => $classId,
-                    'exam_type_id' => $examTypeId,
                     'syllabus_id' => $syllabusId,
-                    'academic_year_id' => $yearId,
+                    'exam_type_id' => $examTypeId,
+                    'academic_year_id' => $academicYearId,
                 ],
-                ['score' => $markData['score']]
+                [
+                    'mark' => $finalMark,
+                    'status' => $status,
+                ]
             );
         }
 
-        return redirect()->back()->with('success', 'Marks updated successfully!');
+        return redirect()->route('teacher.exams.marks', [
+            'yearId' => $academicYearId,
+            'examTypeId' => $examTypeId,
+            'syllabusId' => $syllabusId,
+            'subjectId' => $subjectId,
+            'classId' => $classId,
+        ])->with('success', 'Marks updated successfully!');
     }
 
 }

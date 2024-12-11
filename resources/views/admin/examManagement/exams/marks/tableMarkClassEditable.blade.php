@@ -185,7 +185,7 @@
     });
 });
 </script> --}}
-
+{{--
 <script>
     document.addEventListener('DOMContentLoaded', function () {
     const checkboxes = document.querySelectorAll('.absence-checkbox');
@@ -243,6 +243,47 @@
                 markInput.value = '0'; // Ensure numeric value is submitted
             }
             markInput.removeAttribute('readonly'); // Remove readonly to include in submission
+        });
+    });
+});
+
+</script> --}}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const checkboxes = document.querySelectorAll('.absence-checkbox');
+
+    // Function to handle checkbox changes
+    const handleAbsenceToggle = (checkbox) => {
+        const studentId = checkbox.dataset.studentId;
+
+        const markInput = document.getElementById(`marks-${studentId}`);
+        const statusInput = document.querySelector(`input[name="marks[${studentId}][status]"]`);
+
+        if (checkbox.checked) {
+            markInput.value = '0'; // Set value to 0
+            markInput.setAttribute('readonly', true); // Make input readonly
+            statusInput.value = 'absent'; // Set status to absent
+        } else {
+            markInput.value = markInput.dataset.originalValue || ''; // Restore value if available
+            markInput.removeAttribute('readonly'); // Make input editable
+            statusInput.value = 'present'; // Set status to present
+        }
+    };
+
+    // Initialize and attach event listeners
+    checkboxes.forEach(checkbox => {
+        const studentId = checkbox.dataset.studentId;
+
+        // Set initial state for readonly inputs if checkbox is checked
+        const markInput = document.getElementById(`marks-${studentId}`);
+        if (checkbox.checked) {
+            markInput.setAttribute('readonly', true); // Prevent edits if checkbox is checked
+        }
+
+        // Attach event listener for changes
+        checkbox.addEventListener('change', function () {
+            handleAbsenceToggle(this);
         });
     });
 });

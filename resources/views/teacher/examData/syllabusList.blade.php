@@ -10,9 +10,32 @@
                     <h1>Syllabi for Exam Type: <strong>{{ $examTypeName }}</strong></h1>
                 </div>
             </div>
-            <a>Exam Data / {{ $selectedAcademicYear->academic_year_name }} / {{ $examTypeName }}</a>
         </div>
     </section>
+
+    {{-- breadcrumb --}}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <!-- Home -->
+            <li class="breadcrumb-item">
+                <a href="{{ route('teacher.exams.examTypeList', ['yearId' => $currentAcademicYear->id]) }}">Exam
+                    Data</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ route('teacher.exams.examTypeList', ['yearId' => $currentAcademicYear->id]) }}">
+                    {{ $currentAcademicYear->academic_year_name }}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a
+                    href="{{ route('teacher.exams.syllabusList', ['yearId' => $currentAcademicYear->id, 'examTypeId' => $examType->id]) }}">
+                    {{ $examTypeName }}
+                </a>
+
+            </li>
+        </ol>
+    </nav>
+
 
     <!-- Syllabus Content -->
     <section class="content">
@@ -31,7 +54,7 @@
                         {{-- <a
                             href="{{ route('teacher.exams.classList', ['yearId' => $yearId, 'examTypeId' => $examTypeId, 'syllabusId' => $syllabus->id],'subjectId' => $subject->id]) }}"
                             class="small-box-footer"> --}}
-                            <a href="{{ route('teacher.exams.subjectList', ['yearId' => $yearId, 'examTypeId' => $examTypeId, 'syllabusId' => $syllabus->id]) }}"
+                            <a href="{{ route('teacher.exams.subjectList', ['yearId' => $yearId, 'examTypeId' => $examType->id, 'syllabusId' => $syllabus->id]) }}"
                                 class="small-box-footer">
                                 View Subject <i class="fas fa-arrow-circle-right"></i>
                             </a>

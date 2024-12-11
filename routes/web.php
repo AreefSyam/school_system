@@ -205,7 +205,8 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/{yearId}/{examTypeId}/{syllabusId}/{subjectId}/classes', [ExamController::class, 'classListTeacher'])->name('teacher.exams.classList');
             // Step 4: View and update marks for students in a specific class
             Route::get('/{yearId}/{examTypeId}/{syllabusId}/{subjectId}/{classId}/marks', [MarkController::class, 'teacherSubjectClassMark'])->name('teacher.exams.marks');
-            Route::post('/{yearId}/{examTypeId}/{syllabusId}/{subjectId}/{classId}/marks', [MarkController::class, 'teacherSubjectClassMarkEdit'])->name('teacher.exams.marks.store');
+            Route::put('/{yearId}/{examTypeId}/{syllabusId}/{subjectId}/{classId}/marks', [MarkController::class, 'teacherSubjectClassMarkEdit'])->name('teacher.exams.marks.store');
+
         });
     });
     // Logout Route

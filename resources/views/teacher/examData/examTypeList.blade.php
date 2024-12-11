@@ -10,9 +10,23 @@
                     <h1> Exam Types for Academic Year: <strong>{{ $currentAcademicYear->academic_year_name }} </strong></h1>
                 </div>
             </div>
-            <a>Exam Data / {{ $currentAcademicYear->academic_year_name }}  </a>
+            {{-- <a>Exam Data / {{ $currentAcademicYear->academic_year_name }}  </a> --}}
         </div>
     </section>
+
+
+    {{-- breadcrumb --}}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <!-- Home -->
+            <li class="breadcrumb-item">
+                <a href="{{ route('teacher.exams.examTypeList', ['yearId' => $currentAcademicYear->id]) }}">Exam Data </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ route('teacher.exams.examTypeList', ['yearId' => $currentAcademicYear->id]) }}"> {{ $currentAcademicYear->academic_year_name }} </a>
+            </li>
+        </ol>
+    </nav>
 
     <!-- Exam Type Content -->
     <section class="content">
