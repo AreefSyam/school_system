@@ -129,30 +129,39 @@ class MarkController extends Controller
 
     public function updateAll(Request $request)
     {
+        // \Log::info('Marks:', $request->input('marks'));
+        // \Log::info('Status:', $request->input('status'));
+
         // Validate request input
-        $validated = $request->validate([
+        $request->validate([
             'class_id' => 'required|integer',
             'syllabus_id' => 'required|integer',
             'exam_type_id' => 'required|integer',
             'academic_year_id' => 'required|integer',
             'marks' => 'required|array',
             'marks.*' => 'array',
-            'marks.*.*' => 'integer|min:0|max:100', // Assuming marks range from 0 to 100
+            'marks.*.*' => 'integer|min:0|max:100',
             'attendance' => 'array',
             'status' => 'array',
             'status.*.*' => 'in:present,absent',
         ]);
 
-        $marks = $validated['marks'];
-        $attendance = $validated['attendance'];
-        $status = $validated['status'];
-        $classId = $validated['class_id'];
-        $examTypeId = $validated['exam_type_id'];
-        $examId = $request->examId;    $syllabusId = $validated['syllabus_id'];
-        $academicYearId = $validated['academic_year_id'];
-        $gradeLevelId = ClassModel::findOrFail($classId)->grade_level_id;
+        // \Log::info('Validated:', $validated);
 
-        \Log::info('Status EHE:', $status);
+        // Extract data
+        $marks = $request->input('marks', []);
+        $attendance = $request->input('attendance', []);
+        // new
+        $status = $request->input('status', []);
+        // $status = $validated['status'];
+        $classId = $request->class_id;
+        $examTypeId = $request->exam_type_id;
+        $examId = $request->examId; // Added this to handle exam_id
+        $syllabusId = $request->syllabus_id;
+        $academicYearId = $request->academic_year_id;
+        $gradeLevelId = ClassModel::findOrFail($classId)->grade_level_id; // Fetch the grade level ID of the class for position calculations
+
+        // \Log::info('Status EHE:', $status);
 
         // Define grade thresholds
         $gradeThresholds = [
@@ -160,33 +169,20 @@ class MarkController extends Controller
             'B' => 60,
             'C' => 40,
             'D' => 0,
+            'TH' => 0,
         ];
-
+        // Process each student's marks
         foreach ($marks as $studentId => $subjects) {
-            $numSubjects = count($subjects);
-            $totalMarks = 0;
-            foreach ($subjects as $subjectId => $mark) {
-                \Log::info("Status: {$status[$studentId][$subjectId] }");
-                $studentStatus = $status[$studentId][$subjectId] ?? 'present';
-                \Log::info("Updating mark for student {$studentId}, subject {$subjectId}: mark={$mark}, status={$studentStatus}");
-                $updated = MarkModel::updateOrCreate(
-                    [
-                        'student_id' => $studentId,
-                        'subject_id' => $subjectId,
-                        'class_id' => $classId,
-                        'syllabus_id' => $syllabusId,
-                        'exam_type_id' => $examTypeId,
-                        'academic_year_id' => $academicYearId,
-                    ],
-                    [
-                        'mark' => $studentStatus === 'absent' ? 0 : $mark,
-                        'status' => $studentStatus,
-                    ]
-                );
 
-                $totalMarks += ($studentStatus === 'absent' ? 0 : $mark);
-            }
-            $totalGrade = $this->calculateTotalGrade($subjects, $gradeThresholds);
+            $numSubjects = count($subjects);
+            $maxMarks = $numSubjects * 100; // Maximum marks = 100 * number of subjects
+            // Update student marks and calculate total marks
+            $totalMarks = $this->updateStudentMarks($subjects, $studentId, $classId, $syllabusId, $examTypeId, $academicYearId, $status);
+            // Calculate percentage
+            $percentage = $numSubjects > 0 ? ($totalMarks / $maxMarks) * 100 : 0;
+            // Calculate the total grade
+
+            $totalGrade = $this->calculateTotalGrade($subjects, $studentId, $gradeThresholds, $academicYearId, $syllabusId, $classId, $status);
 
             // Update attendance, total marks, and total grade
             StudentSummaryModel::updateOrCreate(
@@ -201,11 +197,11 @@ class MarkController extends Controller
                 [
                     'attendance' => $attendance[$studentId] ?? null,
                     'total_marks' => $totalMarks,
-                    'percentage' => round(($totalMarks / ($numSubjects * 100)) * 100, 2),
+                    'total_grade' => $totalGrade,
+                    'percentage' => round($percentage, 2), // Save percentage with 2 decimal points
                 ]
             );
         }
-
         // Calculate positions after updates
         $this->summaryRepository->calculatePositions($classId, $examTypeId, $syllabusId, $academicYearId, $gradeLevelId);
 
@@ -222,153 +218,16 @@ class MarkController extends Controller
         ])->with('success', 'Marks, percentages, and summaries updated successfully.');
     }
 
-    // public function updateAll(Request $request)
-    // {
-    //     // \Log::info('Marks:', $request->input('marks'));
-    //     // \Log::info('Status:', $request->input('status'));
-
-    //     // Validate request input
-    //     $validated = $request->validate([
-    //         'class_id' => 'required|integer',
-    //         'syllabus_id' => 'required|integer',
-    //         'exam_type_id' => 'required|integer',
-    //         'academic_year_id' => 'required|integer',
-    //         'marks' => 'required|array',
-    //         'marks.*' => 'array',
-    //         'marks.*.*' => 'integer|min:0|max:100', // Assuming marks range from 0 to 100
-    //         'attendance' => 'array',
-    //         // new
-    //         'status' => 'array',
-    //         'status.*.*' => 'in:present,absent',
-    //     ]);
-
-    //     // \Log::info('Validated:', $validated);
-
-    //     // Extract data
-    //     $marks = $request->input('marks', []);
-    //     $attendance = $request->input('attendance', []);
-    //     // new
-    //     $status = $request->input('status', []);
-    //     // $status = $validated['status'];
-    //     $classId = $request->class_id;
-    //     $examTypeId = $request->exam_type_id;
-    //     $examId = $request->examId; // Added this to handle exam_id
-    //     $syllabusId = $request->syllabus_id;
-    //     $academicYearId = $request->academic_year_id;
-    //     // Fetch the grade level ID of the class for position calculations
-    //     $gradeLevelId = ClassModel::findOrFail($classId)->grade_level_id;
-
-    //     \Log::info('Status EHE:', $status);
-
-    //     // Define grade thresholds
-    //     $gradeThresholds = [
-    //         'A' => 80,
-    //         'B' => 60,
-    //         'C' => 40,
-    //         'D' => 0,
-    //     ];
-    //     // Process each student's marks
-    //     foreach ($marks as $studentId => $subjects) {
-
-    //         $numSubjects = count($subjects);
-    //         $maxMarks = $numSubjects * 100; // Maximum marks = 100 * number of subjects
-    //         // Update student marks and calculate total marks
-    //         $totalMarks = $this->updateStudentMarks($subjects, $studentId, $classId, $syllabusId, $examTypeId, $academicYearId, $status);
-    //         // Calculate percentage
-    //         $percentage = $numSubjects > 0 ? ($totalMarks / $maxMarks) * 100 : 0;
-    //         // Calculate the total grade
-    //         $totalGrade = $this->calculateTotalGrade($subjects, $gradeThresholds);
-    //         // Update attendance, total marks, and total grade
-    //         StudentSummaryModel::updateOrCreate(
-    //             [
-    //                 'student_id' => $studentId,
-    //                 'class_id' => $classId,
-    //                 'exam_type_id' => $examTypeId,
-    //                 'syllabus_id' => $syllabusId,
-    //                 'academic_year_id' => $academicYearId,
-    //                 'exam_id' => $examId,
-    //             ],
-    //             [
-    //                 'attendance' => $attendance[$studentId] ?? null,
-    //                 'total_marks' => $totalMarks,
-    //                 'total_grade' => $totalGrade,
-    //                 'percentage' => round($percentage, 2), // Save percentage with 2 decimal points
-    //             ]
-    //         );
-    //     }
-    //     // Calculate positions after updates
-    //     $this->summaryRepository->calculatePositions($classId, $examTypeId, $syllabusId, $academicYearId, $gradeLevelId);
-
-    //     if (!isset($examId)) {
-    //         return back()->withErrors('Exam ID is required.');
-    //     }
-
-    //     return redirect()->route('exams.marks', [
-    //         'yearId' => $academicYearId,
-    //         'examTypeId' => $examTypeId,
-    //         'syllabusId' => $syllabusId,
-    //         'classId' => $classId,
-    //         'examId' => $examId,
-    //     ])->with('success', 'Marks, percentages, and summaries updated successfully.');
-    // }
-
-    // Update or create marks for a student and calculate total marks.
-    // private function updateStudentMarks($subjects, $studentId,  $classId,  $syllabusId,  $examTypeId,  $academicYearId,  $statuses)
-    // {
-
-    //     $totalMarks = 0;
-    //     foreach ($subjects as $subjectId => $mark) {
-    //         $status = $statuses[$studentId][$subjectId] ?? 'present';
-    //         // Log the status and marks for each student and subject
-    //         \Log::info("Updating mark for student {$studentId}, subject {$subjectId}", [
-    //             'mark' => $mark,
-    //             'status' => $status,
-    //         ]);
-
-    //         $markRecord = MarkModel::updateOrCreate(
-    //             [
-    //                 'student_id' => $studentId,
-    //                 'subject_id' => $subjectId,
-    //                 'class_id' => $classId,
-    //                 'syllabus_id' => $syllabusId,
-    //                 'exam_type_id' => $examTypeId,
-    //                 'academic_year_id' => $academicYearId,
-    //             ],
-    //             [
-    //                 'mark' => $mark,
-    //             ]
-    //         );
-
-    //         // Check if the mark record was successfully updated or created
-    //         if ($markRecord->wasRecentlyCreated || $markRecord->wasChanged()) {
-    //             \Log::info("Mark successfully updated or created for student {$studentId}, subject {$subjectId}");
-    //         } else {
-    //             \Log::error("Failed to update or create mark for student {$studentId}, subject {$subjectId}");
-    //         }
-
-    //         // $totalMarks += $mark;
-    //         $totalMarks += ($status === 'absent' ? 0 : $mark); // Add only non-absent marks
-
-    //     }
-    //     return $totalMarks;
-    // }
-
     private function updateStudentMarks($subjects, $studentId, $classId, $syllabusId, $examTypeId, $academicYearId, $statuses)
     {
+
         $totalMarks = 0;
         foreach ($subjects as $subjectId => $mark) {
             $status = $statuses[$studentId][$subjectId];
-
-            // Log an error if the status is not found
-            if (!isset($status)) {
-                \Log::error("Status not found for student {$studentId} and subject {$subjectId}, defaulting to present");
-            }
-
             $finalMark = ($status === 'absent') ? 0 : $mark;
+            // \Log::info("Updating mark for student {$studentId}, subject {$subjectId}: mark={$finalMark}, status={$status}");
 
-            \Log::info("Updating mark for student {$studentId}, subject {$subjectId}: mark={$finalMark}, status={$status}");
-
-            $markRecord = MarkModel::updateOrCreate(
+            MarkModel::updateOrCreate(
                 [
                     'student_id' => $studentId,
                     'subject_id' => $subjectId,
@@ -382,13 +241,11 @@ class MarkController extends Controller
                     'status' => $status,
                 ]
             );
-
-            if ($markRecord->wasRecentlyCreated || $markRecord->wasChanged()) {
-                \Log::info("Mark successfully updated for student {$studentId}, subject {$subjectId}");
-            } else {
-                \Log::error("Failed to update mark for student {$studentId}, subject {$subjectId}");
-            }
-
+            // if ($markRecord->wasRecentlyCreated || $markRecord->wasChanged()) {
+            //     \Log::info("Mark successfully updated for student {$studentId}, subject {$subjectId}");
+            // } else {
+            //     \Log::error("Failed to update mark for student {$studentId}, subject {$subjectId}");
+            // }
             if ($status !== 'absent') {
                 $totalMarks += $finalMark;
             }
@@ -397,20 +254,54 @@ class MarkController extends Controller
     }
 
     // Calculate the total grade string for a student based on their marks.
-    private function calculateTotalGrade(array $subjects, array $gradeThresholds): string
+    private function calculateTotalGrade(array $subjects, int $studentId, array $gradeThresholds, $yearId, $syllabusId, $classId, $statuses)
     {
+        // Initialize grades including 'TH' for Tidak Hadir (absent)
         $grades = array_fill_keys(array_keys($gradeThresholds), 0);
-        foreach ($subjects as $mark) {
-            foreach ($gradeThresholds as $grade => $threshold) {
-                if ($mark >= $threshold) {
-                    $grades[$grade]++;
-                    break;
+
+        // Fetch statuses directly from the database
+        // $statuses = DB::table('marks')
+        //     ->where('student_id', $studentId)
+        //     ->where('class_id', $classId)
+        //     ->where('academic_year_id', $yearId)
+        //     ->where('syllabus_id', $syllabusId)
+        //     ->pluck('status', 'subject_id');
+
+        foreach ($subjects as $subjectId => $mark) {
+            // $status = $statuses[$subjectId];
+            $status = $statuses[$studentId][$subjectId] ?? 'absent'; // Default to 'absent' if status is missing
+            if ($status === 'absent') {
+                if ($mark == 0) {
+                    $grades['TH']++;
+                    continue;
+                }
+            } else if ($status === 'present') {
+                foreach ($gradeThresholds as $grade => $threshold) {
+                    if ($mark >= $threshold) {
+                        $grades[$grade]++;
+                        break;
+                    }
                 }
             }
         }
+        // Prepare the formatted output for each grade, including 'TH'
+        // return collect($grades)
+        //     ->map(function ($count, $grade) {
+        //         if ($count != 0) {
+        //             return "{$count}{$grade}";
+        //         }
+
+        //     })
+        //     ->implode(' ');
+
         return collect($grades)
-            ->map(fn($count, $grade) => "{$count}{$grade}")
-            ->implode(' ');
+            ->filter(function ($count) {
+                return $count > 0; // Only include grades with a count greater than 0
+            })
+            ->map(function ($count, $grade) {
+                return "{$count}{$grade}"; // Format the remaining grades
+            })
+            ->implode(' '); // Combine into a single string
     }
 
     //TEACHER

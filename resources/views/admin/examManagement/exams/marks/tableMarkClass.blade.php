@@ -68,10 +68,23 @@
                             @foreach ($subjects as $subject)
                             @php
                             $studentMark = $marks->get($student->id)?->firstWhere('subject_id', $subject->subject_id);
-                            $markValue = $studentMark->mark ?? 'N/A';
+                            // $markValue = $studentMark->mark ?? 'N/A';
+                            $markValue = $studentMark?->status === 'absent' ? 'TH' : ($studentMark->mark ?? 'N/A');
+
                             @endphp
                             <td
-                                class="{{ is_numeric($markValue) ? ($markValue >= 80 ? 'text-success' : ($markValue < 40 ? 'text-danger' : '')) : '' }}">
+                                {{-- class="{{ is_numeric($markValue) ? ($markValue >= 80 ? 'text-success' : ($markValue < 40 ? 'text-danger' : '')) : '' }}">
+                                {{ $markValue }} --}}
+                                class="{{
+                                    $markValue === 'TH'
+                                        ? 'text-danger font-weight-bold'
+                                        : (is_numeric($markValue)
+                                            ? ($markValue >= 80
+                                                ? 'text-success'
+                                                : ($markValue < 40
+                                                    ? 'text-danger'
+                                                    : ''))
+                                            : '') }}">
                                 {{ $markValue }}
                             </td>
                             @endforeach
