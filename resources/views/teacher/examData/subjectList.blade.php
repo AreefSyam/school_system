@@ -45,7 +45,7 @@
     <section class="content">
         <div class="container-fluid">
             @if($subjects->isEmpty())
-            <p class="text-center text-muted">No subjects available for the selected syllabus.</p>
+            <p class="text-center text-danger">No subjects available for the selected syllabus.</p>
             @else
             <div class="row">
                 @foreach ($subjects as $subject)

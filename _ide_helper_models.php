@@ -56,6 +56,8 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ClassTeacherYearModel> $classTeacherYears
  * @property-read int|null $class_teacher_years_count
  * @property-read \App\Models\GradeLevelModel|null $gradeLevel
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\MarkModel> $marks
+ * @property-read int|null $marks_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\StudentModel> $students
  * @property-read int|null $students_count
  * @method static \Illuminate\Database\Eloquent\Builder|ClassModel newModelQuery()

@@ -28,6 +28,11 @@ class ClassModel extends Model
         return $this->belongsTo(AcademicYearModel::class, 'academic_year_id');
     }
 
+    public function marks()
+    {
+        return $this->hasMany(MarkModel::class, 'class_id');
+    }
+
     // For assign class teacher
     public function classTeacherYears()
     {
@@ -37,7 +42,6 @@ class ClassModel extends Model
     {
         return $this->classTeacherYears()->where('academic_year_id', $academicYearId)->with('teacher')->first();
     }
-
 
     public static function getRecordClass()
     {

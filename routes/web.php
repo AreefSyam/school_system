@@ -41,6 +41,8 @@ Route::group(['middleware' => 'guest'], function () {
     // Reset password
     Route::get('/reset/{token}', [AuthController::class, 'reset'])->name('reset');
     Route::post('/reset/{token}', [AuthController::class, 'postReset'])->name('reset.post');
+
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
 // Protected Routes for Logged-In Users
@@ -165,9 +167,6 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::get('/{yearId}/{examTypeId}/{syllabusId}/{classId}/{examId}/marks', [MarkController::class, 'index'])->name('exams.marks');
                 Route::get('/{yearId}/{examTypeId}/{syllabusId}/{classId}/{examId}/marks/edit', [MarkController::class, 'edit'])->name('exams.marks.edit');
                 Route::put('/{yearId}/{examTypeId}/{syllabusId}/{classId}/{examId}/marks/edit', [MarkController::class, 'updateAll'])->name('exam.marks.edit.updateAll');
-
-                // Route to generate PDF report for a specific student
-                Route::get('/examManagement/exams/{yearId}/{examTypeId}/{syllabusId}/{classId}/{studentId}/report', [MarkController::class, 'generateStudentReport'])->name('exams.marks.studentReport');
             });
         });
 
@@ -181,6 +180,9 @@ Route::group(['middleware' => 'auth'], function () {
         });
     });
 
+    // Route to generate PDF report for a specific student
+    Route::get('/examManagement/exams/{yearId}/{examTypeId}/{syllabusId}/{classId}/{studentId}/report', [MarkController::class, 'generateStudentReport'])->name('exams.marks.studentReport');
+
     // Teacher Routes
     Route::middleware('teacher')->prefix('teacher')->group(function () {
         // Dashboard
@@ -191,25 +193,27 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::prefix('examData')->group(function () {
             // Grade-level analytics
-            // Route::get('/subjectAssigned', [MarkController::class, 'subjectAssignedTeacher'])->name('teacher.subject.list');
             // Step 1: Display exam types
             Route::get('/{yearId}/types', [ExamController::class, 'examTypeListTeacher'])->name('teacher.exams.examTypeList');
             // Step 2: Display syllabi for the selected exam type
             Route::get('/{yearId}/{examTypeId}/syllabus', [ExamController::class, 'syllabusListTeacher'])->name('teacher.exams.syllabusList');
             // **New Step: Display subjects for the selected syllabus**
             Route::get('/{yearId}/{examTypeId}/{syllabusId}/subjects', [ExamController::class, 'subjectListTeacher'])->name('teacher.exams.subjectList');
-
-            // Step 3: Display classes assigned to the teacher
-            // Route::get('/{yearId}/{examTypeId}/{syllabusId}/classes', [ExamController::class, 'classListTeacher'])->name('teacher.exams.classList');
-
             // Step 3: Display classes assigned to the teacher
             Route::get('/{yearId}/{examTypeId}/{syllabusId}/{subjectId}/classes', [ExamController::class, 'classListTeacher'])->name('teacher.exams.classList');
             // Step 4: View and update marks for students in a specific class
             Route::get('/{yearId}/{examTypeId}/{syllabusId}/{subjectId}/{classId}/marks', [MarkController::class, 'teacherSubjectClassMark'])->name('teacher.exams.marks');
             Route::put('/{yearId}/{examTypeId}/{syllabusId}/{subjectId}/{classId}/marks', [MarkController::class, 'teacherSubjectClassMarkEdit'])->name('teacher.exams.marks.store');
+        });
 
+        Route::prefix('classTeacher')->group(function () {
+            // Grade-level analytics
+            // Step 1: Display exam types
+            Route::get('/{yearId}/types', [ExamController::class, 'examTypeListClassTeacher'])->name('teacher.classTeacher.examTypeList');
+            // Step 2: Display syllabi for the selected exam type
+            Route::get('/{yearId}/{examTypeId}/syllabus', [ExamController::class, 'syllabusListClassTeacher'])->name('teacher.classTeacher.syllabusList');
+            // Step 3: View all student marks for students, action button to get student summary
+            Route::get('/{yearId}/{examTypeId}/{syllabusId}/{examId}/class', [MarkController::class, 'classExamReportClassTeacher'])->name('teacher.classTeacher.classExamReport');
         });
     });
-    // Logout Route
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

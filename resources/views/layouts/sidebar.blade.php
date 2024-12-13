@@ -194,11 +194,11 @@
 
                 {{-- Teacher Class --}}
                 <li class="nav-item">
-                    <a href="{{ route('teacher.exams.examTypeList', ['yearId' => $currentAcademicYear->id ?? '']) }}"
-                        class="nav-link @if (Request::segment(2) == 'examData') active @endif">
-                        <i class="nav-icon far bi bi-clipboard-data active"></i>
+                    <a href="{{ route('teacher.classTeacher.examTypeList', ['yearId' => $currentAcademicYear->id ?? '']) }}"
+                        class="nav-link @if (Request::segment(2) == 'classTeacher') active @endif">
+                        <i class="nav-icon far bi bi-book active"></i>
                         <p>
-                            Exam Data
+                            Class Report
                         </p>
                     </a>
                 </li>

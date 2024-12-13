@@ -7,10 +7,9 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-12">
-                    <h1> Exam Data for <strong>{{ $currentAcademicYear->academic_year_name }} </strong></h1>
+                    <h1> Class Report for <strong>{{ $currentAcademicYear->academic_year_name }} </strong></h1>
                 </div>
             </div>
-            {{-- <a>Exam Data / {{ $currentAcademicYear->academic_year_name }}  </a> --}}
         </div>
     </section>
 
@@ -20,10 +19,10 @@
         <ol class="breadcrumb">
             <!-- Home -->
             <li class="breadcrumb-item">
-                <a href="{{ route('teacher.exams.examTypeList', ['yearId' => $currentAcademicYear->id]) }}">Exam Data </a>
+                <a href="{{ route('teacher.classTeacher.examTypeList', ['yearId' => $currentAcademicYear->id]) }}">Class Report </a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{{ route('teacher.exams.examTypeList', ['yearId' => $currentAcademicYear->id]) }}"> {{ $currentAcademicYear->academic_year_name }} </a>
+                <a href="{{ route('teacher.classTeacher.examTypeList', ['yearId' => $currentAcademicYear->id]) }}"> {{ $currentAcademicYear->academic_year_name }} </a>
             </li>
         </ol>
     </nav>
@@ -42,7 +41,7 @@
                         <div class="inner">
                             <h3>{{ $examType->exam_type_name }}</h3>
                         </div>
-                        <a href="{{ route('teacher.exams.syllabusList', ['yearId' => $currentAcademicYear->id, 'examTypeId' => $examType->id]) }}"
+                        <a href="{{ route('teacher.classTeacher.syllabusList', ['yearId' => $currentAcademicYear->id, 'examTypeId' => $examType->id]) }}"
                             class="small-box-footer">
                             View Syllabus <i class="fas fa-arrow-circle-right"></i>
                         </a>

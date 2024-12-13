@@ -16,7 +16,7 @@
     <section class="content">
         <div class="container-fluid">
             @if($classes->isEmpty())
-            <p class="text-center text-muted">No classes assigned for the current academic year.</p>
+            <p class="text-center text-danger">No classes assigned for the current academic year.</p>
             @else
             <div class="row">
                 @foreach ($classes as $class)
