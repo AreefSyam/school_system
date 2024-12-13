@@ -20,7 +20,7 @@
 
     <style>
         body {
-            background-image: url('{{ asset('assets/images/bg23.svg') }}');
+            background-image: url('assets/images/bg23.svg');
             background-size: cover;
             background-repeat: no-repeat;
             background-attachment: fixed;
@@ -76,8 +76,8 @@
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
 
-                    <!-- Remember Me -->
-                    <div class="row">
+                    <div class="">
+                        <!-- Remember Me -->
                         <div class="col-8">
                             <div class="icheck-primary">
                                 <input type="checkbox" id="remember" name="remember">
@@ -86,20 +86,29 @@
                                 </label>
                             </div>
                         </div>
-                        <!-- /.col -->
-                        <div class="col-4">
-                            <button type="submit" class="btn btn-success btn-block">Sign In</button>
+                        <!-- Forgot Password & Register -->
+                        <p class="col-12">
+                            <a href="{{ route('forgot-password') }}">Forgot Password</a>
+                        </p>
+                        <!-- Cancel & Login -->
+                        <div class="row justify-content-end">
+                            <div class="col-4">
+                                <a href="{{ route('welcome') }}" class="btn btn-light btn-block">
+                                    Cancel
+                                </a>
+                            </div>
+                            <div class="col-4">
+                                <button type="submit" class="btn btn-success btn-block">Submit</button>
+                            </div>
                         </div>
-                        <!-- /.col -->
+                        {{-- <div class="col-4">
+                            <a href="{{ route('welcome') }}" class="btn btn-light btn-block">Cancel</a>
+                            <button type="submit" class="btn btn-success btn-block">Sign In</button>
+                        </div> --}}
                     </div>
                 </form>
 
-                <!-- Forgot Password & Register -->
-                <div class="row mt-1">
-                    <p class="col-5">
-                        <a href="{{ route('forgot-password') }}">Forgot Password</a>
-                    </p>
-                </div>
+
             </div>
             <!-- /.card-body -->
         </div>

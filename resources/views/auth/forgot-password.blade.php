@@ -20,7 +20,7 @@
 
     <style>
         body {
-            background-image: url('{{ asset('assets/images/bg23.svg') }}');
+            background-image: url('assets/images/bg23.svg');
             background-size: cover;
             background-repeat: no-repeat;
             background-attachment: fixed;
@@ -38,11 +38,11 @@
 </head>
 
 <body class="hold-transition register-page">
+    {{-- Alert Message --}}
     <div class="register-box">
+        @include('messages.alert')
         <!-- /.login-logo -->
         <div class="card card-outline card-success">
-            {{-- Alert Message --}}
-            @include('messages.alert')
             <!-- Header Title Centered -->
             <div class="card-header text-center">
                 <p href="" class="h1"><b>Forgot Password</b></p>

@@ -15,7 +15,7 @@ class DashboardController extends Controller
         if (Auth::user()->role == 'admin') {
             // Fetch summary metrics for admin
             $data['totalStudents'] = StudentModel::count();
-            $data['totalTeachers'] = User::count();
+            $data['totalTeachers'] = User::where('role', 'teacher')->count();
             $data['totalClasses'] = ClassModel::count();
             return view('admin.dashboard', $data);
         } elseif (Auth::user()->role == 'teacher') {

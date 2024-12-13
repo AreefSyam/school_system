@@ -18,7 +18,7 @@
 
     <style>
         body {
-            background-image: url('{{ asset('assets/images/bg23.svg') }}');
+            background-image: url('{{asset('assets/images/bg23.svg') }}');
             background-size: cover;
             background-repeat: no-repeat;
             background-attachment: fixed;
