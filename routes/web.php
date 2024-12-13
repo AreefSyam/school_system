@@ -98,9 +98,14 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/edit/{id}', [ClassController::class, 'edit'])->name('class.edit');
             Route::put('/edit/{id}', [ClassController::class, 'update'])->name('class.edit.post');
             Route::get('/delete/{id}', [ClassController::class, 'delete'])->name('class.delete');
+            // Assign student to class
             Route::get('/{classId}/assign-students', [ClassController::class, 'assignStudents'])->name('class.assignStudents');
             Route::post('/{classId}/assign-students', [ClassController::class, 'postAssignStudents'])->name('class.assignStudents.post');
             Route::delete('/{classId}/remove-student/{studentId}', [ClassController::class, 'removeStudent'])->name('class.removeStudent');
+            // Assign class teacher to class
+            Route::get('/{classId}/assign-teacher', [ClassController::class, 'assignTeacher'])->name('class.assignTeacher');
+            Route::post('/{classId}/assign-teacher', [ClassController::class, 'postAssignTeacher'])->name('class.assignTeacher.post');
+            Route::delete('/{classId}/remove-teacher/{teacherId}', [ClassController::class, 'removeTeacher'])->name('class.removeTeacher');
         });
 
         // Academic Year Management
@@ -157,11 +162,7 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::get('/{yearId}/{examTypeId}/{syllabusId}/classes', [ExamController::class, 'classList'])->name('exams.classList');
 
                 // View and update marks for a specific class, syllabus, and exam type
-                // Route::get('/{yearId}/{examTypeId}/{syllabusId}/{classId}/marks', [MarkController::class, 'index'])->name('exams.marks');
                 Route::get('/{yearId}/{examTypeId}/{syllabusId}/{classId}/{examId}/marks', [MarkController::class, 'index'])->name('exams.marks');
-
-                // Route::get('/{yearId}/{examTypeId}/{syllabusId}/{classId}/marks/edit', [MarkController::class, 'edit'])->name('exams.marks.edit');
-                // Route::put('/{yearId}/{examTypeId}/{syllabusId}/{classId}/marks/edit', [MarkController::class, 'updateAll'])->name('exam.marks.edit.updateAll');
                 Route::get('/{yearId}/{examTypeId}/{syllabusId}/{classId}/{examId}/marks/edit', [MarkController::class, 'edit'])->name('exams.marks.edit');
                 Route::put('/{yearId}/{examTypeId}/{syllabusId}/{classId}/{examId}/marks/edit', [MarkController::class, 'updateAll'])->name('exam.marks.edit.updateAll');
 

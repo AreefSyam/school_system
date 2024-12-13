@@ -111,6 +111,8 @@
                                     <a href="{{ route('class.edit', $value->id) }}" class="btn btn-primary">Edit</a>
                                     <a href="{{ route('class.assignStudents', $value->id) }}"
                                         class="btn btn-warning">Assign Students</a>
+                                    <a href="{{ route('class.assignTeacher', $value->id) }}"
+                                        class="btn btn-light">Assign Teacher</a>
                                     <a href="{{ route('class.delete', $value->id) }}" class="btn btn-danger"
                                         onclick="return confirm('Are you sure you want to delete this class? This action cannot be undone.');">
                                         Delete

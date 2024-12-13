@@ -28,6 +28,17 @@ class ClassModel extends Model
         return $this->belongsTo(AcademicYearModel::class, 'academic_year_id');
     }
 
+    // For assign class teacher
+    public function classTeacherYears()
+    {
+        return $this->hasMany(ClassTeacherYearModel::class, 'class_id');
+    }
+    public function assignedTeacher($academicYearId)
+    {
+        return $this->classTeacherYears()->where('academic_year_id', $academicYearId)->with('teacher')->first();
+    }
+
+
     public static function getRecordClass()
     {
         // Select class records with associated grade level, academic year, and created_by (users table)

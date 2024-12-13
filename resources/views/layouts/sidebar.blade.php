@@ -181,7 +181,18 @@
                     </a>
                 </li>
 
-                {{-- Student Management --}}
+                {{-- Exam Data --}}
+                <li class="nav-item">
+                    <a href="{{ route('teacher.exams.examTypeList', ['yearId' => $currentAcademicYear->id ?? '']) }}"
+                        class="nav-link @if (Request::segment(2) == 'examData') active @endif">
+                        <i class="nav-icon far bi bi-clipboard-data active"></i>
+                        <p>
+                            Exam Data
+                        </p>
+                    </a>
+                </li>
+
+                {{-- Teacher Class --}}
                 <li class="nav-item">
                     <a href="{{ route('teacher.exams.examTypeList', ['yearId' => $currentAcademicYear->id ?? '']) }}"
                         class="nav-link @if (Request::segment(2) == 'examData') active @endif">

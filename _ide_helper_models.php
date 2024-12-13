@@ -53,6 +53,8 @@ namespace App\Models{
  * @property int|null $grade_level_id
  * @property int $academic_year_id
  * @property-read \App\Models\AcademicYearModel $academicYear
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ClassTeacherYearModel> $classTeacherYears
+ * @property-read int|null $class_teacher_years_count
  * @property-read \App\Models\GradeLevelModel|null $gradeLevel
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\StudentModel> $students
  * @property-read int|null $students_count
@@ -69,6 +71,32 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ClassModel whereUpdatedAt($value)
  */
 	class ClassModel extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * 
+ *
+ * @property int $id
+ * @property int $class_id
+ * @property int $teacher_id
+ * @property int $academic_year_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\AcademicYearModel $academicYear
+ * @property-read \App\Models\ClassModel $class
+ * @property-read \App\Models\User $teacher
+ * @method static \Illuminate\Database\Eloquent\Builder|ClassTeacherYearModel newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ClassTeacherYearModel newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ClassTeacherYearModel query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ClassTeacherYearModel whereAcademicYearId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ClassTeacherYearModel whereClassId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ClassTeacherYearModel whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ClassTeacherYearModel whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ClassTeacherYearModel whereTeacherId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ClassTeacherYearModel whereUpdatedAt($value)
+ */
+	class ClassTeacherYearModel extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -234,6 +262,7 @@ namespace App\Models{
  * @property int|null $position_in_class
  * @property int|null $position_in_grade
  * @property int|null $attendance
+ * @property string|null $summary
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\AcademicYearModel $academicYear
@@ -256,6 +285,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|StudentSummaryModel wherePositionInClass($value)
  * @method static \Illuminate\Database\Eloquent\Builder|StudentSummaryModel wherePositionInGrade($value)
  * @method static \Illuminate\Database\Eloquent\Builder|StudentSummaryModel whereStudentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|StudentSummaryModel whereSummary($value)
  * @method static \Illuminate\Database\Eloquent\Builder|StudentSummaryModel whereSyllabusId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|StudentSummaryModel whereTotalGrade($value)
  * @method static \Illuminate\Database\Eloquent\Builder|StudentSummaryModel whereTotalMarks($value)
