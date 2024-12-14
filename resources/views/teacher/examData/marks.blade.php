@@ -2,12 +2,16 @@
 
 @section('content')
 <div class="content-wrapper">
-    <!-- Content Header -->
+
     <section class="content-header">
         <div class="container-fluid">
-            <div class="row mb-2">
+            <div class="row">
                 <div class="col-sm-12">
-                    <h1>Manage Marks and Attendance for {{ $subject->subject_name }}</h1>
+                    <h1 style="color: black"> <strong> Manage Mark: Data for {{
+                            $currentAcademicYear->academic_year_name }} {{
+                            $breadcrumbData['examTypeName'] }} {{ $breadcrumbData['syllabusName'] }} {{
+                            $breadcrumbData['subjectName'] }} {{ $breadcrumbData['className'] }}</strong></h1>
+                    <h5> Please select a class you teach below. </h5>
                 </div>
             </div>
         </div>

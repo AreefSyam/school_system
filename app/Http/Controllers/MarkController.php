@@ -316,9 +316,6 @@ class MarkController extends Controller
             ->where('academic_year_id', $yearId)
             ->where('subject_id', $subjectId)
             ->get();
-
-        // $marks = $this->markRepository->getMarks($classId, $examTypeId, $syllabusId, $yearId);
-
         // Fetch all students in the class, regardless of marks
         $students = StudentModel::whereHas('classes', fn($query) => $query->where('class_id', $classId))->get();
         // Fetch additional details for the breadcrumb
@@ -394,141 +391,6 @@ class MarkController extends Controller
         ])->with('success', 'Marks updated successfully!');
     }
 
-    // public function classExamReportClassTeacher($yearId, $examTypeId, $syllabusId, $examId)
-    // {
-    //     $teacherId = auth()->id();
-    //     $selectedAcademicYear = AcademicYearModel::findOrFail($yearId);
-    //     $syllabus = SyllabusModel::findOrFail($syllabusId);
-    //     $examType = ExamTypeModel::findOrFail($examTypeId);
-    //     $examTypeName = DB::table('exam_type')
-    //         ->where('id', $examTypeId)
-    //         ->value('exam_type_name');
-
-    //     // Fetch the class assigned to the teacher for this academic year
-    //     $classTeacherYear = ClassTeacherYearModel::with('class')
-    //         ->where('teacher_id', $teacherId)
-    //         ->where('academic_year_id', $yearId)
-    //         ->first();
-
-    //     if (!$classTeacherYear) {
-    //         abort(404, 'No class assigned to this teacher for the selected academic year.');
-    //     }
-
-    //     $class = $classTeacherYear->class;
-
-    //     // Fetch students in the class
-    //     $students = StudentModel::whereHas('classes', function ($query) use ($class) {
-    //         $query->where('class_id', $class->id);
-    //     })->get();
-
-    //     // Fetch marks for the students in the class, filtered by exam type and syllabus
-    //     $marks = MarkModel::where('class_id', $class->id)
-    //         ->where('exam_type_id', $examTypeId)
-    //         ->where('syllabus_id', $syllabusId)
-    //         ->where('academic_year_id', $yearId)
-    //         ->get()
-    //         ->groupBy('student_id');
-
-    //     // Fetch summary for students in the class and the specific exam
-    //     $studentsSummary = StudentSummaryModel::where('exam_id', $examId)
-    //         ->where('class_id', $class->id)
-    //         ->get();
-
-    //     // Fetch all exams for the given year, exam type, and syllabi
-    //     $exams = ExamModel::where('academic_year_id', $yearId)
-    //         ->where('exam_type_id', $examTypeId)
-    //         ->whereIn('syllabus_id', $syllabusId)
-    //         ->get()
-    //         ->keyBy('syllabus_id'); // Key exams by syllabus_id for easy lookup
-
-    //     // Fetch subjects associated with the class and syllabus
-    //     $subjects = DB::table('subject')
-    //         ->join('subject_grade', 'subject.id', '=', 'subject_grade.subject_id')
-    //         ->where('academic_year_id', $yearId)
-    //         ->where('subject.syllabus_id', $syllabusId)
-    //         ->where('subject_grade.grade_level_id', $class->grade_level_id)
-    //         ->select('subject.id as subject_id', 'subject.subject_name')
-    //         ->get();
-
-    //     return view('teacher.classTeacher.classExamReport', compact(
-    //         'class',
-    //         'selectedAcademicYear',
-    //         'examTypeName',
-    //         'syllabus',
-    //         'examType',
-    //         'marks',
-    //         'studentsSummary',
-    //         'exams',
-    //         'students',
-    //         'subjects'
-    //     ));
-    // }
-
-    // public function classExamReportClassTeacher($yearId = null, $examTypeId, $syllabusId, $examId)
-    // {
-    //     $teacherId = auth()->id();
-    //     $yearId = session('academic_year_id'); // Use session year ID if no parameter provided
-    //     $selectedAcademicYear = AcademicYearModel::find($yearId);
-
-    //     $syllabus = SyllabusModel::findOrFail($syllabusId);
-    //     $examType = ExamTypeModel::select('id', 'exam_type_name')
-    //         ->where('id', $examTypeId)
-    //         ->firstOrFail();
-    //     $examTypeName = DB::table('exam_type')
-    //         ->where('id', $examTypeId)
-    //         ->value('exam_type_name');
-    //     $classTeacherYear = ClassTeacherYearModel::with(['class.students', 'class.marks'])
-    //         ->where('teacher_id', $teacherId)
-    //         ->where('academic_year_id', $yearId)
-    //         ->first();
-    //     if (!$classTeacherYear) {
-    //         abort(404, 'No class assigned to this teacher for the selected academic year.');
-    //     }
-    //     $class = $classTeacherYear->class;
-    //     // Fetch students in the class
-    //     $students = StudentModel::whereHas('classes', function ($query) use ($class) {
-    //         $query->where('class_id', $class->id);
-    //     })->get();
-    //     // Fetch marks for the students in the class
-    //     $marks = MarkModel::where('class_id', $class->id)
-    //         ->where('exam_type_id', $examTypeId)
-    //         ->where('syllabus_id', $syllabusId)
-    //         ->where('academic_year_id', $yearId)
-    //         ->get()
-    //         ->groupBy('student_id');
-    //     // Fetch summary for students in the class and the specific exam
-    //     $studentsSummary = StudentSummaryModel::where('exam_id', $examId)
-    //         ->where('class_id', $class->id)
-    //         ->get();
-    //     // Fetch all exams for the given year, exam type, and syllabus
-    //     $exams = ExamModel::where('academic_year_id', $yearId)
-    //         ->where('exam_type_id', $examTypeId)
-    //         ->where('syllabus_id', $syllabusId)
-    //         ->get()
-    //         ->keyBy('syllabus_id'); // Key exams by syllabus_id for easy lookup
-    //     // Fetch subjects associated with the class and syllabus
-    //     $subjects = DB::table('subject')
-    //         ->join('subject_grade', 'subject.id', '=', 'subject_grade.subject_id')
-    //         ->where('academic_year_id', $yearId)
-    //         ->where('subject.syllabus_id', $syllabusId)
-    //         ->where('subject_grade.grade_level_id', $class->grade_level_id)
-    //         ->select('subject.id as subject_id', 'subject.subject_name')
-    //         ->get();
-
-    //     return view('teacher.classTeacher.classExamReport', compact(
-    //         'class',
-    //         'selectedAcademicYear',
-    //         'examTypeName',
-    //         'syllabus',
-    //         'examType',
-    //         'marks',
-    //         'studentsSummary',
-    //         'exams',
-    //         'students',
-    //         'subjects'
-    //     ));
-    // }
-
     public function classExamReportClassTeacher($yearId = null, $examTypeId, $syllabusId, $examId)
     {
         $teacherId = auth()->id();
@@ -560,14 +422,11 @@ class MarkController extends Controller
             return redirect()->route('teacher.classTeacher.examTypeList', ['yearId' => $yearId])
                 ->with('error', 'No class assigned to this teacher for the selected academic year.');
         }
-
         $class = $classTeacherYear->class;
-
         // Fetch students in the class
         $students = StudentModel::whereHas('classes', function ($query) use ($class) {
             $query->where('class_id', $class->id);
         })->get();
-
         if ($students->isEmpty()) {
             return redirect()->route('teacher.classTeacher.examTypeList', ['yearId' => $yearId])
                 ->with('error', 'No students found for the assigned class.');
@@ -580,12 +439,6 @@ class MarkController extends Controller
             ->where('academic_year_id', $yearId)
             ->get()
             ->groupBy('student_id');
-
-        // // Fetch summary for students in the class and the specific exam
-        // $studentsSummary = DB::table('students_summary')
-        //     ->where('exam_id', $examId)
-        //     ->where('class_id', $class->id)
-        //     ->get();
 
         // Fetch summary for students in the class and the specific exam
         $studentsSummary = StudentSummaryModel::where('exam_id', $examId)

@@ -194,43 +194,34 @@ class ExamController extends Controller
         return view('admin.examManagement.exams.classList', compact('year', 'examType', 'syllabus', 'classes', 'exam'));
     }
 
-    //TEACHER
+    // TEACHER
+    // Exam Data
     // Step 1: Display available exam types
     public function examTypeListTeacher($yearId)
     {
-        // Get the academic year from the session
-        $currentAcademicYear = AcademicYearModel::findOrFail(session('academic_year_id'));
-
-        // If no current academic year is found, redirect with an error message
-        if (!$currentAcademicYear) {
+        $currentAcademicYear = AcademicYearModel::findOrFail(session('academic_year_id')); // Get the academic year from the session
+        if (!$currentAcademicYear) { // If no current academic year is found, redirect with an error message
             return redirect()->back()->with('error', 'No academic year is set as current. Please select an academic year.');
         }
-
-        // Fetch distinct exam types for the given academic year
-        $examTypes = DB::table('examination')
+        $examTypes = DB::table('examination') // Fetch distinct exam types for the given academic year
             ->join('exam_type', 'examination.exam_type_id', '=', 'exam_type.id')
             ->where('examination.academic_year_id', $currentAcademicYear->id) // Filter by academic year
             ->select('exam_type.id', 'exam_type.exam_type_name') // Fetch only relevant fields
             ->distinct() // Ensure no duplicates
             ->get();
-
-        return view('teacher.examData.examTypeList', compact('currentAcademicYear', 'examTypes'));
+        $breadcrumbData = [
+            'academicYearName' => $currentAcademicYear->academic_year_name,
+        ];
+        return view('teacher.examData.examTypeList', compact('currentAcademicYear', 'examTypes', 'breadcrumbData'));
     }
 
     // Step 2: Display available syllabi
     public function syllabusListTeacher($yearId = null, $examTypeId)
     {
         $yearId = session('academic_year_id'); // Use session year ID if no parameter provided
-        // $selectedAcademicYear = AcademicYearModel::where('is_current', 1)->first();
         $selectedAcademicYear = AcademicYearModel::findOrFail($yearId);
-
         // fetch data
         $examType = ExamTypeModel::findOrFail($examTypeId);
-
-        $examTypeName = DB::table('exam_type')
-            ->where('id', $examTypeId)
-            ->value('exam_type_name');
-
         $syllabi = DB::table('examination')
             ->join('syllabus', 'examination.syllabus_id', '=', 'syllabus.id')
             ->where('examination.academic_year_id', $selectedAcademicYear->id)
@@ -238,34 +229,21 @@ class ExamController extends Controller
             ->select('syllabus.id', 'syllabus.syllabus_name')
             ->distinct()
             ->get();
-
-        return view('teacher.examData.syllabusList', compact('syllabi', 'yearId', 'examType', 'selectedAcademicYear', 'examTypeName'));
+        $breadcrumbData = [
+            'academicYearName' => $selectedAcademicYear->academic_year_name,
+            'examTypeName' => $examType->exam_type_name,
+        ];
+        return view('teacher.examData.syllabusList', compact('syllabi', 'yearId', 'examType', 'selectedAcademicYear', 'breadcrumbData'));
     }
 
     public function subjectListTeacher($yearId = null, $examTypeId, $syllabusId)
     {
-        // Get the authenticated teacher's ID
-        $teacherId = auth()->id();
-
+        $teacherId = auth()->id(); // Get the authenticated teacher's ID
+        $teacher = auth()->user(); // Fetch the authenticated user object to get user name
         $yearId = session('academic_year_id'); // Use session year ID if no parameter provided
-
-        // Fetch the academic year for display
-        $selectedAcademicYear = AcademicYearModel::findOrFail($yearId);
-
-        // fetch data
-        $examType = ExamTypeModel::findOrFail($examTypeId);
+        $selectedAcademicYear = AcademicYearModel::findOrFail($yearId); // Fetch the academic year for display
+        $examType = ExamTypeModel::findOrFail($examTypeId); // fetch data
         $syllabus = SyllabusModel::findOrFail($syllabusId);
-
-        // Fetch the exam type name for breadcrumb
-        $examTypeName = DB::table('exam_type')
-            ->where('id', $examTypeId)
-            ->value('exam_type_name');
-
-        // Fetch the syllabus name for breadcrumb
-        $syllabusName = DB::table('syllabus')
-            ->where('id', $syllabusId)
-            ->value('syllabus_name');
-
         // Fetch the subjects assigned to the teacher for the given syllabus and academic year
         $subjects = TeacherAssignClasses::join('subject', 'teacherassignclasses.subject_id', '=', 'subject.id')
             ->select('subject.id', 'subject.subject_name')
@@ -274,9 +252,14 @@ class ExamController extends Controller
             ->where('teacherassignclasses.syllabus_id', $syllabusId)
             ->distinct()
             ->get();
-
+        // Fetch the name for breadcrumb
+        $breadcrumbData = [
+            'academicYearName' => $selectedAcademicYear->academic_year_name,
+            'examTypeName' => $examType->exam_type_name,
+            'syllabusName' => $syllabus->syllabus_name,
+        ];
         // Pass all data to the view
-        return view('teacher.examData.subjectList', compact('subjects', 'yearId', 'examType', 'syllabus', 'selectedAcademicYear', 'examTypeName', 'syllabusName'));
+        return view('teacher.examData.subjectList', compact('subjects', 'yearId', 'examType', 'syllabus', 'selectedAcademicYear', 'breadcrumbData', 'teacher'));
     }
 
     // Step 3: Display assigned classes
@@ -284,21 +267,10 @@ class ExamController extends Controller
     {
         $teacherId = auth()->id();
         $yearId = session('academic_year_id'); // Use session year ID if no parameter provided
-        // fetch data
+        $selectedAcademicYear = AcademicYearModel::findOrFail($yearId); // Fetch the academic year for display
         $examType = ExamTypeModel::findOrFail($examTypeId);
         $syllabus = SyllabusModel::findOrFail($syllabusId);
         $subject = SubjectModel::findOrFail($subjectId);
-        // Fetch the syllabus name for display
-        $syllabusName = DB::table('syllabus')
-            ->where('id', $syllabusId)
-            ->value('syllabus_name');
-        $subjectName = DB::table('subject')
-            ->where('id', $subjectId)
-            ->value('subject_name');
-        // Fetch the exam type name for display
-        $examTypeName = DB::table('exam_type')
-            ->where('id', $examTypeId)
-            ->value('exam_type_name');
         // Fetch classes assigned to the teacher
         $classes = TeacherAssignClasses::join('class', 'teacherassignclasses.class_id', '=', 'class.id')
             ->select('class.id', 'class.name')
@@ -308,9 +280,16 @@ class ExamController extends Controller
             ->where('teacherassignclasses.subject_id', $subjectId) // Filter by subject
             ->distinct()
             ->get();
-        return view('teacher.examData.classList', compact('classes', 'yearId', 'examType', 'syllabus', 'syllabusName', 'examTypeName', 'subject', 'subjectName'));
+        $breadcrumbData = [
+            'academicYearName' => $selectedAcademicYear->academic_year_name,
+            'examTypeName' => $examType->exam_type_name,
+            'syllabusName' => $syllabus->syllabus_name,
+            'subjectName' => $subject->subject_name,
+        ];
+        return view('teacher.examData.classList', compact('classes', 'yearId', 'examType', 'syllabus', 'subject', 'teacherId', 'breadcrumbData'));
     }
 
+    // Class Report
     // Class Report for teacher view: examTypeList
     public function examTypeListClassTeacher($yearId = null)
     {
@@ -337,7 +316,6 @@ class ExamController extends Controller
     public function syllabusListClassTeacher($yearId = null, $examTypeId)
     {
         $yearId = session('academic_year_id'); // Use session year ID if no parameter provided
-
         $selectedAcademicYear = AcademicYearModel::findOrFail($yearId);
         $examType = ExamTypeModel::select('id', 'exam_type_name')
             ->where('id', $examTypeId)
@@ -346,7 +324,6 @@ class ExamController extends Controller
         $examTypeName = DB::table('exam_type')
             ->where('id', $examTypeId)
             ->value('exam_type_name');
-
         // Fetch syllabi associated with the exam type and academic year
         $syllabi = DB::table('examination')
             ->join('syllabus', 'examination.syllabus_id', '=', 'syllabus.id')

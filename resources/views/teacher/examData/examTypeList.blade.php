@@ -5,9 +5,10 @@
     <!-- Content Header -->
     <section class="content-header">
         <div class="container-fluid">
-            <div class="row mb-2">
+            <div class="row">
                 <div class="col-sm-12">
-                    <h1> Exam Data for <strong>{{ $currentAcademicYear->academic_year_name }} </strong></h1>
+                    <h1 style="color: Black"> <strong>List of Examination: Data for {{ $breadcrumbData['academicYearName'] }}</strong></h1>
+                    <h5> Please select exam type below. </h5>
                 </div>
             </div>
             {{-- <a>Exam Data / {{ $currentAcademicYear->academic_year_name }}  </a> --}}
@@ -23,7 +24,7 @@
                 <a href="{{ route('teacher.exams.examTypeList', ['yearId' => $currentAcademicYear->id]) }}">Exam Data </a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{{ route('teacher.exams.examTypeList', ['yearId' => $currentAcademicYear->id]) }}"> {{ $currentAcademicYear->academic_year_name }} </a>
+                <a href="{{ route('teacher.exams.examTypeList', ['yearId' => $currentAcademicYear->id]) }}"> {{ $breadcrumbData['academicYearName'] }} </a>
             </li>
         </ol>
     </nav>

@@ -5,13 +5,14 @@
     <!-- Content Header -->
     <section class="content-header">
         <div class="container-fluid">
-            <div class="row mb-2">
+            <div class="row">
                 <div class="col-sm-12">
-                    <h1>All Classes</h1>
+                    <h1 style="color: black"> <strong> List of Class: Data for {{
+                            $breadcrumbData['academicYearName'] }} {{
+                            $breadcrumbData['examTypeName'] }} {{ $breadcrumbData['syllabusName'] }} {{ $breadcrumbData['subjectName'] }}</strong></h1>
+                    <h5> Please select a class you teach below. </h5>
                 </div>
             </div>
-            {{-- <a>Exam Data / {{ session('academic_year', 'Unknown Year') }} / {{ $examTypeName ?? 'N/A' }} / {{
-                $syllabusName ?? 'N/A' }} / {{ $subjectName ?? 'N/A' }}</a> --}}
         </div>
     </section>
 
@@ -25,25 +26,25 @@
             </li>
             <li class="breadcrumb-item">
                 <a href="{{ route('teacher.exams.examTypeList', ['yearId' => $currentAcademicYear->id]) }}">
-                    {{ $currentAcademicYear->academic_year_name ?? 'N/A' }}
+                    {{ $breadcrumbData['academicYearName'] ?? 'N/A' }}
                 </a>
             </li>
             <li class="breadcrumb-item">
                 <a
                     href="{{ route('teacher.exams.syllabusList', ['yearId' => $currentAcademicYear->id, 'examTypeId' => $examType->id]) }}">
-                    {{ $examTypeName ?? 'N/A' }}
+                    {{ $breadcrumbData['examTypeName'] ?? 'N/A' }}
                 </a>
             </li>
             <li class="breadcrumb-item">
                 <a
                     href="{{ route('teacher.exams.subjectList', ['yearId' => $currentAcademicYear->id, 'examTypeId' => $examType->id, 'syllabusId' => $syllabus->id]) }}">
-                    {{ $syllabusName ?? 'N/A' }}
+                    {{ $breadcrumbData['syllabusName'] ?? 'N/A' }}
                 </a>
             </li>
             <li class="breadcrumb-item">
                 <a
                     href="{{ route('teacher.exams.classList', ['yearId' => $currentAcademicYear->id, 'examTypeId' => $examType->id, 'syllabusId' => $syllabus->id, 'subjectId' => $subject->id]) }}">
-                    {{ $subjectName ?? 'N/A' }}
+                    {{  $breadcrumbData['subjectName'] ?? 'N/A' }}
                 </a>
             </li>
         </ol>

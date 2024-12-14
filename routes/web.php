@@ -42,11 +42,13 @@ Route::group(['middleware' => 'guest'], function () {
     Route::get('/reset/{token}', [AuthController::class, 'reset'])->name('reset');
     Route::post('/reset/{token}', [AuthController::class, 'postReset'])->name('reset.post');
 
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
 // Protected Routes for Logged-In Users
 Route::group(['middleware' => 'auth'], function () {
+    
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
     // Admin Routes
     Route::middleware('admin')->prefix('admin')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
