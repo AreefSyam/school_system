@@ -46,7 +46,7 @@ Route::group(['middleware' => 'guest'], function () {
 
 // Protected Routes for Logged-In Users
 Route::group(['middleware' => 'auth'], function () {
-    
+
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Admin Routes
@@ -81,17 +81,17 @@ Route::group(['middleware' => 'auth'], function () {
             // Delete a specific class assignment for a teacher
             Route::delete('/teacher/class-assignments/{assignmentId}', [TeacherController::class, 'deleteAssignment'])->name('teacher.deleteAssignment');
 
-            // AJAX Routes for Dynamic Dropdowns
-            // Fetch classes dynamically based on the selected academic year
-            Route::post('/teacher/get-classes', [TeacherController::class, 'getClassesByAcademicYear'])->name('teacher.getClasses');
-            // Fetch subjects dynamically based on the selected academic year
-            Route::post('/teacher/get-subjects', [TeacherController::class, 'getSubjectsByAcademicYear'])->name('teacher.getSubjects');
-            // Fetch the syllabus dynamically based on the selected subject
-            Route::post('/teacher/get-syllabus', [TeacherController::class, 'getSyllabusBySubject'])->name('teacher.getSyllabus');
-            // Fetch the grade level dynamically based on the selected class
-            Route::post('/teacher/get-grade-level', [TeacherController::class, 'getGradeLevelByClass'])->name('teacher.getGradeLevel');
-            // Fetch the student name dynamically based on the selected class
-            Route::post('/teacher/get-students', [TeacherController::class, 'getStudentsByClass'])->name('teacher.getStudents');
+            // // AJAX Routes for Dynamic Dropdowns
+            // // Fetch classes dynamically based on the selected academic year
+            // Route::post('/teacher/get-classes', [TeacherController::class, 'getClassesByAcademicYear'])->name('teacher.getClasses');
+            // // Fetch subjects dynamically based on the selected academic year
+            // Route::post('/teacher/get-subjects', [TeacherController::class, 'getSubjectsByAcademicYear'])->name('teacher.getSubjects');
+            // // Fetch the syllabus dynamically based on the selected subject
+            // Route::post('/teacher/get-syllabus', [TeacherController::class, 'getSyllabusBySubject'])->name('teacher.getSyllabus');
+            // // Fetch the grade level dynamically based on the selected class
+            // Route::post('/teacher/get-grade-level', [TeacherController::class, 'getGradeLevelByClass'])->name('teacher.getGradeLevel');
+            // // Fetch the student name dynamically based on the selected class
+            // Route::post('/teacher/get-students', [TeacherController::class, 'getStudentsByClass'])->name('teacher.getStudents');
         });
 
         // Class Management
@@ -173,17 +173,30 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
         Route::prefix('analyticManagement')->group(function () {
-            // Grade-level analytics
+            // Subject analytics
             Route::get('/bySubject', [AnalyticController::class, 'subjectPerformance'])->name('analytic.subjectPerformance');
             // Individual student analytics
             Route::get('/byIndividual', [AnalyticController::class, 'individualPerformance'])->name('analytic.individualPerformance');
-            // Subject-level analytics
+            // Class analytics
             Route::get('/byClass', [AnalyticController::class, 'classPerformance'])->name('analytic.classPerformance');
         });
     });
 
     // Route to generate PDF report for a specific student
-    Route::get('/examManagement/exams/{yearId}/{examTypeId}/{syllabusId}/{classId}/{studentId}/report', [MarkController::class, 'generateStudentReport'])->name('exams.marks.studentReport');
+    // Common PDF Generation Route for Admin and Teacher
+    Route::get('/examsReport/{yearId}/{examTypeId}/{syllabusId}/{classId}/{studentId}/report', [MarkController::class, 'generateStudentReport'])->name('exams.marks.studentReport');
+
+    // AJAX Routes for Dynamic Dropdowns
+    // Fetch classes dynamically based on the selected academic year
+    Route::post('/teacher/get-classes', [TeacherController::class, 'getClassesByAcademicYear'])->name('teacher.getClasses');
+    // Fetch subjects dynamically based on the selected academic year
+    Route::post('/teacher/get-subjects', [TeacherController::class, 'getSubjectsByAcademicYear'])->name('teacher.getSubjects');
+    // Fetch the syllabus dynamically based on the selected subject
+    Route::post('/teacher/get-syllabus', [TeacherController::class, 'getSyllabusBySubject'])->name('teacher.getSyllabus');
+    // Fetch the grade level dynamically based on the selected class
+    Route::post('/teacher/get-grade-level', [TeacherController::class, 'getGradeLevelByClass'])->name('teacher.getGradeLevel');
+    // Fetch the student name dynamically based on the selected class
+    Route::post('/teacher/get-students', [TeacherController::class, 'getStudentsByClass'])->name('teacher.getStudents');
 
     // Teacher Routes
     Route::middleware('teacher')->prefix('teacher')->group(function () {
@@ -194,7 +207,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/set-academic-year/{id}', [NavBarController::class, 'setAcademicYear'])->name('navBar.setAcademicYear');
 
         Route::prefix('examData')->group(function () {
-            // Grade-level analytics
             // Step 1: Display exam types
             Route::get('/{yearId}/types', [ExamController::class, 'examTypeListTeacher'])->name('teacher.exams.examTypeList');
             // Step 2: Display syllabi for the selected exam type
@@ -209,13 +221,21 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
         Route::prefix('classTeacher')->group(function () {
-            // Grade-level analytics
             // Step 1: Display exam types
             Route::get('/{yearId}/types', [ExamController::class, 'examTypeListClassTeacher'])->name('teacher.classTeacher.examTypeList');
             // Step 2: Display syllabi for the selected exam type
             Route::get('/{yearId}/{examTypeId}/syllabus', [ExamController::class, 'syllabusListClassTeacher'])->name('teacher.classTeacher.syllabusList');
             // Step 3: View all student marks for students, action button to get student summary
             Route::get('/{yearId}/{examTypeId}/{syllabusId}/{examId}/class', [MarkController::class, 'classExamReportClassTeacher'])->name('teacher.classTeacher.classExamReport');
+        });
+
+        Route::prefix('analyticTeacher')->group(function () {
+            // bySubject analytics
+            // Route::get('/{yearId}/bySubject', [AnalyticController::class, 'subjectPerformanceTeacher'])->name('teacher.analytic.classPerformance');
+            // byIndividual student analytics
+            Route::get('/byIndividual/{yearId}', [AnalyticController::class, 'individualPerformanceTeacher'])->name('teacher.analytic.individualPerformance');
+            // byClass-level analytics
+            Route::get('/byClass/{yearId}', [AnalyticController::class, 'classPerformanceTeacher'])->name('teacher.analytic.classPerformance');
         });
     });
 });

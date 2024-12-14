@@ -7,11 +7,11 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-12">
-                    <h1 style="color: black"> <strong> Manage Mark: Data for {{
+                    <h1 style="color: black"> <strong> Subject Mark: Data for {{
                             $currentAcademicYear->academic_year_name }} {{
                             $breadcrumbData['examTypeName'] }} {{ $breadcrumbData['syllabusName'] }} {{
                             $breadcrumbData['subjectName'] }} {{ $breadcrumbData['className'] }}</strong></h1>
-                    <h5> Please select a class you teach below. </h5>
+                    <h5> Please enter students's mark. </h5>
                 </div>
             </div>
         </div>
@@ -60,7 +60,7 @@
     <!-- Marks Form -->
     <section class="content">
         <div class="container-fluid">
-            @if(!$marks->isEmpty())
+            @if(!$students->isEmpty())
             <form
                 action="{{ route('teacher.exams.marks.store', [$yearId, $examType->id, $syllabus->id, $subject->id, $class->id]) }}"
                 method="POST">

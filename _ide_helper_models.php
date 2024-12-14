@@ -364,6 +364,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\AcademicYearModel $academicYear
  * @property-read \App\Models\ClassModel $class
+ * @property-read \App\Models\ExamTypeModel|null $examType
  * @property-read \App\Models\GradeLevelModel $gradeLevel
  * @property-read \App\Models\SubjectModel $subject
  * @property-read \App\Models\SyllabusModel $syllabus

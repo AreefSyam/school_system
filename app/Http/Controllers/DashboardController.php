@@ -1,12 +1,16 @@
 <?php
 namespace App\Http\Controllers;
+
+use App\Models\AcademicYearModel;
+use App\Models\ClassModel;
+use App\Models\StudentModel;
+use App\Models\TeacherAssignClasses;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use App\Models\StudentModel;
-use App\Models\ClassModel;
 
 class DashboardController extends Controller
 {
+
     public function dashboard()
     {
         $data['header_title'] = 'Dashboard';
@@ -19,8 +23,24 @@ class DashboardController extends Controller
             $data['totalClasses'] = ClassModel::count();
             return view('admin.dashboard', $data);
         } elseif (Auth::user()->role == 'teacher') {
-            // Teacher-specific dashboard
+            $yearId = session('academic_year_id'); // Use session year ID if no parameter provided
+            // Get current academic year details
+            $data['currentAcademicYear'] = AcademicYearModel::find($yearId);
+            if (!$data['currentAcademicYear']) {
+                $data['error'] = 'No academic year is currently selected.';
+            }
+            // Fetch additional data for teacher dashboard if necessary
+            $teacherId = auth()->id(); // Get logged-in teacher ID
+            // Get assigned subjects for the teacher
+            $data['assignedSubjects'] = TeacherAssignClasses::with(['subject', 'syllabus', 'class'])
+                ->where('user_id', $teacherId)
+                ->where('academic_year_id', $yearId)
+                ->get();
+            // $data['yearId'] = $yearId;
             return view('teacher.dashboard', $data);
         }
+
+        // Default fallback, should not occur unless roles are misconfigured
+        return redirect()->route('home')->with('error', 'Unauthorized access.');
     }
 }

@@ -103,6 +103,13 @@ class MarkController extends Controller
         $student = StudentModel::findOrFail($studentId);
         // Fetch marks for the student
         $marks = $this->markRepository->getStudentMarks($studentId, $classId, $examTypeId, $syllabusId, $yearId);
+        // Analyze attendance and adjust marks
+        $marks->transform(function ($mark) {
+            if ($mark->status === 'absent') {
+                $mark->mark = 'TH'; // Indicate absent with "TH"
+            }
+            return $mark;
+        });
         // Fetch subjects for the syllabus and grade level
         $subjects = DB::table('subject')
             ->join('subject_grade', 'subject.id', '=', 'subject_grade.subject_id')
@@ -260,14 +267,6 @@ class MarkController extends Controller
     {
         // Initialize grades including 'TH' for Tidak Hadir (absent)
         $grades = array_fill_keys(array_keys($gradeThresholds), 0);
-
-        // Fetch statuses directly from the database
-        // $statuses = DB::table('marks')
-        //     ->where('student_id', $studentId)
-        //     ->where('class_id', $classId)
-        //     ->where('academic_year_id', $yearId)
-        //     ->where('syllabus_id', $syllabusId)
-        //     ->pluck('status', 'subject_id');
 
         foreach ($subjects as $subjectId => $mark) {
             // $status = $statuses[$subjectId];

@@ -27,7 +27,7 @@ class TeacherAssignClasses extends Model
     }
 
     // Relationship to Class
-    public function class()
+    public function class ()
     {
         return $this->belongsTo(ClassModel::class, 'class_id');
     }
@@ -48,5 +48,11 @@ class TeacherAssignClasses extends Model
     public function syllabus()
     {
         return $this->belongsTo(SyllabusModel::class, 'syllabus_id');
+    }
+
+    // Relationship with ExamTypeModel
+    public function examType()
+    {
+        return $this->belongsTo(ExamTypeModel::class, 'exam_type_id', 'id');
     }
 }

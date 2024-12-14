@@ -202,6 +202,33 @@
                         </p>
                     </a>
                 </li>
+                {{-- analyticManagement --}}
+                <li class="nav-item @if (Request::segment(2) == 'analyticManagement') menu-is-opening menu-open @endif">
+                    <a href="#" class="nav-link @if (Request::segment(2) == 'analyticTeacher') active @endif">
+                        <i class="nav-icon far bi bi-bar-chart-fill"></i>
+                        <p>
+                            Graph Analytic
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview" @if (Request::segment(2) !='analyticTeacher' )
+                        style="display: none;" @endif>
+                        <li class="nav-item">
+                            <a href="{{ route('teacher.analytic.classPerformance', ['yearId' => $currentAcademicYear->id ?? '']) }}"
+                                class="nav-link @if (Request::segment(3) == 'byClass') active @endif">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Performance Class</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('teacher.analytic.individualPerformance', ['yearId' => $currentAcademicYear->id ?? '']) }}"
+                                class="nav-link @if (Request::segment(3) == 'byIndividual') active @endif">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Performance Individual</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 @endif
             </ul>
         </nav>

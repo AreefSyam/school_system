@@ -5,9 +5,10 @@
     <!-- Content Header -->
     <section class="content-header">
         <div class="container-fluid">
-            <div class="row mb-2">
+            <div class="row">
                 <div class="col-sm-12">
-                    <h1>Syllabi for Exam Type: <strong>{{ $examTypeName }}</strong></h1>
+                    <h1><strong> Syllabi for Exam Type: {{ $examTypeName }}</strong></h1>
+                    <h5> Please select an exam type below. </h5>
                 </div>
             </div>
         </div>
@@ -46,7 +47,7 @@
                 @foreach ($syllabi as $syllabus)
                 <div class="col-lg-3 col-6">
                     <!-- Small box -->
-                    <div class="small-box bg-info">
+                    <div class="small-box bg-pink">
                         <div class="inner">
                             <h3>{{ $syllabus->syllabus_name }}</h3>
                         </div>
