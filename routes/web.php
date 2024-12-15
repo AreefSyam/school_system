@@ -1,18 +1,19 @@
 <?php
 
-use App\Http\Controllers\AcademicYearController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\AnalyticController;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ClassController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\MarkController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ClassController;
 use App\Http\Controllers\NavBarController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AnalyticController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AcademicYearController;
 
 // Public (Guest) Routes
 Route::group(['middleware' => 'guest'], function () {
@@ -48,6 +49,10 @@ Route::group(['middleware' => 'guest'], function () {
 Route::group(['middleware' => 'auth'], function () {
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
     // Admin Routes
     Route::middleware('admin')->prefix('admin')->group(function () {

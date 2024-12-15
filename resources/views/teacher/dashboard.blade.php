@@ -55,8 +55,8 @@
                             <h4 class="font-weight-bold">Subjects:</h4>
                         </div>
                         @if($assignedSubjects->isEmpty())
-                        <p class="text-center text-danger">No subjects are assigned to you for the selected academic
-                            year.</p>
+                        <p class="text-center text-danger">No subjects are assigned to you for the selected academic year. Try reload the page.
+                            </p>
                         @else
                         @foreach($assignedSubjects as $assignment)
                         @if($assignment->subject && $assignment->syllabus && $assignment->class)
