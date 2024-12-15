@@ -162,6 +162,13 @@
                                 <p>Performance Individual</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{ route('analytic.reportStudentLess60Percent') }}"
+                                class="nav-link @if (Request::segment(3) == 'refinementClass') active @endif">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Student < 60%</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 @endif

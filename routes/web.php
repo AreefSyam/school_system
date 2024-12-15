@@ -179,6 +179,10 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/byIndividual', [AnalyticController::class, 'individualPerformance'])->name('analytic.individualPerformance');
             // Class analytics
             Route::get('/byClass', [AnalyticController::class, 'classPerformance'])->name('analytic.classPerformance');
+
+            // Report Student Below 60%
+            Route::get('/refinementClass', [AnalyticController::class, 'reportStudentLess60Percent'])->name('analytic.reportStudentLess60Percent');
+
         });
     });
 

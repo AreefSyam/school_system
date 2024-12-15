@@ -138,8 +138,25 @@
                             <tr>
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $student->full_name }}</td>
-                                @foreach($subjects as $subject)
+                                {{-- @foreach($subjects as $subject)
                                 <td>{{ $marksByStudent[$student->id][$subject->id]['PPT'] ?? 'N/A' }}</td>
+                                @endforeach --}}
+                                @foreach($subjects as $subject)
+                                <td>
+                                    @php
+                                    $mark = $marksByStudent[$student->id][$subject->id]['PPT'] ?? null;
+                                    @endphp
+
+                                    @if ($mark === 'TH')
+                                    <span style="color: red; font-weight: bold;">{{ $mark }}</span>
+                                    @elseif (is_numeric($mark) && $mark < 40) <span style="color: red;">{{ $mark
+                                        }}</span>
+                                        @elseif (is_numeric($mark) && $mark > 79)
+                                        <span style="color: green;">{{ $mark }}</span>
+                                        @else
+                                        {{ $mark ?? 'N/A' }}
+                                        @endif
+                                </td>
                                 @endforeach
                             </tr>
                             @endforeach
@@ -173,8 +190,25 @@
                             <tr>
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $student->full_name }}</td>
-                                @foreach($subjects as $subject)
+                                {{-- @foreach($subjects as $subject)
                                 <td>{{ $marksByStudent[$student->id][$subject->id]['PAT'] ?? 'N/A' }}</td>
+                                @endforeach --}}
+                                @foreach($subjects as $subject)
+                                <td>
+                                    @php
+                                    $mark = $marksByStudent[$student->id][$subject->id]['PAT'] ?? null;
+                                    @endphp
+
+                                    @if ($mark === 'TH')
+                                    <span style="color: red; font-weight: bold;">{{ $mark }}</span>
+                                    @elseif (is_numeric($mark) && $mark < 40) <span style="color: red;">{{ $mark
+                                        }}</span>
+                                        @elseif (is_numeric($mark) && $mark > 79)
+                                        <span style="color: green;">{{ $mark }}</span>
+                                        @else
+                                        {{ $mark ?? 'N/A' }}
+                                        @endif
+                                </td>
                                 @endforeach
                             </tr>
                             @endforeach

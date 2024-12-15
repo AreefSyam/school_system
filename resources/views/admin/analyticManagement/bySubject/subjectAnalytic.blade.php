@@ -201,27 +201,27 @@
         const labels = @json($data->pluck('grade_name')->unique());
         const datasets = [
             {
-                label: 'Count A',
+                label: 'Total A',
                 data: @json($data->pluck('count_A')),
                 backgroundColor: 'rgba(75, 192, 192, 0.7)',
             },
             {
-                label: 'Count B',
+                label: 'Total B',
                 data: @json($data->pluck('count_B')),
                 backgroundColor: 'rgba(54, 162, 235, 0.7)',
             },
             {
-                label: 'Count C',
+                label: 'Total C',
                 data: @json($data->pluck('count_C')),
                 backgroundColor: 'rgba(255, 206, 86, 0.7)',
             },
             {
-                label: 'Count D',
+                label: 'Total D',
                 data: @json($data->pluck('count_D')),
                 backgroundColor: 'rgba(255, 99, 132, 0.7)',
             },
             {
-                label: 'Count TH',
+                label: 'Total TH',
                 data: @json($data->pluck('count_TH')),
                 backgroundColor: 'rgba(153, 102, 255, 0.7)', // Purple for Count TH
             },

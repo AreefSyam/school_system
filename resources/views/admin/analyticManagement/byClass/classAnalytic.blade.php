@@ -84,6 +84,21 @@
                                 <a href="{{ route('analytic.classPerformance') }}" class="btn btn-success"
                                     style="margin-top: 30px">Reset</a>
                             </div>
+
+                            {{-- Appears only filter button clicked --}}
+                            @if(request('academic_year_id') || request('class_id') || request('syllabus_id') ||
+                            request('exam_type_id'))
+                            <div class="form-group col-md-2">
+                                <!-- Redirect to reportStudentLess60Percent with filters -->
+                                <a href="{{ route('analytic.reportStudentLess60Percent', [
+                                    'academic_year_id' => request('academic_year_id'),
+                                    'class_id' => request('class_id'),
+                                    'syllabus_id' => request('syllabus_id'),
+                                    'exam_type_id' => request('exam_type_id')
+                                ]) }}" class="btn btn-warning" style="margin-top: 30px">
+                                    Students < 61% </a>
+                            </div>
+                            @endif
                         </div>
                     </div>
                 </form>
@@ -126,10 +141,11 @@
                                 <th>Year</th>
                                 <th>Class Name</th>
                                 <th>Subject</th>
-                                <th>Count A</th>
-                                <th>Count B</th>
-                                <th>Count C</th>
-                                <th>Count D</th>
+                                <th>Total A</th>
+                                <th>Total B</th>
+                                <th>Total C</th>
+                                <th>Total D</th>
+                                <th>Total TH</th> <!-- New column for absent students -->
                             </tr>
                         </thead>
                         <tbody>
@@ -143,6 +159,7 @@
                                 <td>{{ $row->count_B }}</td>
                                 <td>{{ $row->count_C }}</td>
                                 <td>{{ $row->count_D }}</td>
+                                <td>{{ $row->count_TH }}</td> <!-- Display absent count -->
                             </tr>
                             @endforeach
                         </tbody>
@@ -165,25 +182,30 @@
     const labels = @json($data->pluck('subject_name')); // Use subject names as labels
     const datasets = [
         {
-            label: 'Count A',
+            label: 'Total A',
             data: @json($data->pluck('count_A')), // Data for Count A
             backgroundColor: 'rgba(75, 192, 192, 0.7)', // Color for Count A
         },
         {
-            label: 'Count B',
+            label: 'Total B',
             data: @json($data->pluck('count_B')), // Data for Count B
             backgroundColor: 'rgba(54, 162, 235, 0.7)', // Color for Count B
         },
         {
-            label: 'Count C',
+            label: 'Total C',
             data: @json($data->pluck('count_C')), // Data for Count C
             backgroundColor: 'rgba(255, 206, 86, 0.7)', // Color for Count C
         },
         {
-            label: 'Count D',
+            label: 'Total D',
             data: @json($data->pluck('count_D')), // Data for Count D
             backgroundColor: 'rgba(255, 99, 132, 0.7)', // Color for Count D
         },
+        {
+            label: 'Total TH',
+            data: @json($data->pluck('count_TH')),
+            backgroundColor: 'rgba(153, 102, 255, 0.7)', // Purple for Count TH
+        }
     ];
 
     new Chart(document.getElementById('gradePerformanceChart'), {
