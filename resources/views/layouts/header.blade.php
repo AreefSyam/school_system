@@ -8,14 +8,15 @@
         <li class="nav-item d-flex align-items-center">
             @if(auth()->user()->hasRole('admin'))
             <a href="{{ route('admin.dashboard') }}" class="d-flex align-items-center">
-                <img src="{{ url('dist/img/iPerform.png') }}" alt="Logo" class="brand-logo"
+                <img src="{{ url('dist/img/LOGO_KAJILAH.svg')  }}" alt="Logo" class="brand-logo"
                     style="height: 50px; margin-right: 15px;">
             </a>
+
             @endif
 
             @if(auth()->user()->hasRole('teacher'))
             <a href="{{ route('teacher.dashboard') }}" class="d-flex align-items-center">
-                <img src="{{ url('dist/img/iPerform.png') }}" alt="Logo" class="brand-logo"
+                <img src="{{ url('dist/img/LOGO_KAJILAH.svg')  }}" alt="Logo" class="brand-logo"
                     style="height: 50px; margin-right: 15px;">
             </a>
             @endif

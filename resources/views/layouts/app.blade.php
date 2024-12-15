@@ -14,7 +14,9 @@
     <link rel="stylesheet" href="{{url('plugins/fontawesome-free/css/all.min.css')}}">
 
     {{-- logo --}}
-    <link rel="icon" type="image/x-icon" href="{{ asset('assets\icons\logo4.png') }}" />
+    {{-- <link rel="icon" type="image/x-icon" href="{{ asset('assets\icons\logo4.png') }}" /> --}}
+    <link rel="icon" type="image/x-icon" href="{{ asset('assets\icons\KAJILAH_V2.svg') }}" />
+
     <!-- Ionicons -->
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <!-- Tempusdominus Bootstrap 4 -->
