@@ -80,11 +80,11 @@
                                 // Ensure $studentMark is not null before accessing status
 
                                 @endphp
-                                {{-- <td>
+                                <td>
                                     <input type="number" id="marks-{{ $student->id }}-{{ $subject->subject_id }}"
                                         name="marks[{{ $student->id }}][{{ $subject->subject_id }}]"
                                         value="{{ $isAbsent ? '0' : $studentMark->mark ?? '' }}" class="form-control"
-                                        min="0" max="100" {{ $isAbsent ? '' : '' }}>
+                                        min="0" max="100" {{ $isAbsent ? '' : '' }} required>
 
                                     <input type="hidden" name="status[{{ $student->id }}][{{ $subject->subject_id }}]"
                                         value="{{ $isAbsent ? 'absent' : 'present' }}">
@@ -96,9 +96,9 @@
                                             onchange="handleAbsenceToggle(this, {{ $student->id }}, {{ $subject->subject_id }})"
                                             {{ $isAbsent ? 'checked' : '' }}> TH
                                     </div>
-                                </td> --}}
+                                </td>
 
-                                <td>
+                                {{-- <td>
                                     <!-- Input for marks -->
                                     <input type="number" id="marks-{{ $student->id }}-{{ $subject->subject_id }}"
                                         name="marks[{{ $student->id }}][{{ $subject->subject_id }}]"
@@ -118,7 +118,7 @@
                                             }}>
                                         TH
                                     </div>
-                                </td>
+                                </td> --}}
 
                                 @endforeach
                                 <td>
@@ -148,47 +148,18 @@
 </div>
 @endsection
 
-{{-- <script>
-    document.addEventListener('DOMContentLoaded', function () {
-    const checkboxes = document.querySelectorAll('.absence-checkbox');
-
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function () {
-            const studentId = this.dataset.studentId;
-            const subjectId = this.dataset.subjectId;
-            const markInput = document.getElementById(`marks-${studentId}-${subjectId}`);
-            const statusInput = document.querySelector(`input[name='status[${studentId}][${subjectId}]']`);
-
-            if (this.checked) {
-                markInput.value = '0'; // Set mark to 0
-                statusInput.value = 'absent'; // Set status to absent
-                // markInput.disabled = false; // Disable input to indicate no input needed
-                // markInput.disabled = this.checked;
-            } else {
-                markInput.value = ''; // Optionally reset to a default value if unchecked
-                statusInput.value = 'present'; // Reset status to present
-                markInput.disabled = false; // Enable input
-            }
-        });
-    });
-
-    // Ensure all inputs are enabled before submitting the form to capture all data
-    const form = document.querySelector('form');
-    form.addEventListener('submit', function () {
-        // Explicitly enable all inputs for submission
-        checkboxes.forEach(checkbox => {
-            const studentId = checkbox.dataset.studentId;
-            const subjectId = checkbox.dataset.subjectId;
-            const markInput = document.getElementById(`marks-${studentId}-${subjectId}`);
-            markInput.disabled = false;  // Ensure input is enabled regardless of checkbox state
-        });
-    });
-});
-</script> --}}
-{{--
+{{-- No 2 --}}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
     const checkboxes = document.querySelectorAll('.absence-checkbox');
+    const markInputs = document.querySelectorAll('input[type="number"]');
+
+    // Initialize the page: Set marks to 0 if null or empty
+    markInputs.forEach(markInput => {
+        if (markInput.value === '' || markInput.value === null) {
+            markInput.value = '0'; // Set default value to 0
+        }
+    });
 
     // Function to handle checkbox changes
     const handleAbsenceToggle = (checkbox) => {
@@ -208,8 +179,8 @@
         }
     };
 
-        // Initialize the page by setting readonly for checked checkboxes
-        checkboxes.forEach(checkbox => {
+    // Initialize the page by setting readonly for checked checkboxes
+    checkboxes.forEach(checkbox => {
         const studentId = checkbox.dataset.studentId;
         const subjectId = checkbox.dataset.subjectId;
         const markInput = document.getElementById(`marks-${studentId}-${subjectId}`);
@@ -224,13 +195,6 @@
         });
     });
 
-    // Attach event listeners to checkboxes
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function () {
-            handleAbsenceToggle(this);
-        });
-    });
-
     // Ensure all inputs are valid before form submission
     const form = document.querySelector('form');
     form.addEventListener('submit', function () {
@@ -239,51 +203,39 @@
             const subjectId = checkbox.dataset.subjectId;
             const markInput = document.getElementById(`marks-${studentId}-${subjectId}`);
 
-            if (markInput.value === '0') {
-                markInput.value = '0'; // Ensure numeric value is submitted
+            // Ensure numeric value is submitted
+            if (markInput.value === '' || markInput.value === null) {
+                markInput.value = '0';
             }
             markInput.removeAttribute('readonly'); // Remove readonly to include in submission
+        });
+
+        markInputs.forEach(markInput => {
+            // Ensure empty or invalid inputs are set to 0
+            if (markInput.value === '' || markInput.value === null) {
+                markInput.value = '0';
+            }
         });
     });
 });
 
-</script> --}}
+</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-    const checkboxes = document.querySelectorAll('.absence-checkbox');
+    const markInputs = document.querySelectorAll('input[type="number"]');
 
-    // Function to handle checkbox changes
-    const handleAbsenceToggle = (checkbox) => {
-        const studentId = checkbox.dataset.studentId;
+    markInputs.forEach(input => {
+        input.addEventListener('invalid', function () {
+            if (this.value === '' || this.value === null) {
+                this.setCustomValidity('Please enter a valid mark or set it to 0.');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
 
-        const markInput = document.getElementById(`marks-${studentId}`);
-        const statusInput = document.querySelector(`input[name="marks[${studentId}][status]"]`);
-
-        if (checkbox.checked) {
-            markInput.value = '0'; // Set value to 0
-            markInput.setAttribute('readonly', true); // Make input readonly
-            statusInput.value = 'absent'; // Set status to absent
-        } else {
-            markInput.value = markInput.dataset.originalValue || ''; // Restore value if available
-            markInput.removeAttribute('readonly'); // Make input editable
-            statusInput.value = 'present'; // Set status to present
-        }
-    };
-
-    // Initialize and attach event listeners
-    checkboxes.forEach(checkbox => {
-        const studentId = checkbox.dataset.studentId;
-
-        // Set initial state for readonly inputs if checkbox is checked
-        const markInput = document.getElementById(`marks-${studentId}`);
-        if (checkbox.checked) {
-            markInput.setAttribute('readonly', true); // Prevent edits if checkbox is checked
-        }
-
-        // Attach event listener for changes
-        checkbox.addEventListener('change', function () {
-            handleAbsenceToggle(this);
+        input.addEventListener('input', function () {
+            this.setCustomValidity(''); // Clear custom messages on input
         });
     });
 });

@@ -111,9 +111,9 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Filter Buttons -->
-                            <div class="form-group col-md-2">
+                            <div class="form-group col-md-6">
                                 <button type="submit" class="btn btn-primary" style="margin-top: 30px;">Filter</button>
                                 <a href="{{ route('analytic.subjectPerformance') }}" class="btn btn-success"
                                     style="margin-top: 30px;">Reset</a>
@@ -164,6 +164,7 @@
                                 <th>Total B</th>
                                 <th>Total C</th>
                                 <th>Total D</th>
+                                <th>Total TH</th> <!-- New column for absent students -->
                             </tr>
                         </thead>
                         <tbody>
@@ -177,6 +178,7 @@
                                 <td>{{ $row->count_B }}</td>
                                 <td>{{ $row->count_C }}</td>
                                 <td>{{ $row->count_D }}</td>
+                                <td>{{ $row->count_TH }}</td> <!-- Display absent count -->
                             </tr>
                             @endforeach
                         </tbody>
@@ -217,6 +219,11 @@
                 label: 'Count D',
                 data: @json($data->pluck('count_D')),
                 backgroundColor: 'rgba(255, 99, 132, 0.7)',
+            },
+            {
+                label: 'Count TH',
+                data: @json($data->pluck('count_TH')),
+                backgroundColor: 'rgba(153, 102, 255, 0.7)', // Purple for Count TH
             },
         ];
 

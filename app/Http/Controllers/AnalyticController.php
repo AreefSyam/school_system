@@ -40,7 +40,8 @@ class AnalyticController extends Controller
                     DB::raw('COUNT(CASE WHEN m.mark >= 80 THEN 1 END) as count_A'),
                     DB::raw('COUNT(CASE WHEN m.mark >= 60 AND m.mark < 80 THEN 1 END) as count_B'),
                     DB::raw('COUNT(CASE WHEN m.mark >= 40 AND m.mark < 60 THEN 1 END) as count_C'),
-                    DB::raw('COUNT(CASE WHEN m.mark < 40 THEN 1 END) as count_D')
+                    DB::raw('COUNT(CASE WHEN m.mark < 40 AND m.status = "present" THEN 1 END) as count_D'),
+                    DB::raw('COUNT(CASE WHEN m.mark = 0 AND m.status = "absent" THEN 1 END) as count_TH') // Count for absent students
                 )
                 ->when($year, function ($query, $year) {
                     $query->where('m.academic_year_id', $year);
@@ -318,7 +319,7 @@ class AnalyticController extends Controller
             'selectedAcademicYear'
         ));
     }
-    
+
     // [User:Teacher] -> Performance ByCLass
     public function classPerformanceTeacher(Request $request)
     {
