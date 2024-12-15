@@ -100,7 +100,7 @@
                                         <input type="number" id="marks-{{ $student->id }}-{{ $subject->id }}"
                                             name="marks[{{ $index }}][mark]" class="form-control"
                                             value="{{ $isAbsent ? '0' : $mark->mark ?? '' }}" {{ $isAbsent ? 'readonly'
-                                            : '' }} min="0" max="100">
+                                            : '' }} min="0" max="100" required>
                                         <input type="hidden" name="marks[{{ $index }}][student_id]"
                                             value="{{ $student->id }}">
                                     </td>
@@ -177,6 +177,27 @@
 
         // Attach event listener for changes
         checkbox.addEventListener('change', () => handleAbsenceToggle(checkbox, studentId, subjectId));
+    });
+});
+
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const markInputs = document.querySelectorAll('input[type="number"]');
+
+    markInputs.forEach(input => {
+        input.addEventListener('invalid', function () {
+            if (this.value === '' || this.value === null) {
+                this.setCustomValidity('Please enter a valid mark or set it to 0.');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+
+        input.addEventListener('input', function () {
+            this.setCustomValidity(''); // Clear custom messages on input
+        });
     });
 });
 

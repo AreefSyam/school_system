@@ -1,19 +1,19 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AcademicYearController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AnalyticController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClassController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\MarkController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\ClassController;
 use App\Http\Controllers\NavBarController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
-use App\Http\Controllers\AnalyticController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\AcademicYearController;
+use Illuminate\Support\Facades\Route;
 
 // Public (Guest) Routes
 Route::group(['middleware' => 'guest'], function () {
@@ -245,6 +245,9 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/byIndividual/{yearId}', [AnalyticController::class, 'individualPerformanceTeacher'])->name('teacher.analytic.individualPerformance');
             // byClass-level analytics
             Route::get('/byClass/{yearId}', [AnalyticController::class, 'classPerformanceTeacher'])->name('teacher.analytic.classPerformance');
+
+            // Report Student Below 60%
+            Route::get('/refinementClass/{yearId}', [AnalyticController::class, 'reportStudentLess60PercentTeacher'])->name('teacher.analytic.reportStudentLess60Percent');
         });
     });
 });

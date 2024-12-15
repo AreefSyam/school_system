@@ -218,8 +218,8 @@
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
-                    <ul class="nav nav-treeview" @if (Request::segment(2) !='analyticTeacher' )
-                        style="display: none;" @endif>
+                    <ul class="nav nav-treeview" @if (Request::segment(2) !='analyticTeacher' ) style="display: none;"
+                        @endif>
                         <li class="nav-item">
                             <a href="{{ route('teacher.analytic.classPerformance', ['yearId' => $currentAcademicYear->id ?? '']) }}"
                                 class="nav-link @if (Request::segment(3) == 'byClass') active @endif">
@@ -232,6 +232,13 @@
                                 class="nav-link @if (Request::segment(3) == 'byIndividual') active @endif">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Performance Individual</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('teacher.analytic.reportStudentLess60Percent' , ['yearId' => $currentAcademicYear->id ?? '']) }}"
+                                class="nav-link @if (Request::segment(3) == 'refinementClass') active @endif">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Student < 60%</p>
                             </a>
                         </li>
                     </ul>

@@ -205,57 +205,6 @@ class AnalyticController extends Controller
         ));
     }
 
-    // public function reportStudentLess60Percent(Request $request)
-    // {
-    //     // Fetch filter values from the request
-    //     $year = $request->input('academic_year_id');
-    //     $class = $request->input('class_id');
-    //     $syllabus = $request->input('syllabus_id');
-    //     $examType = $request->input('exam_type_id');
-
-    //     // Fetch students below 61%
-    //     $students = DB::table('students_summary as ss')
-    //         ->join('student as st', 'ss.student_id', '=', 'st.id')
-    //         ->join('class as c', 'ss.class_id', '=', 'c.id')
-    //         ->join('academic_year as ay', 'ss.academic_year_id', '=', 'ay.id')
-    //         ->leftJoin('marks as m', function ($join) {
-    //             $join->on('ss.student_id', '=', 'm.student_id')
-    //                 ->on('ss.class_id', '=', 'm.class_id')
-    //                 ->on('ss.academic_year_id', '=', 'm.academic_year_id');
-    //         })
-    //         ->join('subject as s', 'm.subject_id', '=', 's.id')
-    //         ->select(
-    //             'ss.id as summary_id',
-    //             'st.full_name as student_name',
-    //             'ay.academic_year_name',
-    //             'c.name as class_name',
-    //             'ss.total_marks',
-    //             'ss.percentage',
-    //             'ss.total_grade',
-    //             DB::raw('GROUP_CONCAT(DISTINCT CASE WHEN m.mark < 40 AND m.status = "present" THEN s.subject_name ELSE NULL END) as failed_subjects'),
-    //             DB::raw('GROUP_CONCAT(DISTINCT CASE WHEN m.status = "absent" THEN s.subject_name ELSE NULL END) as absent_subjects')
-    //         )
-    //         ->when($year, fn($query) => $query->where('ss.academic_year_id', $year))
-    //         ->when($class, fn($query) => $query->where('ss.class_id', $class))
-    //         ->when($syllabus, fn($query) => $query->where('ss.syllabus_id', $syllabus))
-    //         ->when($examType, fn($query) => $query->where('ss.exam_type_id', $examType))
-    //         ->where('ss.percentage', '<', 61)
-    //         ->groupBy('ss.id', 'st.full_name', 'ay.academic_year_name', 'c.name', 'ss.total_marks', 'ss.percentage', 'ss.total_grade')
-    //         ->orderBy('ss.academic_year_id')
-    //         ->orderBy('c.name')
-    //         ->orderBy('ss.percentage', 'ASC')
-    //         ->get();
-
-    //     // Fetch dropdown options for filters
-    //     $academicYears = AcademicYearModel::select('id', 'academic_year_name')->get();
-    //     $classes = ClassModel::select('id', 'name')->get();
-    //     $examTypes = ExamTypeModel::select('id', 'exam_type_name')->get();
-    //     $syllabuses = SyllabusModel::select('id', 'syllabus_name')->get();
-
-    //     return view('admin.analyticManagement.refinementClass.reportStudentLess60Percent', compact(
-    //         'students', 'academicYears', 'classes', 'examTypes', 'syllabuses'
-    //     ));
-    // }
 
     public function reportStudentLess60Percent(Request $request)
     {
@@ -379,6 +328,7 @@ class AnalyticController extends Controller
                     'm.student_id',
                     'm.subject_id',
                     'm.mark',
+                    'm.status',
                     'st.full_name as student_name',
                     's.subject_name',
                     'ay.academic_year_name',
@@ -400,12 +350,17 @@ class AnalyticController extends Controller
         $marksByStudent = [];
         foreach ($data as $entry) {
             $examType = $entry->exam_type_id === 1 ? 'PPT' : 'PAT';
-            $marksByStudent[$entry->student_id][$entry->subject_id][$examType] = $entry->mark;
+            // $marksByStudent[$entry->student_id][$entry->subject_id][$examType] = $entry->mark;
+            $marksByStudent[$entry->student_id][$entry->subject_id][$examType] =
+            $entry->status === 'absent' ? 'TH' : $entry->mark;
         }
 
         // Prepare data for the chart
         $chartData = $data->groupBy('exam_type_id')->map(function ($group) {
-            return $group->pluck('mark', 'subject_name');
+            // return $group->pluck('mark', 'subject_name');
+            return $group->pluck('mark', 'subject_name')->filter(function ($mark) {
+                return is_numeric($mark); // Exclude "TH" from chart data
+            });
         });
 
         // Fetch dropdown data
@@ -496,7 +451,8 @@ class AnalyticController extends Controller
                     DB::raw('COUNT(CASE WHEN m.mark >= 80 THEN 1 END) as count_A'),
                     DB::raw('COUNT(CASE WHEN m.mark >= 60 AND m.mark < 80 THEN 1 END) as count_B'),
                     DB::raw('COUNT(CASE WHEN m.mark >= 40 AND m.mark < 60 THEN 1 END) as count_C'),
-                    DB::raw('COUNT(CASE WHEN m.mark < 40 THEN 1 END) as count_D')
+                    DB::raw('COUNT(CASE WHEN m.mark < 40 AND m.status = "present" THEN 1 END) as count_D'),
+                    DB::raw('COUNT(CASE WHEN m.mark = 0 AND m.status = "absent" THEN 1 END) as count_TH') // Count for absent students
                 )
                 ->where('m.class_id', $class->id) // Restrict to the teacher's assigned class
                 ->where('m.academic_year_id', $yearId)
@@ -521,6 +477,88 @@ class AnalyticController extends Controller
             'syllabuses',
             'class',
             'selectedAcademicYear',
+        ));
+    }
+
+    public function reportStudentLess60PercentTeacher(Request $request)
+    {
+        $teacherId = auth()->id(); // Logged-in teacher's ID
+        $yearId = session('academic_year_id'); // Academic year from session
+        $selectedAcademicYear = AcademicYearModel::find($yearId);
+
+        // Validate academic year existence
+        if (!$selectedAcademicYear) {
+            return view('teacher.analyticTeacher.refinementClass.reportStudentLess60Percent', [
+                'error' => 'No academic year is currently selected.',
+                'data' => collect(), // Empty collection
+                'examTypes' => collect(),
+                'syllabuses' => collect(),
+                'selectedAcademicYear' => null,
+            ]);
+        }
+
+        // Fetch the teacher's assigned class for the academic year
+        $classTeacherYear = ClassTeacherYearModel::with('class')
+            ->where('teacher_id', $teacherId)
+            ->where('academic_year_id', $yearId)
+            ->first();
+
+        if (!$classTeacherYear || !$classTeacherYear->class) {
+            return view('teacher.analyticTeacher.refinementClass.reportStudentLess60Percent', [
+                'error' => 'No class is assigned to you for the selected academic year.',
+                'data' => collect(),
+                'examTypes' => collect(),
+                'syllabuses' => collect(),
+                'selectedAcademicYear' => $selectedAcademicYear,
+            ]);
+        }
+
+        $class = $classTeacherYear->class;
+
+        // Fetch filter values from the request
+        $examTypeId = $request->input('exam_type_id');
+        $syllabusId = $request->input('syllabus_id');
+
+        // Query for students below 61%
+        $data = DB::table('students_summary as ss')
+            ->join('student as st', 'ss.student_id', '=', 'st.id')
+            ->join('class as c', 'ss.class_id', '=', 'c.id')
+            ->join('academic_year as ay', 'ss.academic_year_id', '=', 'ay.id')
+            ->leftJoin('marks as m', function ($join) {
+                $join->on('ss.student_id', '=', 'm.student_id')
+                    ->on('ss.class_id', '=', 'm.class_id')
+                    ->on('ss.academic_year_id', '=', 'm.academic_year_id');
+            })
+            ->join('subject as s', 'm.subject_id', '=', 's.id')
+            ->select(
+                'ss.id as summary_id',
+                'st.full_name as student_name',
+                'ay.academic_year_name',
+                'c.name as class_name',
+                'ss.total_marks',
+                'ss.percentage',
+                'ss.total_grade',
+                DB::raw('GROUP_CONCAT(DISTINCT CASE WHEN m.mark < 40 AND m.status = "present" THEN s.subject_name ELSE NULL END) as failed_subjects'),
+                DB::raw('GROUP_CONCAT(DISTINCT CASE WHEN m.status = "absent" THEN s.subject_name ELSE NULL END) as absent_subjects')
+            )
+            ->where('ss.class_id', $class->id)
+            ->where('ss.academic_year_id', $yearId)
+            ->when($examTypeId, fn($query) => $query->where('ss.exam_type_id', $examTypeId))
+            ->when($syllabusId, fn($query) => $query->where('ss.syllabus_id', $syllabusId))
+            ->where('ss.percentage', '<', 61)
+            ->groupBy('ss.id', 'st.full_name', 'ay.academic_year_name', 'c.name', 'ss.total_marks', 'ss.percentage', 'ss.total_grade')
+            ->orderBy('ss.percentage', 'ASC')
+            ->get();
+
+        $examTypes = ExamTypeModel::select('id', 'exam_type_name')->get();
+        $syllabuses = SyllabusModel::select('id', 'syllabus_name')->get();
+
+        return view('teacher.analyticTeacher.refinementClass.reportStudentLess60Percent', compact(
+            'data',
+            'examTypes',
+            'syllabuses',
+            'selectedAcademicYear',
+            'class'
         ));
     }
 

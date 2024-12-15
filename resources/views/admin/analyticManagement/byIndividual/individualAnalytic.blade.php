@@ -138,9 +138,6 @@
                             <tr>
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $student->full_name }}</td>
-                                {{-- @foreach($subjects as $subject)
-                                <td>{{ $marksByStudent[$student->id][$subject->id]['PPT'] ?? 'N/A' }}</td>
-                                @endforeach --}}
                                 @foreach($subjects as $subject)
                                 <td>
                                     @php

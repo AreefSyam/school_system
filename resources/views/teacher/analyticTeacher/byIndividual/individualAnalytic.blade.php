@@ -10,7 +10,8 @@
                 <div class="col-sm-12">
                     <h1>
                         Individual Performance Analytics:
-                        <strong>{{ $selectedAcademicYear->academic_year_name ?? 'N/A' }} - {{ $class->name ?? 'N/A' }}</strong>
+                        <strong>{{ $selectedAcademicYear->academic_year_name ?? 'N/A' }} - {{ $class->name ?? 'N/A'
+                            }}</strong>
                     </h1>
                 </div>
             </div>
@@ -28,7 +29,8 @@
                     action="{{ route('teacher.analytic.individualPerformance', ['yearId' => $currentAcademicYear->id ?? '']) }}">
                     <div class="card-body">
                         @if($students->isEmpty())
-                        <p class="text-center text-danger">No students found for this class in the selected academic year.</p>
+                        <p class="text-center text-danger">No students found for this class in the selected academic
+                            year.</p>
                         @else
                         <div class="row">
                             <!-- Student -->
@@ -37,7 +39,8 @@
                                 <select class="form-control" id="student_id" name="student_id" required>
                                     <option value="" disabled selected>-- Select Student --</option>
                                     @foreach($students as $student)
-                                    <option value="{{ $student->id }}" {{ request('student_id') == $student->id ? 'selected' : '' }}>
+                                    <option value="{{ $student->id }}" {{ request('student_id')==$student->id ?
+                                        'selected' : '' }}>
                                         {{ $student->full_name }}
                                     </option>
                                     @endforeach
@@ -49,7 +52,8 @@
                                 <select class="form-control" id="syllabus_id" name="syllabus_id" required>
                                     <option value="" disabled selected>-- Select Syllabus --</option>
                                     @foreach($syllabuses as $syllabus)
-                                    <option value="{{ $syllabus->id }}" {{ request('syllabus_id') == $syllabus->id ? 'selected' : '' }}>
+                                    <option value="{{ $syllabus->id }}" {{ request('syllabus_id')==$syllabus->id ?
+                                        'selected' : '' }}>
                                         {{ $syllabus->syllabus_name }}
                                     </option>
                                     @endforeach
@@ -113,8 +117,26 @@
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $student->full_name }}</td>
                                 @foreach($subjects as $subject)
-                                <td>{{ $marksByStudent[$student->id][$subject->id]['PPT'] ?? 'N/A' }}</td>
+                                <td>
+                                    @php
+                                    $mark = $marksByStudent[$student->id][$subject->id]['PPT'] ?? null;
+                                    @endphp
+
+                                    @if ($mark === 'TH')
+                                    <span style="color: red; font-weight: bold;">{{ $mark }}</span>
+                                    @elseif (is_numeric($mark) && $mark < 40) <span style="color: red;">{{ $mark
+                                        }}</span>
+                                        @elseif (is_numeric($mark) && $mark > 79)
+                                        <span style="color: green;">{{ $mark }}</span>
+                                        @else
+                                        {{ $mark ?? 'N/A' }}
+                                        @endif
+                                </td>
                                 @endforeach
+
+                                {{-- @foreach($subjects as $subject)
+                                <td>{{ $marksByStudent[$student->id][$subject->id]['PPT'] ?? 'N/A' }}</td>
+                                @endforeach --}}
                             </tr>
                             @endforeach
                         </tbody>
@@ -147,8 +169,25 @@
                             <tr>
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $student->full_name }}</td>
-                                @foreach($subjects as $subject)
+                                {{-- @foreach($subjects as $subject)
                                 <td>{{ $marksByStudent[$student->id][$subject->id]['PAT'] ?? 'N/A' }}</td>
+                                @endforeach --}}
+                                @foreach($subjects as $subject)
+                                <td>
+                                    @php
+                                    $mark = $marksByStudent[$student->id][$subject->id]['PAT'] ?? null;
+                                    @endphp
+
+                                    @if ($mark === 'TH')
+                                    <span style="color: red; font-weight: bold;">{{ $mark }}</span>
+                                    @elseif (is_numeric($mark) && $mark < 40) <span style="color: red;">{{ $mark
+                                        }}</span>
+                                        @elseif (is_numeric($mark) && $mark > 79)
+                                        <span style="color: green;">{{ $mark }}</span>
+                                        @else
+                                        {{ $mark ?? 'N/A' }}
+                                        @endif
+                                </td>
                                 @endforeach
                             </tr>
                             @endforeach

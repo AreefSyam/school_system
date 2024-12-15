@@ -24,6 +24,20 @@ class DashboardController extends Controller
             return view('admin.dashboard', $data);
         } elseif (Auth::user()->role == 'teacher') {
             $yearId = session('academic_year_id'); // Use session year ID if no parameter provided
+
+            if (!$yearId) {
+                // If not set, fetch the current academic year and set it in the session
+                $currentYear = AcademicYearModel::orderBy('start_date', 'desc')->first();
+
+                if ($currentYear) {
+                    $yearId = $currentYear->id;
+                    session(['academic_year_id' => $yearId]);
+                } else {
+                    $data['error'] = 'No academic year is currently active.';
+                    return view('teacher.dashboard', $data);
+                }
+            }
+
             // Get current academic year details
             $data['currentAcademicYear'] = AcademicYearModel::find($yearId);
             if (!$data['currentAcademicYear']) {
