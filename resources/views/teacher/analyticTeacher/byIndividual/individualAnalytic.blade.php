@@ -64,6 +64,8 @@
                                 <button type="submit" class="btn btn-primary" style="margin-top: 30px;">Filter</button>
                                 <a href="{{ route('teacher.analytic.individualPerformance', ['yearId' => $currentAcademicYear->id ?? '']) }}"
                                     class="btn btn-success" style="margin-top: 30px;">Reset</a>
+                                <button id="saveImage" type="button" class="btn btn-info" style="margin-top: 30px">Save
+                                    as Image</button>
                             </div>
                         </div>
                         @endif

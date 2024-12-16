@@ -79,10 +79,12 @@
                                 </select>
                             </div>
                             <!-- Filter Buttons -->
-                            <div class="form-group col-md-2">
+                            <div class="form-group col-md-3">
                                 <button type="submit" class="btn btn-primary" style="margin-top: 30px">Filter</button>
                                 <a href="{{ route('analytic.classPerformance') }}" class="btn btn-success"
                                     style="margin-top: 30px">Reset</a>
+                                <button id="saveImage" type="button" class="btn btn-info" style="margin-top: 30px">Save
+                                    as Image</button>
                             </div>
 
                             {{-- Appears only filter button clicked --}}

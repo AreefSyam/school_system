@@ -12,9 +12,9 @@
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{url('plugins/fontawesome-free/css/all.min.css')}}">
-
     {{-- logo --}}
-    {{-- <link rel="icon" type="image/x-icon" href="{{ asset('assets\icons\logo4.png') }}" /> --}}
+    {{--
+    <link rel="icon" type="image/x-icon" href="{{ asset('assets\icons\logo4.png') }}" /> --}}
     <link rel="icon" type="image/x-icon" href="{{ asset('assets\icons\KAJILAH_V2.svg') }}" />
 
     <!-- Ionicons -->
@@ -84,6 +84,35 @@
     {{-- <script src="{{url('dist/js/demo.js')}}"></script> --}}
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
     <script src="{{url('dist/js/pages/dashboard.js')}}"></script>
+
+    <!-- Save Canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <!-- JavaScript Section -->
+    <script>
+        document.getElementById('saveImage').addEventListener('click', function () {
+        // Select the section to capture
+        const content = document.querySelector('.content-wrapper');
+        if (!content) {
+            console.error('Content wrapper not found');
+            return;
+        }
+
+        // Capture with html2canvas
+        html2canvas(content, {
+            scale: 2, // High resolution
+            useCORS: true, // Cross-origin support for images
+        }).then(canvas => {
+            // Create a link to download the image
+            const link = document.createElement('a');
+            link.download = 'image.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }).catch(error => {
+            console.error('Error capturing content:', error);
+        });
+    });
+    </script>
 </body>
 
 </html>

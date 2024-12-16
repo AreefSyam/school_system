@@ -37,7 +37,7 @@
                                     <!-- Gender -->
                                     <div class="form-group col-md-3">
                                         <label>Gender <span class="text-danger">*</span></label>
-                                        <select class="form-control" name="gender" required>
+                                        <select class="form-control" name="gender">
                                             <option value="" disabled selected>-- Select Gender --</option>
                                             @foreach ($genders as $gender)
                                             <option value="{{ $gender }}" {{ old('gender')==$gender ? 'selected' : ''

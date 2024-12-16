@@ -239,13 +239,12 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
         Route::prefix('analyticTeacher')->group(function () {
-            // bySubject analytics
+            // bySubject analytics - no subject for teacher
             // Route::get('/{yearId}/bySubject', [AnalyticController::class, 'subjectPerformanceTeacher'])->name('teacher.analytic.classPerformance');
             // byIndividual student analytics
             Route::get('/byIndividual/{yearId}', [AnalyticController::class, 'individualPerformanceTeacher'])->name('teacher.analytic.individualPerformance');
             // byClass-level analytics
             Route::get('/byClass/{yearId}', [AnalyticController::class, 'classPerformanceTeacher'])->name('teacher.analytic.classPerformance');
-
             // Report Student Below 60%
             Route::get('/refinementClass/{yearId}', [AnalyticController::class, 'reportStudentLess60PercentTeacher'])->name('teacher.analytic.reportStudentLess60Percent');
         });

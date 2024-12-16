@@ -53,8 +53,10 @@
                             </div>
                             <div class="form-group col-md-4">
                                 <button type="submit" class="btn btn-primary" style="margin-top: 30px">Filter</button>
-                                <a href="{{ route('teacher.analytic.reportStudentLess60Percent', ['yearId' => $currentAcademicYear->id ?? '']) }}" class="btn btn-success"
-                                style="margin-top: 30px">Reset</a>
+                                <a href="{{ route('teacher.analytic.reportStudentLess60Percent', ['yearId' => $currentAcademicYear->id ?? '']) }}"
+                                    class="btn btn-success" style="margin-top: 30px">Reset</a>
+                                <button id="saveImage" type="button" class="btn btn-info" style="margin-top: 30px">Save
+                                    as Image</button>
                             </div>
                         </div>
                     </div>

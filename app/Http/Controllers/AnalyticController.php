@@ -205,7 +205,6 @@ class AnalyticController extends Controller
         ));
     }
 
-
     public function reportStudentLess60Percent(Request $request)
     {
         // Fetch filter values from the request
@@ -486,6 +485,9 @@ class AnalyticController extends Controller
         $yearId = session('academic_year_id'); // Academic year from session
         $selectedAcademicYear = AcademicYearModel::find($yearId);
 
+        // Initialize the query builder but fetch data only if filters are applied
+        $data = collect();
+
         // Validate academic year existence
         if (!$selectedAcademicYear) {
             return view('teacher.analyticTeacher.refinementClass.reportStudentLess60Percent', [
@@ -520,35 +522,68 @@ class AnalyticController extends Controller
         $syllabusId = $request->input('syllabus_id');
 
         // Query for students below 61%
-        $data = DB::table('students_summary as ss')
-            ->join('student as st', 'ss.student_id', '=', 'st.id')
-            ->join('class as c', 'ss.class_id', '=', 'c.id')
-            ->join('academic_year as ay', 'ss.academic_year_id', '=', 'ay.id')
-            ->leftJoin('marks as m', function ($join) {
-                $join->on('ss.student_id', '=', 'm.student_id')
-                    ->on('ss.class_id', '=', 'm.class_id')
-                    ->on('ss.academic_year_id', '=', 'm.academic_year_id');
-            })
-            ->join('subject as s', 'm.subject_id', '=', 's.id')
-            ->select(
-                'ss.id as summary_id',
-                'st.full_name as student_name',
-                'ay.academic_year_name',
-                'c.name as class_name',
-                'ss.total_marks',
-                'ss.percentage',
-                'ss.total_grade',
-                DB::raw('GROUP_CONCAT(DISTINCT CASE WHEN m.mark < 40 AND m.status = "present" THEN s.subject_name ELSE NULL END) as failed_subjects'),
-                DB::raw('GROUP_CONCAT(DISTINCT CASE WHEN m.status = "absent" THEN s.subject_name ELSE NULL END) as absent_subjects')
-            )
-            ->where('ss.class_id', $class->id)
-            ->where('ss.academic_year_id', $yearId)
-            ->when($examTypeId, fn($query) => $query->where('ss.exam_type_id', $examTypeId))
-            ->when($syllabusId, fn($query) => $query->where('ss.syllabus_id', $syllabusId))
-            ->where('ss.percentage', '<', 61)
-            ->groupBy('ss.id', 'st.full_name', 'ay.academic_year_name', 'c.name', 'ss.total_marks', 'ss.percentage', 'ss.total_grade')
-            ->orderBy('ss.percentage', 'ASC')
-            ->get();
+        // $data = DB::table('students_summary as ss')
+        //     ->join('student as st', 'ss.student_id', '=', 'st.id')
+        //     ->join('class as c', 'ss.class_id', '=', 'c.id')
+        //     ->join('academic_year as ay', 'ss.academic_year_id', '=', 'ay.id')
+        //     ->leftJoin('marks as m', function ($join) {
+        //         $join->on('ss.student_id', '=', 'm.student_id')
+        //             ->on('ss.class_id', '=', 'm.class_id')
+        //             ->on('ss.academic_year_id', '=', 'm.academic_year_id');
+        //     })
+        //     ->join('subject as s', 'm.subject_id', '=', 's.id')
+        //     ->select(
+        //         'ss.id as summary_id',
+        //         'st.full_name as student_name',
+        //         'ay.academic_year_name',
+        //         'c.name as class_name',
+        //         'ss.total_marks',
+        //         'ss.percentage',
+        //         'ss.total_grade',
+        //         DB::raw('GROUP_CONCAT(DISTINCT CASE WHEN m.mark < 40 AND m.status = "present" THEN s.subject_name ELSE NULL END) as failed_subjects'),
+        //         DB::raw('GROUP_CONCAT(DISTINCT CASE WHEN m.status = "absent" THEN s.subject_name ELSE NULL END) as absent_subjects')
+        //     )
+        //     ->where('ss.class_id', $class->id)
+        //     ->where('ss.academic_year_id', $yearId)
+        //     ->when($examTypeId, fn($query) => $query->where('ss.exam_type_id', $examTypeId))
+        //     ->when($syllabusId, fn($query) => $query->where('ss.syllabus_id', $syllabusId))
+        //     ->where('ss.percentage', '<', 61)
+        //     ->groupBy('ss.id', 'st.full_name', 'ay.academic_year_name', 'c.name', 'ss.total_marks', 'ss.percentage', 'ss.total_grade')
+        //     ->orderBy('ss.percentage', 'ASC')
+        //     ->get();
+
+        // Query for students below 61% only if filters are applied
+        if ($examTypeId || $syllabusId) {
+            $data = DB::table('students_summary as ss')
+                ->join('student as st', 'ss.student_id', '=', 'st.id')
+                ->join('class as c', 'ss.class_id', '=', 'c.id')
+                ->join('academic_year as ay', 'ss.academic_year_id', '=', 'ay.id')
+                ->leftJoin('marks as m', function ($join) {
+                    $join->on('ss.student_id', '=', 'm.student_id')
+                        ->on('ss.class_id', '=', 'm.class_id')
+                        ->on('ss.academic_year_id', '=', 'm.academic_year_id');
+                })
+                ->join('subject as s', 'm.subject_id', '=', 's.id')
+                ->select(
+                    'ss.id as summary_id',
+                    'st.full_name as student_name',
+                    'ay.academic_year_name',
+                    'c.name as class_name',
+                    'ss.total_marks',
+                    'ss.percentage',
+                    'ss.total_grade',
+                    DB::raw('GROUP_CONCAT(DISTINCT CASE WHEN m.mark < 40 AND m.status = "present" THEN s.subject_name ELSE NULL END) as failed_subjects'),
+                    DB::raw('GROUP_CONCAT(DISTINCT CASE WHEN m.status = "absent" THEN s.subject_name ELSE NULL END) as absent_subjects')
+                )
+                ->where('ss.class_id', $class->id)
+                ->where('ss.academic_year_id', $yearId)
+                ->when($examTypeId, fn($query) => $query->where('ss.exam_type_id', $examTypeId))
+                ->when($syllabusId, fn($query) => $query->where('ss.syllabus_id', $syllabusId))
+                ->where('ss.percentage', '<', 61)
+                ->groupBy('ss.id', 'st.full_name', 'ay.academic_year_name', 'c.name', 'ss.total_marks', 'ss.percentage', 'ss.total_grade')
+                ->orderBy('ss.percentage', 'ASC')
+                ->get();
+        }
 
         $examTypes = ExamTypeModel::select('id', 'exam_type_name')->get();
         $syllabuses = SyllabusModel::select('id', 'syllabus_name')->get();
