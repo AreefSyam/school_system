@@ -50,14 +50,21 @@
 
                                 <!-- Password (optional) -->
                                 <div class="form-group">
-                                    <label>Password (optional)</label>
-                                    <input type="password" name="password" class="form-control"
-                                        placeholder="New password (optional)">
-                                    <small>Leave empty if you don't want to change the password</small>
-                                    @if($errors->has('password'))
-                                    <span class="text-danger">{{ $errors->first('password') }}</span>
-                                    @endif
+                                    <label>Password</label>
+                                    <div class="input-group">
+                                        <input type="password" name="password" id="password" class="form-control"
+                                            placeholder="New password (optional)" required>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" id="togglePassword" style="cursor: pointer;">
+                                                <i class="fas fa-eye"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <small style="color: red">Leave empty if you don't want to change the password</small>
                                 </div>
+                                @if($errors->has('password'))
+                                <span class="text-danger">{{ $errors->first('password') }}</span>
+                                @endif
                             </div>
                             <div class="card-footer">
                                 <a href="{{ route('admin.list') }}" class="btn btn-secondary">Cancel</a>
@@ -70,4 +77,22 @@
         </div>
     </section>
 </div>
+
+<script>
+    document.getElementById('togglePassword').addEventListener('click', function () {
+    const passwordInput = document.getElementById('password');
+    const passwordIcon = this.querySelector('i');
+
+    // Toggle the password field type
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        passwordIcon.classList.remove('fa-eye');
+        passwordIcon.classList.add('fa-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        passwordIcon.classList.remove('fa-eye-slash');
+        passwordIcon.classList.add('fa-eye');
+    }
+});
+</script>
 @endsection

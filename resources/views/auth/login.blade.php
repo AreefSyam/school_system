@@ -64,12 +64,29 @@
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
 
+                    {{--
                     <!-- Password Input -->
                     <div class="input-group mb-3">
                         <input type="password" name="password" class="form-control" placeholder="Password" required>
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-lock"></span>
+                            </div>
+                        </div>
+                    </div>
+                    @error('password')
+                    <span class="text-danger">{{ $message }}</span>
+                    @enderror --}}
+
+                    <!-- Password Input -->
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="password" name="password" id="password" class="form-control"
+                                placeholder="Password" required>
+                            <div class="input-group-append">
+                                <span class="input-group-text" id="togglePassword" style="cursor: pointer;">
+                                    <i class="fas fa-eye"></i>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -93,19 +110,15 @@
                         </p>
                         <!-- Cancel & Login -->
                         <div class="row justify-content-end">
-                            <div class="col-4">
+                            <div class="col-8">
                                 <a href="{{ route('welcome') }}" class="btn btn-light btn-block">
-                                    Cancel
+                                    Back to Homepage
                                 </a>
                             </div>
                             <div class="col-4">
                                 <button type="submit" class="btn btn-success btn-block">Submit</button>
                             </div>
                         </div>
-                        {{-- <div class="col-4">
-                            <a href="{{ route('welcome') }}" class="btn btn-light btn-block">Cancel</a>
-                            <button type="submit" class="btn btn-success btn-block">Sign In</button>
-                        </div> --}}
                     </div>
                 </form>
 
@@ -121,6 +134,27 @@
     <script src="{{ url('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <!-- AdminLTE App -->
     <script src="{{ url('dist/js/adminlte.min.js') }}"></script>
+
+
+    <script>
+        document.getElementById('togglePassword').addEventListener('click', function () {
+        const passwordInput = document.getElementById('password');
+        const passwordIcon = this.querySelector('i');
+
+        // Toggle the password field type
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            passwordIcon.classList.remove('fa-eye');
+            passwordIcon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            passwordIcon.classList.remove('fa-eye-slash');
+            passwordIcon.classList.add('fa-eye');
+        }
+    });
+    </script>
+
+
 </body>
 
 </html>

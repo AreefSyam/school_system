@@ -47,6 +47,7 @@
                                     @endif
                                 </div>
 
+                                {{--
                                 <!-- Password -->
                                 <div class="form-group">
                                     <label>Password</label>
@@ -55,7 +56,24 @@
                                     @if($errors->has('password'))
                                     <span class="text-danger">{{ $errors->first('password') }}</span>
                                     @endif
+                                </div> --}}
+
+                                <!-- Password Input -->
+                                <div class="form-group">
+                                    <label>Password</label>
+                                    <div class="input-group">
+                                        <input type="password" name="password" id="password" class="form-control"
+                                            placeholder="Password" required>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" id="togglePassword" style="cursor: pointer;">
+                                                <i class="fas fa-eye"></i>
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
+                                @if($errors->has('password'))
+                                <span class="text-danger">{{ $errors->first('password') }}</span>
+                                @endif
                             </div>
 
                             <div class="card-footer">
@@ -69,4 +87,23 @@
         </div>
     </section>
 </div>
+
+<script>
+    document.getElementById('togglePassword').addEventListener('click', function () {
+    const passwordInput = document.getElementById('password');
+    const passwordIcon = this.querySelector('i');
+
+    // Toggle the password field type
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        passwordIcon.classList.remove('fa-eye');
+        passwordIcon.classList.add('fa-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        passwordIcon.classList.remove('fa-eye-slash');
+        passwordIcon.classList.add('fa-eye');
+    }
+});
+</script>
+
 @endsection
