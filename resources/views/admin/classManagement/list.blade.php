@@ -3,7 +3,7 @@
 @section('content')
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
+    <section class="content-header bg-dark">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
@@ -15,6 +15,18 @@
             </div>
         </div><!-- /.container-fluid -->
     </section>
+
+    {{-- breadcrumb --}}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{{ route('admin.dashboard') }}">Home </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ route('class.list') }}"> Class List </a>
+            </li>
+        </ol>
+    </nav>
 
     <!-- Search Form -->
     <section class="content">
@@ -111,8 +123,8 @@
                                     <a href="{{ route('class.edit', $value->id) }}" class="btn btn-primary">Edit</a>
                                     <a href="{{ route('class.assignStudents', $value->id) }}"
                                         class="btn btn-warning">Assign Students</a>
-                                    <a href="{{ route('class.assignTeacher', $value->id) }}"
-                                        class="btn btn-light">Assign Teacher</a>
+                                    <a href="{{ route('class.assignTeacher', $value->id) }}" class="btn btn-info">Assign
+                                        Teacher</a>
                                     <a href="{{ route('class.delete', $value->id) }}" class="btn btn-danger"
                                         onclick="return confirm('Are you sure you want to delete this class? This action cannot be undone.');">
                                         Delete

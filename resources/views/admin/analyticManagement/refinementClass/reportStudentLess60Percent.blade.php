@@ -25,6 +25,32 @@
                         <div class="row">
                             <!-- Academic Year -->
                             <div class="form-group col-md-2">
+                                <label for="academic_year_id">Academic Year (First)</label>
+                                <select class="form-control" id="academic_year_id" name="academic_year_id">
+                                    <option value="" disabled selected>-- Select Year --</option>
+                                    @foreach($academicYears as $year)
+                                    <option value="{{ $year->id }}" {{ request('academic_year_id')==$year->id ?
+                                        'selected' : '' }}>
+                                        {{ $year->academic_year_name }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <!-- Class -->
+                            <div class="form-group col-md-2">
+                                <label for="class_id">Class</label>
+                                <select class="form-control" id="class_id" name="class_id">
+                                    <option value="" disabled selected>-- Select Class --</option>
+                                    @foreach($classes as $class)
+                                    <option value="{{ $class->id }}" {{ request('class_id')==$class->id ? 'selected' :
+                                        '' }}>
+                                        {{ $class->name }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            {{-- <!-- Academic Year -->
+                            <div class="form-group col-md-2">
                                 <label>Academic Year</label>
                                 <select class="form-control" name="academic_year_id">
                                     <option value="">-- Select Year --</option>
@@ -48,7 +74,7 @@
                                     </option>
                                     @endforeach
                                 </select>
-                            </div>
+                            </div> --}}
                             <!-- Exam Type -->
                             <div class="form-group col-md-2">
                                 <label>Exam Type</label>
@@ -80,8 +106,8 @@
                                 <button type="submit" class="btn btn-primary" style="margin-top: 30px">Filter</button>
                                 <a href="{{ route('analytic.reportStudentLess60Percent') }}" class="btn btn-success"
                                     style="margin-top: 30px">Reset</a>
-                                <button id="saveImage" type="button" class="btn btn-info"
-                                    style="margin-top: 30px">Save as Image</button>
+                                <button id="saveImage" type="button" class="btn btn-info" style="margin-top: 30px">Save
+                                    as Image</button>
                             </div>
                         </div>
                     </div>
@@ -151,8 +177,86 @@
         </div>
     </section>
 </div>
+<script>
+    document.getElementById('academic_year_id').addEventListener('change', function () {
+    const academicYearId = this.value;
+    const classDropdown = document.getElementById('class_id');
+    classDropdown.innerHTML = '<option>Loading...</option>';
 
+    if (academicYearId) {
+        fetch("{{ route('teacher.getClasses') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({ academic_year_id: academicYearId })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch classes');
+            }
+            return response.json();
+        })
+        .then(data => {
+            classDropdown.innerHTML = '<option value="">-- Select Class --</option>';
+            data.forEach(classItem => {
+                const option = document.createElement('option');
+                option.value = classItem.id;
+                option.textContent = classItem.name;
+                classDropdown.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error(error);
+            classDropdown.innerHTML = '<option value="">Failed to load classes</option>';
+        });
+    }
+});
 
+document.getElementById('class_id').addEventListener('change', function () {
+    const classId = this.value;
+    const academicYearId = document.getElementById('academic_year_id').value;
+    const studentDropdown = document.getElementById('student_id');
+
+    studentDropdown.innerHTML = '<option>Loading...</option>';
+
+    if (classId && academicYearId) {
+        fetch("{{ route('teacher.getStudents') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({ class_id: classId, academic_year_id: academicYearId })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch students');
+            }
+            return response.json();
+        })
+        .then(data => {
+            studentDropdown.innerHTML = '<option value="">-- Select Student --</option>';
+            if (data.length === 0) {
+                studentDropdown.innerHTML = '<option value="">No students available</option>';
+            } else {
+                data.forEach(student => {
+                    const option = document.createElement('option');
+                    option.value = student.id;
+                    option.textContent = student.full_name;
+                    studentDropdown.appendChild(option);
+                });
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            studentDropdown.innerHTML = '<option value="">Failed to load students</option>';
+        });
+    }
+});
+
+</script>
 
 
 @endsection

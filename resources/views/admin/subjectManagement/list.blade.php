@@ -3,7 +3,7 @@
 @section('content')
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
+    <section class="content-header bg-dark">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
@@ -15,6 +15,18 @@
             </div>
         </div>
     </section>
+
+    {{-- breadcrumb --}}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{{ route('admin.dashboard') }}">Home </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ route('subjectManagement.list') }}">Subject List </a>
+            </li>
+        </ol>
+    </nav>
 
     <!-- Search Section -->
     <section class="content">

@@ -3,15 +3,30 @@
 @section('content')
 <div class="content-wrapper">
     <!-- Content Header -->
-    <section class="content-header">
+    <section class="content-header bg-dark">
         <div class="container-fluid">
             <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1>Assign Teacher to Class: {{ $class->name }}</h1>
+                <div class="col-sm-12">
+                    <h1>Assign Teacher to Class: {{ $class->name }} -  {{ $class->academicYear->academic_year_name ?? 'N/A' }}</h1>
                 </div>
             </div>
         </div>
     </section>
+
+    {{-- breadcrumb --}}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{{ route('admin.dashboard') }}">Home </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ route('class.list') }}"> Class List </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ route('class.assignTeacher', $class->id) }}"> Assign Teacher Class </a>
+            </li>
+        </ol>
+    </nav>
 
     <!-- Assigned Teacher Information -->
     @if ($assignedTeacher)
@@ -55,8 +70,8 @@
                             <select name="teacher_id" id="teacher_id" class="form-control">
                                 <option value="">-- Select a Teacher --</option>
                                 @foreach ($teachers as $teacher)
-                                <option value="{{ $teacher->id }}"
-                                    {{ $assignedTeacher && $assignedTeacher->teacher_id === $teacher->id ? 'selected' : '' }}>
+                                <option value="{{ $teacher->id }}" {{ $assignedTeacher && $assignedTeacher->teacher_id
+                                    === $teacher->id ? 'selected' : '' }}>
                                     {{ $teacher->name }}
                                 </option>
                                 @endforeach

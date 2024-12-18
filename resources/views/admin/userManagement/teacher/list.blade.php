@@ -3,18 +3,33 @@
 @section('content')
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
+    <section class="content-header bg-dark">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
                     <h1>Teacher List</h1>
                 </div>
                 <div class="col-sm-6" style="text-align: right;">
-                    <a class="btn btn-primary" href="{{ route('teacher.add') }}">Add new Teacher</a>
+                    <a href="{{ route('teacher.add') }}" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Add new Teacher
+                    </a>
                 </div>
             </div>
         </div><!-- /.container-fluid -->
     </section>
+
+    {{-- breadcrumb --}}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{{ route('admin.dashboard') }}">Home </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ route('teacher.list') }}">Teacher List </a>
+            </li>
+        </ol>
+    </nav>
+
 
     <section class="content">
         <div class="container-fluid">
@@ -58,10 +73,6 @@
                 </div>
             </div>
         </div>
-
-
-
-
     </section>
 
     <!-- Main content -->
@@ -99,7 +110,8 @@
                                         <td>{{ date('d-m-Y H:i A', strtotime($value->updated_at)) }}</td>
                                         <td><a href="{{ route('teacher.edit', $value->id) }}"
                                                 class="btn btn-primary">Edit</a>
-                                            <a href="{{ route('teacher.classAssignments', $value->id) }}" class="btn btn-warning">View Class</a>
+                                            <a href="{{ route('teacher.classAssignments', $value->id) }}"
+                                                class="btn btn-warning">Assign Subject Class</a>
                                             <!-- Add confirmation on delete button -->
                                             <a href="{{ route('teacher.delete', $value->id) }}" class="btn btn-danger"
                                                 onclick="return confirm('Are you sure you want to delete this teacher? This action cannot be undone.');">

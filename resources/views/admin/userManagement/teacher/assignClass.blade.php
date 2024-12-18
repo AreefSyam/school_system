@@ -3,23 +3,40 @@
 @section('content')
 <div class="content-wrapper">
     <!-- Content Header -->
-    <section class="content-header">
+    <section class="content-header  bg-dark">
         <div class="container-fluid">
             <div class="row align-items-center mb-2">
-                <!-- Back Button -->
+                {{-- <!-- Back Button -->
                 <div class="col-auto">
                     <a href="{{ route('teacher.deleteAssignment', $teacher->id) }}" class="btn btn-success btn-sm">
                         <i class="fas fa-arrow-left"></i> Back
                     </a>
-                </div>
-
+                </div> --}}
                 <!-- Page Title -->
                 <div class="col">
-                    <h1 class="m-0">Assign New Class to Teacher: <strong>{{ $teacher->name }}</strong></h1>
+                    <h1 class="m-0">Assign New Subject Class to Teacher: <strong>{{ $teacher->name }}</strong></h1>
                 </div>
             </div>
         </div>
     </section>
+
+    {{-- breadcrumb --}}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{{ route('admin.dashboard') }}">Home </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ route('teacher.list') }}">Teacher List </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ route('teacher.classAssignments', $teacher->id)}}"> Teaching Assignment </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ route('teacher.assignClass', $teacher->id) }}"> Assign New Subject </a>
+            </li>
+        </ol>
+    </nav>
 
     <!-- Main Content -->
     <section class="content">

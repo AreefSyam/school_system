@@ -112,12 +112,37 @@ class SubjectController extends Controller
         $subject = SubjectModel::findOrFail($id);
 
         $request->validate([
-            'subject_name' => 'required|string|max:255|unique:subject,subject_name,' . $subject->id,
+            'subject_name' => [
+                'required',
+                'string',
+                'max:255',
+                // Custom rule for unique combination
+                function ($attribute, $value, $fail) use ($request, $subject) {
+                    $exists = SubjectModel::where('subject_name', $value)
+                        ->where('syllabus_id', $request->syllabus_id)
+                        ->where('academic_year_id', $request->academic_year_id)
+                        ->where('id', '!=', $subject->id) // Exclude the current record
+                        ->exists();
+
+                    if ($exists) {
+                        $fail('The subject with the same name and syllabus already exists for the selected academic year.');
+                    }
+                },
+            ],
             'syllabus_id' => 'required|exists:syllabus,id',
             'grade_level_id' => 'required|array|min:1',
             'grade_level_id.*' => 'exists:grade_level,id',
-            'academic_year_id' => 'required|exists:academic_year,id' // Ensure the academic year is valid
+            'academic_year_id' => 'required|exists:academic_year,id'
         ]);
+
+
+        // $request->validate([
+        //     'subject_name' => 'required|string|max:255|unique:subject,subject_name,' . $subject->id,
+        //     'syllabus_id' => 'required|exists:syllabus,id',
+        //     'grade_level_id' => 'required|array|min:1',
+        //     'grade_level_id.*' => 'exists:grade_level,id',
+        //     'academic_year_id' => 'required|exists:academic_year,id' // Ensure the academic year is valid
+        // ]);
 
         try {
             $subject->subject_name = trim($request->subject_name);

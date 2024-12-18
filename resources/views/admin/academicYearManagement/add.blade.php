@@ -3,7 +3,7 @@
 @section('content')
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
+    <section class="content-header bg-dark">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
@@ -15,11 +15,24 @@
         </div><!-- /.container-fluid -->
     </section>
 
+    {{-- breadcrumb --}}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{{ route('admin.dashboard') }}">Home </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ route('academicYear.list') }}">Academic Year List </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ route('academicYear.add') }}">Add New Academic Year </a>
+            </li>
+        </ol>
+    </nav>
+
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-6">
                     <!-- general form elements -->
                     <div class="card card-primary">
                         <div class="card-header">
@@ -37,7 +50,7 @@
                                         placeholder="Enter Academic Year Name (e.g., 2023-2024)"
                                         value="{{ old('academic_year_name') }}" required>
                                     @if($errors->has('academic_year_name'))
-                                        <span class="text-danger">{{ $errors->first('academic_year_name') }}</span>
+                                    <span class="text-danger">{{ $errors->first('academic_year_name') }}</span>
                                     @endif
                                 </div>
 
@@ -47,7 +60,7 @@
                                     <input type="date" name="start_date" class="form-control"
                                         value="{{ old('start_date') }}" required>
                                     @if($errors->has('start_date'))
-                                        <span class="text-danger">{{ $errors->first('start_date') }}</span>
+                                    <span class="text-danger">{{ $errors->first('start_date') }}</span>
                                     @endif
                                 </div>
 
@@ -57,7 +70,7 @@
                                     <input type="date" name="end_date" class="form-control"
                                         value="{{ old('end_date') }}" required>
                                     @if($errors->has('end_date'))
-                                        <span class="text-danger">{{ $errors->first('end_date') }}</span>
+                                    <span class="text-danger">{{ $errors->first('end_date') }}</span>
                                     @endif
                                 </div>
 
@@ -66,22 +79,21 @@
                                     <label>Status</label>
                                     <select class="form-control" name="status" required>
                                         <option value="" disabled selected>-- Select Status --</option>
-                                        <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Active</option>
-                                        <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Inactive</option>
+                                        <option value="0" {{ old('status')=='0' ? 'selected' : '' }}>Active</option>
+                                        <option value="1" {{ old('status')=='1' ? 'selected' : '' }}>Inactive</option>
                                     </select>
                                     @if($errors->has('status'))
-                                        <span class="text-danger">{{ $errors->first('status') }}</span>
+                                    <span class="text-danger">{{ $errors->first('status') }}</span>
                                     @endif
                                 </div>
                             </div>
                             <!-- /.card-body -->
-                            <div class="card-footer">
+                            <div class="card-footer text-right">
+                                <a href="{{ route('academicYear.list') }}" class="btn btn-secondary">Cancel</a>
                                 <button type="submit" class="btn btn-primary">Register New Academic Year</button>
                             </div>
                         </form>
                     </div>
-                </div>
-            </div>
         </div>
     </section>
 </div>

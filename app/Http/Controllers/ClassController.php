@@ -108,8 +108,9 @@ class ClassController extends Controller
     public function assignStudents($classId)
     {
         $class = ClassModel::with('students')->findOrFail($classId);
+        $academicYears = AcademicYearModel::all();
         $students = StudentModel::searchStudents(request('student_name'), 10);
-        return view('admin.classManagement.assignStudents', compact('class', 'students'));
+        return view('admin.classManagement.assignStudents', compact('class', 'students', 'academicYears'));
     }
 
     public function postAssignStudents(Request $request, $classId)

@@ -186,7 +186,7 @@
         },
         {
             label: 'Total TH',
-            data: @json($data->pluck('count_D')), // Data for Count TH
+            data: @json($data->pluck('count_TH')), // Data for Count TH
             backgroundColor: 'rgba(153, 102, 255, 0.7)', // Purple for Count TH
 
         },

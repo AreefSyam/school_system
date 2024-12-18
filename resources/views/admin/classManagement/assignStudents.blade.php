@@ -3,15 +3,30 @@
 @section('content')
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
+    <section class="content-header bg-dark">
         <div class="container-fluid">
             <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1>Assign Students to Class: {{ $class->name }}</h1>
+                <div class="col-sm-12">
+                    <h1>Assign Students to Class: {{ $class->name }} - {{ $class->academicYear->academic_year_name ?? 'N/A' }}</h1>
                 </div>
             </div>
         </div><!-- /.container-fluid -->
     </section>
+
+    {{-- breadcrumb --}}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{{ route('admin.dashboard') }}">Home </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ route('class.list') }}"> Class List </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ route('class.assignStudents', $class->id) }}"> Assign Student Class </a>
+            </li>
+        </ol>
+    </nav>
 
     <!-- Assign Students Form with Search and Pagination -->
     <section class="content">
@@ -62,13 +77,6 @@
                                     <tr>
                                         <td>{{ $index + 1 }}</td>
                                         <td>{{ $student->full_name }}</td>
-                                        {{-- <td class="text-center">
-                                            <div class="d-flex justify-content-center align-items-center">
-                                                <input type="checkbox" name="student_ids[]" value="{{ $student->id }}"
-                                                    {{ $class->students->contains($student->id) ? 'checked' : '' }}
-                                                style="transform: scale(1.2);">
-                                            </div>
-                                        </td> --}}
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center align-items-center">
                                                 <input type="checkbox" name="student_ids[]" value="{{ $student->id }}"
@@ -95,7 +103,6 @@
                             <span class="text-danger">{{ $errors->first('student_ids') }}</span>
                             @endif
                         </div>
-
                     </div>
 
                     <!-- Pagination and Submit Button -->
@@ -104,13 +111,8 @@
                         <div>
                             {{ $students->appends(request()->query())->links() }}
                         </div>
-
                         <!-- Action Buttons and Note -->
                         <div class="ml-auto d-flex align-items-center">
-                            <!-- Action Buttons -->
-                            <a href="{{ route('class.list', $class->id) }}"
-                                class="btn btn-secondary btn-sm mr-2">Back to Class
-                                List</a>
                             <button type="submit" class="btn btn-primary btn-sm">Assign Students</button>
                         </div>
                     </div>

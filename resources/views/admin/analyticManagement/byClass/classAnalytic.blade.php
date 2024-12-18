@@ -14,6 +14,7 @@
             </div>
         </div>
     </section>
+    
     <!-- Filters Section -->
     <section class="content">
         <div class="container-fluid">
@@ -37,8 +38,8 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <!-- Class Dropdown -->
 
+                            <!-- Class Dropdown -->
                             <div class="form-group col-md-2">
                                 <label>Class</label>
                                 <select id="class_id" name="class_id" class="form-control" required>

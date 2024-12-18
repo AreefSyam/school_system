@@ -3,7 +3,7 @@
 @section('content')
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
+    <section class="content-header bg-dark">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
@@ -14,11 +14,25 @@
         </div>
     </section>
 
+    {{-- breadcrumb --}}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{{ route('admin.dashboard') }}">Home </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ route('admin.list') }}">Admin List </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ route('admin.edit', $user->id ) }}">Edit Admin </a>
+            </li>
+        </ol>
+    </nav>
+
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-6">
+
                     <div class="card card-primary">
                         <div class="card-header">
                             <h3 class="card-title">Adjust The Detail Below</h3>
@@ -60,20 +74,20 @@
                                             </span>
                                         </div>
                                     </div>
-                                    <small style="color: red">Leave empty if you don't want to change the password</small>
+                                    <small style="color: red">Leave empty if you don't want to change the
+                                        password</small>
                                 </div>
                                 @if($errors->has('password'))
                                 <span class="text-danger">{{ $errors->first('password') }}</span>
                                 @endif
                             </div>
-                            <div class="card-footer">
+                            <div class="card-footer text-right">
                                 <a href="{{ route('admin.list') }}" class="btn btn-secondary">Cancel</a>
                                 <button type="submit" class="btn btn-primary">Save Changes</button>
                             </div>
                         </form>
                     </div>
-                </div>
-            </div>
+
         </div>
     </section>
 </div>

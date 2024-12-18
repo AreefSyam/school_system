@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\ClassModel;
-use App\Models\SubjectModel;
-use Illuminate\Http\Request;
-use App\Models\SyllabusModel;
-use App\Models\GradeLevelModel;
 use App\Models\AcademicYearModel;
-use Illuminate\Support\Facades\DB;
+use App\Models\ClassModel;
+use App\Models\GradeLevelModel;
+use App\Models\SubjectModel;
+use App\Models\SyllabusModel;
 use App\Models\TeacherAssignClasses;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class TeacherController extends Controller
@@ -146,26 +146,67 @@ class TeacherController extends Controller
 
         // Redirect back with a success message
         return redirect()
-            // ->route('teacher.list')
+        // ->route('teacher.list')
             ->route('teacher.classAssignments', $teacher->id)
             ->with('success', 'Class assigned to teacher successfully.');
     }
 
-    public function classAssignments($id)
+    // public function classAssignments($id)
+    // {
+    //     $teacher = User::where('id', $id)->where('role', 'teacher')->firstOrFail();
+
+    //     $classAssignments = TeacherAssignClasses::with([
+    //         'academicYear',
+    //         'class',
+    //         'gradeLevel',
+    //         'subject',
+    //         'syllabus',
+    //     ])->where('user_id', $teacher->id)->get();
+
+    //     return view('admin.userManagement.teacher.teacherClassList', [
+    //         'teacher' => $teacher,
+    //         'classAssignments' => $classAssignments,
+    //     ]);
+    // }
+
+    public function classAssignments($id, Request $request)
     {
         $teacher = User::where('id', $id)->where('role', 'teacher')->firstOrFail();
 
-        $classAssignments = TeacherAssignClasses::with([
+        $query = TeacherAssignClasses::with([
             'academicYear',
             'class',
             'gradeLevel',
             'subject',
             'syllabus',
-        ])->where('user_id', $teacher->id)->get();
+        ])->where('user_id', $teacher->id);
+
+        // Apply filters if provided
+        if ($request->filled('academic_year_id')) {
+            $query->where('academic_year_id', $request->academic_year_id);
+        }
+
+        if ($request->filled('class_id')) {
+            $query->where('class_id', $request->class_id);
+        }
+
+        if ($request->filled('subject_id')) {
+            $query->where('subject_id', $request->subject_id);
+        }
+
+        $classAssignments = $query->get();
+
+        // Fetch options for filters
+        $academicYears = AcademicYearModel::select('id', 'academic_year_name')->get();
+        $classes = ClassModel::select('id', 'name')->get();
+        $subjects = SubjectModel::select('id', 'subject_name')->get();
 
         return view('admin.userManagement.teacher.teacherClassList', [
             'teacher' => $teacher,
             'classAssignments' => $classAssignments,
+            'academicYears' => $academicYears,
+            'classes' => $classes,
+            'subjects' => $subjects,
         ]);
     }
 

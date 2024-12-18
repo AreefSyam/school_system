@@ -3,7 +3,7 @@
 @section('content')
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
+    <section class="content-header bg-dark">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
@@ -15,11 +15,24 @@
         </div><!-- /.container-fluid -->
     </section>
 
+    {{-- breadcrumb --}}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{{ route('admin.dashboard') }}">Home </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ route('examManagement.list') }}">Examination List </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ route('examManagement.edit', $exam->id) }}">Edit Exam: {{ $exam->exam_name }} </a>
+            </li>
+        </ol>
+    </nav>
+
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-6">
                     <!-- General form elements -->
                     <div class="card card-primary">
                         <div class="card-header">
@@ -47,7 +60,8 @@
                                     <select name="exam_type_id" class="form-control" required>
                                         <option value="" disabled>Select Exam Type</option>
                                         @foreach($exam_types as $exam_type)
-                                        <option value="{{ $exam_type->id }}" {{ old('exam_type_id', $exam->exam_type_id) == $exam_type->id ? 'selected' : '' }}>
+                                        <option value="{{ $exam_type->id }}" {{ old('exam_type_id', $exam->exam_type_id)
+                                            == $exam_type->id ? 'selected' : '' }}>
                                             {{ $exam_type->exam_type_name }}
                                         </option>
                                         @endforeach
@@ -63,7 +77,8 @@
                                     <select name="syllabus_id" class="form-control" required>
                                         <option value="" disabled>Select Syllabus</option>
                                         @foreach($syllabuses as $syllabus)
-                                        <option value="{{ $syllabus->id }}" {{ old('syllabus_id', $exam->syllabus_id) == $syllabus->id ? 'selected' : '' }}>
+                                        <option value="{{ $syllabus->id }}" {{ old('syllabus_id', $exam->syllabus_id) ==
+                                            $syllabus->id ? 'selected' : '' }}>
                                             {{ $syllabus->syllabus_name }}
                                         </option>
                                         @endforeach
@@ -79,7 +94,8 @@
                                     <select name="academic_year_id" class="form-control" required>
                                         <option value="" disabled>Select Academic Year</option>
                                         @foreach($academic_years as $year)
-                                        <option value="{{ $year->id }}" {{ old('academic_year_id', $exam->academic_year_id) == $year->id ? 'selected' : '' }}>
+                                        <option value="{{ $year->id }}" {{ old('academic_year_id', $exam->
+                                            academic_year_id) == $year->id ? 'selected' : '' }}>
                                             {{ $year->academic_year_name }}
                                         </option>
                                         @endforeach
@@ -117,8 +133,6 @@
                             </div>
                         </form>
                     </div>
-                </div>
-            </div>
         </div>
     </section>
 </div>
