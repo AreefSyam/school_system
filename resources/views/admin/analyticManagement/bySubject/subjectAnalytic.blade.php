@@ -5,7 +5,7 @@
 
 
     <!-- Content Header -->
-    <section class="content-header">
+    <section class="content-header bg-dark">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
@@ -14,6 +14,18 @@
             </div>
         </div>
     </section>
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{{ route('admin.dashboard') }}">Home</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ route('analytic.subjectPerformance') }}"> Subject Performance </a>
+            </li>
+        </ol>
+    </nav>
+
 
     <!-- Filters Section -->
     <section class="content">
@@ -117,8 +129,8 @@
                                 <button type="submit" class="btn btn-primary" style="margin-top: 30px;">Filter</button>
                                 <a href="{{ route('analytic.subjectPerformance') }}" class="btn btn-success"
                                     style="margin-top: 30px;">Reset</a>
-                                    <button id="saveImage" type="button" class="btn btn-info"
-                                    style="margin-top: 30px">Save as Image</button>
+                                <button id="saveImage" type="button" class="btn btn-info" style="margin-top: 30px">Save
+                                    as Image</button>
                             </div>
                         </div>
                     </div>

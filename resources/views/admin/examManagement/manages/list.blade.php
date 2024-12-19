@@ -112,6 +112,7 @@
                                     <tr>
                                         <th>No.</th>
                                         <th>Examination Name</th>
+                                        <th>Status</th>
                                         <th>Exam Type</th>
                                         <th>Syllabus</th>
                                         <th>Academic Year</th>
@@ -125,6 +126,10 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $value->exam_name }}</td>
+                                        <td
+                                            class="{{ $value->status === 'available' ? 'text-success' : 'text-danger' }}">
+                                            {{ ucfirst($value->status) }}
+                                        </td>
                                         <td>{{ $value->examType->exam_type_name }}</td>
                                         <td>{{ $value->syllabus->syllabus_name }}</td>
                                         <td>{{ $value->academicYear->academic_year_name }}</td>

@@ -115,6 +115,7 @@ namespace App\Models{
  * @property int|null $created_by
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string $status
  * @property-read \App\Models\AcademicYearModel $academicYear
  * @property-read \App\Models\ExamTypeModel $examType
  * @property-read \App\Models\SyllabusModel $syllabus
@@ -129,6 +130,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ExamModel whereExamTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ExamModel whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ExamModel whereStartDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ExamModel whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ExamModel whereSyllabusId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ExamModel whereUpdatedAt($value)
  */
@@ -364,6 +366,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\AcademicYearModel $academicYear
  * @property-read \App\Models\ClassModel $class
+ * @property-read \App\Models\ExamModel|null $exam
  * @property-read \App\Models\ExamTypeModel|null $examType
  * @property-read \App\Models\GradeLevelModel $gradeLevel
  * @property-read \App\Models\SubjectModel $subject

@@ -1,32 +1,84 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Models\AcademicYearModel;
+use App\Models\User;
+use App\Models\ExamModel;
 use App\Models\ClassModel;
 use App\Models\StudentModel;
+use App\Models\AcademicYearModel;
 use App\Models\TeacherAssignClasses;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
+
+    // public function dashboard()
+    // {
+    //     $data['header_title'] = 'Dashboard';
+
+    //     // Check the role of the authenticated user
+    //     if (Auth::user()->role == 'admin') {
+    //         // Fetch summary metrics for admin
+    //         $data['totalStudents'] = StudentModel::count();
+    //         $data['totalTeachers'] = User::where('role', 'teacher')->count();
+    //         $data['totalClasses'] = ClassModel::count();
+    //         return view('admin.dashboard', $data);
+    //     } elseif (Auth::user()->role == 'teacher') {
+    //         $yearId = session('academic_year_id'); // Use session year ID if no parameter provided
+
+    //         if (!$yearId) {
+    //             // If not set, fetch the current academic year and set it in the session
+    //             $currentYear = AcademicYearModel::orderBy('start_date', 'desc')->first();
+
+    //             if ($currentYear) {
+    //                 $yearId = $currentYear->id;
+    //                 session(['academic_year_id' => $yearId]);
+    //             } else {
+    //                 $data['error'] = 'No academic year is currently active.';
+    //                 return view('teacher.dashboard', $data);
+    //             }
+    //         }
+
+    //         // Get current academic year details
+    //         $data['currentAcademicYear'] = AcademicYearModel::find($yearId);
+    //         if (!$data['currentAcademicYear']) {
+    //             $data['error'] = 'No academic year is currently selected.';
+    //         }
+    //         // Fetch additional data for teacher dashboard if necessary
+    //         $teacherId = auth()->id(); // Get logged-in teacher ID
+    //         // Get assigned subjects for the teacher
+    //         $data['assignedSubjects'] = TeacherAssignClasses::with(['subject', 'syllabus', 'class', 'exam'])
+    //             ->where('user_id', $teacherId)
+    //             ->where('academic_year_id', $yearId)
+    //             ->get();
+
+    //         $data['examinations'] = ExamModel::where('academic_year_id', $yearId)
+    //             ->where('syllabus_id', $assignment->syllabus->id)
+    //             ->get();
+
+    //         return view('teacher.dashboard', $data);
+    //     }
+
+    //     // Default fallback, should not occur unless roles are misconfigured
+    //     return redirect()->route('home')->with('error', 'Unauthorized access.');
+    // }
 
     public function dashboard()
     {
         $data['header_title'] = 'Dashboard';
 
         // Check the role of the authenticated user
-        if (Auth::user()->role == 'admin') {
-            // Fetch summary metrics for admin
+        if (Auth::user()->role === 'admin') {
+            // Admin metrics
             $data['totalStudents'] = StudentModel::count();
             $data['totalTeachers'] = User::where('role', 'teacher')->count();
             $data['totalClasses'] = ClassModel::count();
             return view('admin.dashboard', $data);
-        } elseif (Auth::user()->role == 'teacher') {
-            $yearId = session('academic_year_id'); // Use session year ID if no parameter provided
+        } elseif (Auth::user()->role === 'teacher') {
+            $yearId = session('academic_year_id'); // Use session-stored academic year ID
 
             if (!$yearId) {
-                // If not set, fetch the current academic year and set it in the session
+                // Fetch current academic year if not set
                 $currentYear = AcademicYearModel::orderBy('start_date', 'desc')->first();
 
                 if ($currentYear) {
@@ -38,23 +90,33 @@ class DashboardController extends Controller
                 }
             }
 
-            // Get current academic year details
+            // Fetch current academic year details
             $data['currentAcademicYear'] = AcademicYearModel::find($yearId);
+
             if (!$data['currentAcademicYear']) {
                 $data['error'] = 'No academic year is currently selected.';
+                return view('teacher.dashboard', $data);
             }
-            // Fetch additional data for teacher dashboard if necessary
-            $teacherId = auth()->id(); // Get logged-in teacher ID
-            // Get assigned subjects for the teacher
-            $data['assignedSubjects'] = TeacherAssignClasses::with(['subject', 'syllabus', 'class'])
+
+            // Fetch assigned subjects for the teacher
+            $teacherId = auth()->id();
+            $assignedSubjects = TeacherAssignClasses::with(['subject', 'syllabus', 'class'])
                 ->where('user_id', $teacherId)
                 ->where('academic_year_id', $yearId)
                 ->get();
-            // $data['yearId'] = $yearId;
+
+            $data['assignedSubjects'] = $assignedSubjects;
+
+            // Fetch examinations for the current academic year and associated syllabi
+            $syllabusIds = $assignedSubjects->pluck('syllabus_id')->unique();
+            $data['examinations'] = ExamModel::where('academic_year_id', $yearId)
+                ->whereIn('syllabus_id', $syllabusIds)
+                ->get();
+
             return view('teacher.dashboard', $data);
         }
 
-        // Default fallback, should not occur unless roles are misconfigured
+        // Default fallback
         return redirect()->route('home')->with('error', 'Unauthorized access.');
     }
 }

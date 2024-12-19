@@ -41,38 +41,6 @@ class ExamController extends Controller
     }
 
     // Store New Exam
-    // public function postAdd(Request $request)
-    // {
-    //     // Validate inputs
-    //     $request->validate([
-    //         'exam_name' => 'required|string|max:255',
-    //         'exam_type_id' => 'required|exists:exam_type,id',
-    //         'syllabus_id' => 'required|exists:syllabus,id',
-    //         'academic_year_id' => 'required|exists:academic_year,id',
-    //         'start_date' => 'required|date',
-    //         'end_date' => 'required|date|after_or_equal:start_date',
-    //     ]);
-
-    //     try {
-    //         // Create the new exam
-    //         $exam = new ExamModel();
-    //         $exam->exam_name = trim($request->exam_name);
-    //         $exam->exam_type_id = $request->exam_type_id;
-    //         $exam->syllabus_id = $request->syllabus_id;
-    //         $exam->academic_year_id = $request->academic_year_id;
-    //         $exam->start_date = $request->start_date;
-    //         $exam->end_date = $request->end_date;
-    //         $exam->created_by = Auth::user()->id; // Store the creator
-    //         $exam->save();
-
-    //         return redirect()->route('examManagement.list')->with('success', 'New exam successfully created');
-    //     } catch (\Exception $e) {
-    //         Log::error('Error creating exam: ' . $e->getMessage());
-    //         return redirect()->back()->with('error', 'There was an issue creating the exam. Please try again.');
-    //     }
-    // }
-
-    // Store New Exam
     public function postAdd(Request $request)
     {
         // Validate inputs
@@ -83,6 +51,7 @@ class ExamController extends Controller
             'academic_year_id' => 'required|exists:academic_year,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
+            'status' => 'required|in:available,unavailable', // Add status validation
         ]);
 
         // Check if the combination already exists
@@ -106,6 +75,7 @@ class ExamController extends Controller
             $exam->academic_year_id = $request->academic_year_id;
             $exam->start_date = $request->start_date;
             $exam->end_date = $request->end_date;
+            $exam->status = $request->status; // Add status field
             $exam->created_by = Auth::user()->id; // Store the creator
             $exam->save();
 
@@ -146,6 +116,7 @@ class ExamController extends Controller
             'academic_year_id' => 'required|exists:academic_year,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
+            'status' => 'required|in:available,unavailable', // Add status validation
         ]);
 
         try {
@@ -155,6 +126,7 @@ class ExamController extends Controller
             $exam->academic_year_id = $request->academic_year_id;
             $exam->start_date = $request->start_date;
             $exam->end_date = $request->end_date;
+            $exam->status = $request->status; // Save the status field
             $exam->save();
 
             return redirect()->route('examManagement.list')->with('success', 'Exam details updated successfully.');

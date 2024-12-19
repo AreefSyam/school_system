@@ -26,6 +26,7 @@ class StudentSummaryModel extends Model
         'position_in_grade',
         'attendance',
         'exam_id',
+        'summary'
     ];
 
     public function examination()

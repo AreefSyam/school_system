@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use App\Models\SyllabusModel;
-use App\Models\ExamTypeModel;
 use App\Models\AcademicYearModel;
+use App\Models\ExamTypeModel;
+use App\Models\SyllabusModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ExamModel extends Model
 {
@@ -21,7 +21,8 @@ class ExamModel extends Model
         'syllabus_id',
         'exam_name',
         'start_date',
-        'end_date'
+        'end_date',
+        'status',
     ];
 
     // Define the relationship with ExamType

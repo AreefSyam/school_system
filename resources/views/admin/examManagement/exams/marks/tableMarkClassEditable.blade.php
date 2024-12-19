@@ -4,7 +4,7 @@
 <div class="content-wrapper">
 
     <!-- Content Header -->
-    <section class="content-header">
+    <section class="content-header bg-dark">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-12">
@@ -18,7 +18,9 @@
     <!-- breadcrumb -->
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <!-- Home -->
+            <li class="breadcrumb-item">
+                <a href="{{ route('admin.dashboard') }}">Home</a>
+            </li>
             <li class="breadcrumb-item">
                 <a href="{{ route('exams.yearList') }}">Exam Data </a>
             </li>
@@ -39,6 +41,11 @@
                 <a
                     href="{{ route('exams.marks',  ['yearId' => $year->id, 'syllabusId' => $syllabus->id, 'examTypeId' => $examType->id, 'classId' => $class->id, 'examId' => $exam->id]) }}">{{
                     $class->name }}</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a
+                    href="{{ route('exams.marks.edit',  ['yearId' => $year->id, 'syllabusId' => $syllabus->id, 'examTypeId' => $examType->id, 'classId' => $class->id, 'examId' => $exam->id]) }}">
+                    Edit Mark</a>
             </li>
         </ol>
     </nav>
@@ -65,7 +72,8 @@
                                 @foreach($subjects as $subject)
                                 <th>{{ $subject->subject_name }}</th>
                                 @endforeach
-                                <th>Total Attendance</th>
+                                {{-- <th>Total Attendance</th> --}}
+                                <th> Summary</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -98,33 +106,15 @@
                                     </div>
                                 </td>
 
-                                {{-- <td>
-                                    <!-- Input for marks -->
-                                    <input type="number" id="marks-{{ $student->id }}-{{ $subject->subject_id }}"
-                                        name="marks[{{ $student->id }}][{{ $subject->subject_id }}]"
-                                        value="{{ $isAbsent ? '0' : $studentMark->mark ?? '' }}" class="form-control"
-                                        data-original-value="{{ $isAbsent ? '0' : ($studentMark->mark ?? '') }}" min="0"
-                                        max="100">
-
-                                    <!-- Hidden input for status -->
-                                    <input type="hidden" name="status[{{ $student->id }}][{{ $subject->subject_id }}]"
-                                        value="{{ $isAbsent ? 'absent' : 'present' }}">
-
-                                    <!-- Checkbox for absence -->
-                                    <div>
-                                        <input type="checkbox" class="absence-checkbox"
-                                            data-student-id="{{ $student->id }}"
-                                            data-subject-id="{{ $subject->subject_id }}" {{ $isAbsent ? 'checked' : ''
-                                            }}>
-                                        TH
-                                    </div>
-                                </td> --}}
-
                                 @endforeach
                                 <td>
-                                    <input type="number" name="attendance[{{ $student->id }}]"
-                                        value="{{ $studentsSummary->firstWhere('student_id', $student->id)?->attendance ?? '' }}"
-                                        class="form-control" />
+                                    {{-- <input type="number" name="attendance[{{ $student->id }}]"
+                                        value="{{ $studentsSummary->firstWhere('student_id', $student->id)?->summary ?? '' }}"
+                                        class="form-control" /> --}}
+                                    <!-- Text input for performance summary -->
+                                    <textarea name="summary[{{ $student->id }}]" class="form-control" rows="2"
+                                        maxlength="500"
+                                        placeholder="Describe this student's performance here...">{{ $studentsSummary->firstWhere('student_id', $student->id)?->summary ?? '' }}</textarea>
                                 </td>
                             </tr>
                             @endforeach
@@ -236,6 +226,22 @@
 
         input.addEventListener('input', function () {
             this.setCustomValidity(''); // Clear custom messages on input
+        });
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.querySelector('form');
+
+    // Handle form submission
+    form.addEventListener('submit', function () {
+        const textareas = document.querySelectorAll('textarea');
+
+        textareas.forEach(textarea => {
+            // Check if the textarea is empty
+            if (textarea.value.trim() === '') {
+                textarea.value = null; // Set to null if empty
+            }
         });
     });
 });

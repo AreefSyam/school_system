@@ -44,7 +44,6 @@
             </li>
         </ol>
     </nav>
-
     <!-- Individual Marks Table -->
     <section class="content">
         <div class="card">
@@ -60,7 +59,7 @@
                             @foreach ($subjects as $subject)
                             <th>{{ $subject->subject_name }}</th>
                             @endforeach
-                            <th>Attendance</th>
+                            <th>Summary</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -90,10 +89,34 @@
                             </td>
                             @endforeach
 
-                            @php
-                            $summary = $studentsSummary->firstWhere('student_id', $student->id);
+                            {{-- @php
+                            $stdSummary = $studentsSummary->firstWhere('student_id', $student->id);
                             @endphp
-                            <td>{{ $summary->attendance ?? '0' }} days</td>
+                            <td>{{ $stdSummary->summary ?? 'N/A' }}</td> --}}
+                            {{-- <td>
+                                <a href="{{ route('teacher.classTeacher.writeSummary', [$selectedAcademicYear->id, $examType->id,$syllabus->id, $exams2->id , $class->id, $student->id]) }}"
+                                    class="btn btn-warning btn-sm">Write Summary</a>
+                            </td> --}}
+                            <td>
+                                @php
+                                // Find the student's summary if it exists
+                                $studentSummary = $studentsSummary->firstWhere('student_id', $student->id);
+                                @endphp
+
+                                @if ($studentSummary && $studentSummary->summary)
+                                <a href="{{ route('teacher.classTeacher.writeSummary', [$selectedAcademicYear->id, $examType->id, $syllabus->id, $exams2->id, $class->id, $student->id]) }}"
+                                    class="btn btn-success btn-sm">
+                                    <i class="bi bi-check-square"></i>
+                                    Done</a>
+                                @else
+                                <a href="{{ route('teacher.classTeacher.writeSummary', [$selectedAcademicYear->id, $examType->id, $syllabus->id, $exams2->id, $class->id, $student->id]) }}"
+                                    class="btn btn-warning btn-sm">
+                                    <i class="bi bi-pencil-square"></i>
+                                    Write
+                                </a>
+                                @endif
+                            </td>
+
                             <td>
                                 <a href="{{ route('exams.marks.studentReport', [$selectedAcademicYear->id, $examType->id, $syllabus->id, $class->id, $student->id]) }}"
                                     class="btn btn-primary btn-sm" target="_blank">View Report</a>
@@ -121,7 +144,7 @@
                 @if($studentsSummary->isEmpty())
                 <p class="text-center text-danger">No student summaries available for this exam.</p>
                 @else
-                <table class="table table-bordered">
+                <table id="summary-table" class="table table-bordered">
                     <thead>
                         <tr>
                             <th>No.</th>
@@ -129,8 +152,14 @@
                             <th>Total Grade</th>
                             <th>Total Marks</th>
                             <th>Percentage</th>
-                            <th>Position in Class</th>
-                            <th>Position in Grade</th>
+                            {{-- <th>Position in Class</th>
+                            <th>Position in Grade</th> --}}
+                            <th>Position in Class
+                                <i class="bi bi-sort-numeric-up" style="color:green" data-index="5"></i>
+                            </th>
+                            <th>Position in Grade
+                                <i class="bi bi-sort-numeric-up" style="color:green" data-index="6"></i>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -152,4 +181,56 @@
         </div>
     </section>
 </div>
+
+<!-- Sorting Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const table = document.querySelector('#summary-table');
+    const headers = table.querySelectorAll('th');
+    const rows = Array.from(table.querySelectorAll('tbody tr'));
+
+    headers.forEach((header, index) => {
+        // Only allow sorting for "Position in Class" and "Position in Grade"
+        if (index === 5 || index === 6) {
+            header.style.cursor = 'pointer';
+            header.setAttribute('title', 'Click to sort');
+
+            const icon = header.querySelector('i');
+
+            header.addEventListener('click', function () {
+                const ascending = header.dataset.order !== 'asc';
+                header.dataset.order = ascending ? 'asc' : 'desc';
+
+                // Reset all icons
+                document.querySelectorAll('.bi-sort-numeric-up, .bi-sort-numeric-down-alt').forEach(icon => {
+                    icon.classList.remove('bi-sort-numeric-up', 'bi-sort-numeric-down-alt');
+                    icon.classList.add('bi-sort-numeric-up');
+                });
+
+                // Update the current icon
+                if (ascending) {
+                    icon.classList.remove('bi-sort-numeric-down-alt');
+                    icon.classList.add('bi-sort-numeric-up');
+                } else {
+                    icon.classList.remove('bi-sort-numeric-up');
+                    icon.classList.add('bi-sort-numeric-down-alt');
+                }
+
+                // Sort rows
+                rows.sort((rowA, rowB) => {
+                    const cellA = parseInt(rowA.children[index].textContent.trim()) || 0;
+                    const cellB = parseInt(rowB.children[index].textContent.trim()) || 0;
+
+                    return ascending ? cellA - cellB : cellB - cellA;
+                });
+
+                // Update table rows
+                const tbody = table.querySelector('tbody');
+                rows.forEach(row => tbody.appendChild(row));
+            });
+        }
+    });
+});
+
+</script>
 @endsection

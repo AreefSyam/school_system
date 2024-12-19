@@ -24,6 +24,7 @@
                 {{-- Admin Modules --}}
                 @if (Auth::user()->role == 'admin')
                 <li class="nav-header">MENU</li>
+                <!-- Admin Dashboard -->
                 <li class="nav-item">
                     <a href="{{ route('admin.dashboard') }}"
                         class="nav-link @if (Request::segment(2) == 'dashboard') active @endif">
@@ -33,12 +34,72 @@
                         </p>
                     </a>
                 </li>
+                <!-- Academic Year -->
                 <li class="nav-item">
                     <a href=" {{ route('academicYear.list')  }}"
                         class="nav-link @if (Request::segment(2) == 'academicYearManagement') active @endif">
                         <i class="nav-icon far bi bi-calendar-fill active"></i>
                         <p>
                             Academic Year
+                        </p>
+                    </a>
+                </li>
+                <!-- User Management Menu -->
+                <li class="nav-item @if (Request::segment(2) == 'userManagement') menu-is-opening menu-open @endif">
+                    <a href="#" class="nav-link @if (Request::segment(2) == 'userManagement') active @endif">
+                        <i class="nav-icon fas fa-users"></i>
+                        <p>
+                            User
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview" @if (Request::segment(2) !='userManagement' ) style="display: none;"
+                        @endif>
+                        <!-- Admin as a sub-item -->
+                        <li class="nav-item">
+                            <a href="{{ route('admin.list') }}"
+                                class="nav-link @if (Request::segment(3) == 'admin') active @endif">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Manage Admin</p>
+                            </a>
+                        </li>
+                        <!-- Teacher sub-item -->
+                        <li class="nav-item">
+                            <a href="{{ route('teacher.list') }}"
+                                class="nav-link @if (Request::segment(3) == 'teacher') active @endif">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Manage Teacher</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                {{-- Student Management --}}
+                <li class="nav-item">
+                    <a href="{{ route('studentManagement.list') }}"
+                        class="nav-link @if (Request::segment(2) == 'studentManagement') active @endif">
+                        <i class="nav-icon far bi bi-people active"></i>
+                        <p>
+                            Student
+                        </p>
+                    </a>
+                </li>
+                {{-- Subject Management --}}
+                <li class="nav-item">
+                    <a href="{{ route('subjectManagement.list') }}"
+                        class="nav-link @if (Request::segment(2) == 'subjectManagement') active @endif">
+                        <i class="nav-icon far bi bi-book active"></i>
+                        <p>
+                            Subject
+                        </p>
+                    </a>
+                </li>
+                {{-- Class Management --}}
+                <li class="nav-item">
+                    <a href="{{ route('class.list') }}"
+                        class="nav-link @if (Request::segment(2) == 'classManagement') active @endif">
+                        <i class="nav-icon far fa-copy active"></i>
+                        <p>
+                            Class
                         </p>
                     </a>
                 </li>
@@ -71,65 +132,9 @@
                         </li>
                     </ul>
                 </li>
-                <!-- User Management Menu -->
-                <li class="nav-item @if (Request::segment(2) == 'userManagement') menu-is-opening menu-open @endif">
-                    <a href="#" class="nav-link @if (Request::segment(2) == 'userManagement') active @endif">
-                        <i class="nav-icon fas fa-users"></i>
-                        <p>
-                            User
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview" @if (Request::segment(2) !='userManagement' ) style="display: none;"
-                        @endif>
-                        <!-- Admin as a sub-item -->
-                        <li class="nav-item">
-                            <a href="{{ route('admin.list') }}"
-                                class="nav-link @if (Request::segment(3) == 'admin') active @endif">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Manage Admin</p>
-                            </a>
-                        </li>
-                        <!-- Teacher sub-item -->
-                        <li class="nav-item">
-                            <a href="{{ route('teacher.list') }}"
-                                class="nav-link @if (Request::segment(3) == 'teacher') active @endif">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Manage Teacher</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                {{-- Subject Management --}}
-                <li class="nav-item">
-                    <a href="{{ route('subjectManagement.list') }}"
-                        class="nav-link @if (Request::segment(2) == 'subjectManagement') active @endif">
-                        <i class="nav-icon far bi bi-book active"></i>
-                        <p>
-                            Subject
-                        </p>
-                    </a>
-                </li>
-                {{-- Class Management --}}
-                <li class="nav-item">
-                    <a href="{{ route('class.list') }}"
-                        class="nav-link @if (Request::segment(2) == 'classManagement') active @endif">
-                        <i class="nav-icon far fa-copy active"></i>
-                        <p>
-                            Class
-                        </p>
-                    </a>
-                </li>
-                {{-- Student Management --}}
-                <li class="nav-item">
-                    <a href="{{ route('studentManagement.list') }}"
-                        class="nav-link @if (Request::segment(2) == 'studentManagement') active @endif">
-                        <i class="nav-icon far bi bi-people active"></i>
-                        <p>
-                            Student
-                        </p>
-                    </a>
-                </li>
+
+
+
                 {{-- analyticManagement --}}
                 <li class="nav-item @if (Request::segment(2) == 'analyticManagement') menu-is-opening menu-open @endif">
                     <a href="#" class="nav-link @if (Request::segment(2) == 'analyticManagement') active @endif">

@@ -84,6 +84,21 @@
                             @enderror
                         </div>
 
+                        <!-- Status -->
+                        <div class="form-group">
+                            <label>Status <span class="text-danger">*</span></label>
+                            <select class="form-control" name="status" required>
+                                <option value="" disabled selected>-- Select Status --</option>
+                                <option value="available" {{ old('status')=='available' ? 'selected' : '' }}>Available
+                                </option>
+                                <option value="unavailable" {{ old('status')=='unavailable' ? 'selected' : '' }}>
+                                    Unavailable</option>
+                            </select>
+                            @error('status')
+                            <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
                         <!-- Academic Year -->
                         <div class="form-group">
                             <label>Academic Year <span class="text-danger">*</span></label>

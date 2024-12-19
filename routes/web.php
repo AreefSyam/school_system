@@ -194,6 +194,11 @@ Route::group(['middleware' => 'auth'], function () {
     // Route to generate PDF report for a specific student
     // Common PDF Generation Route for Admin and Teacher
     Route::get('/examsReport/{yearId}/{examTypeId}/{syllabusId}/{classId}/{studentId}/report', [MarkController::class, 'generateStudentReport'])->name('exams.marks.studentReport');
+    // Route::get('/examsReport/{yearId}/{examTypeId}/{syllabusId}/{classId}/{examId}/{studentId}/position-in-class', [MarkController::class, 'positionInClassReport'])->name('exams.marks.positionInClass');
+    // Route::get('/examsReport/{yearId}/{examTypeId}/{syllabusId}/{classId}/{examId}/{studentId}/position-in-year-level', [MarkController::class, 'positionInYearLevelReport'])->name('exams.marks.positionInYearLevel');
+
+    Route::get('/examsReport/{yearId}/{examTypeId}/{syllabusId}/{classId}/{examId}/{studentId}/position-in-class', [MarkController::class, 'positionInClassReport'])->name('exams.marks.positionInClass');
+    Route::get('/examsReport/{yearId}/{examTypeId}/{syllabusId}/{classId}/{examId}/{studentId}/position-in-year-level', [MarkController::class, 'positionInYearLevelReport'])->name('exams.marks.positionInYearLevel');
 
     // AJAX Routes for Dynamic Dropdowns
     // Fetch classes dynamically based on the selected academic year
@@ -236,6 +241,17 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/{yearId}/{examTypeId}/syllabus', [ExamController::class, 'syllabusListClassTeacher'])->name('teacher.classTeacher.syllabusList');
             // Step 3: View all student marks for students, action button to get student summary
             Route::get('/{yearId}/{examTypeId}/{syllabusId}/{examId}/class', [MarkController::class, 'classExamReportClassTeacher'])->name('teacher.classTeacher.classExamReport');
+            Route::get('/{yearId}/{examTypeId}/{syllabusId}/{examId}/{classId}/{studentId}/write-summary', [MarkController::class, 'writeSummaryClassTeacher'])->name('teacher.classTeacher.writeSummary');
+            Route::post('/{yearId}/{examTypeId}/{syllabusId}/{examId}/{classId}/{studentId}/write-summary', [MarkController::class, 'writeSummaryClassTeacherPost'])->name('teacher.classTeacher.writeSummary.post');
+            // Add summary routes
+            // Route::get('/{yearId}/{examTypeId}/{syllabusId}/{examId}/{classId}/{studentId}/write-summary',
+            //     [MarkController::class, 'writeSummaryClassTeacher'])
+            //     ->name('teacher.classTeacher.writeSummary');
+
+            // Route::post('/{yearId}/{examTypeId}/{syllabusId}/{examId}/{classId}/{studentId}/write-summary',
+            //     [MarkController::class, 'writeSummaryClassTeacherPost'])
+            //     ->name('teacher.classTeacher.writeSummary.post');
+
         });
 
         Route::prefix('analyticTeacher')->group(function () {

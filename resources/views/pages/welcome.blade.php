@@ -61,6 +61,16 @@
             /* Slightly deeper shadow on hover */
         }
 
+        .features-icons {
+            padding: 0;
+            margin-top: 0;
+            /* Remove top margin to reduce gap from previous elements */
+            margin-bottom: 0;
+            /* Remove bottom margin to reduce gap to next elements */
+        }
+
+
+
         @media (max-width: 768px) {
             .masthead h1 {
                 font-size: 1.5rem;
@@ -120,9 +130,21 @@
 
 
     <!-- Icons Grid-->
+    <section class="text-center bg-light">
+        <div
+            style="position: relative; width: 100%; height: 0; padding-top: 50%; box-shadow: 0 2px 8px 0 rgba(63,69,81,0.16); overflow: hidden; border-radius: 8px; will-change: transform;">
+            <iframe loading="lazy"
+                style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; border: none; padding: 0; margin: 0;"
+                src="https://www.canva.com/design/DAGZwUuSFb8/G7Ser9ZkoFJNutap-8r5eg/view?embed"
+                allowfullscreen="allowfullscreen" allow="fullscreen">
+            </iframe>
+        </div>
+    </section>
+
+
+    <!-- Icons Grid-->
     <section class="features-icons bg-light text-center">
         <div class="container">
-            <h2 class="mb-5" style="color: green"> </h2>
             <h2 class="mb-5" style="color: green; font-weight: bold; font-family: 'Poppins'"> Ikuti Perkembangan Sekolah
                 Kami </h2>
             <div class="row">
@@ -386,6 +408,7 @@
     <!-- Core theme JS-->
     <script src="js/scripts.js"></script>
     <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+
 </body>
 
 </html>

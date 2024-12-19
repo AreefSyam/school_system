@@ -3,7 +3,7 @@
 @section('content')
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
+    <section class="content-header  bg-dark">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-12">
@@ -16,7 +16,9 @@
     {{-- breadcrumb --}}
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <!-- Home -->
+            <li class="breadcrumb-item">
+                <a href="{{ route('admin.dashboard') }}">Home</a>
+            </li>
             <li class="breadcrumb-item">
                 <a href="{{ route('exams.yearList') }}">Exam Data</a>
             </li>

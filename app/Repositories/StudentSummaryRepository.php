@@ -25,6 +25,14 @@ class StudentSummaryRepository
             ->first();
     }
 
+    public function getSummariesAscending($examId, $classId)
+    {
+        return StudentSummaryModel::where('exam_id', $examId)
+            ->where('class_id', $classId)
+            ->orderBy('position_in_grade', 'asc') // Adding order by clause
+            ->get();
+    }
+
     public function upsertSummaries(array $summaries)
     {
         return StudentSummaryModel::upsert($summaries, ['student_id', 'class_id', 'exam_type_id', 'syllabus_id', 'academic_year_id'], ['attendance', 'total_marks', 'percentage', 'total_grade']);

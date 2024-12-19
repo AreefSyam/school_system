@@ -20,6 +20,14 @@ class TeacherAssignClasses extends Model
         'syllabus_id',
     ];
 
+    // to handle assign teacher subject at teacher interface dashboard
+    public function exam()
+    {
+        return $this->hasOne(ExamModel::class, 'syllabus_id', 'syllabus_id')
+            ->whereColumn('academic_year_id', 'academic_year_id')
+            ->whereColumn('exam_type_id', 'exam_type_id');
+    }
+
     // Relationship to Academic Year
     public function academicYear()
     {
