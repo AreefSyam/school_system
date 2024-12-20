@@ -3,7 +3,7 @@
 @section('content')
 <div class="content-wrapper">
     <!-- Content Header -->
-    <section class="content-header">
+    <section class="content-header bg-cyan">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-12">
@@ -17,15 +17,12 @@
     {{-- breadcrumb --}}
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <!-- Home -->
             <li class="breadcrumb-item">
-                <a href="{{ route('teacher.classTeacher.examTypeList', ['yearId' => $currentAcademicYear->id]) }}">
-                    Class Report</a>
+                <a href="{{ route('teacher.dashboard') }}">Home </a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{{ route('teacher.classTeacher.examTypeList', ['yearId' => $currentAcademicYear->id]) }}">
-                    {{ $currentAcademicYear->academic_year_name }}
-                </a>
+                <a href="{{ route('teacher.classTeacher.examTypeList', ['yearId' => $currentAcademicYear->id]) }}">Class
+                    Report {{ $currentAcademicYear->academic_year_name }}</a>
             </li>
             <li class="breadcrumb-item">
                 <a

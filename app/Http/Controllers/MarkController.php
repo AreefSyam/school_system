@@ -300,37 +300,121 @@ class MarkController extends Controller
             ->implode(' '); // Combine into a single string
     }
 
-    //TEACHER
+    // //TEACHER
+    // public function teacherSubjectClassMark($yearId = null, $examTypeId, $syllabusId, $subjectId, $classId)
+    // {
+    //     $teacherId = auth()->id();
+    //     $yearId = session('academic_year_id');
+    //     $selectedAcademicYear = AcademicYearModel::findOrFail($yearId);
+    //     // Fetch main data
+    //     $examType = ExamTypeModel::findOrFail($examTypeId);
+    //     $syllabus = SyllabusModel::findOrFail($syllabusId);
+    //     $subject = SubjectModel::findOrFail($subjectId);
+    //     $class = ClassModel::findOrFail($classId);
+    //     // Fetch marks for the given class, subject, exam type, and academic year
+    //     $marks = MarkModel::with('student') // Load the related student data
+    //         ->where('class_id', $classId)
+    //         ->where('exam_type_id', $examTypeId)
+    //         ->where('syllabus_id', $syllabusId)
+    //         ->where('academic_year_id', $yearId)
+    //         ->where('subject_id', $subjectId)
+    //         ->get();
+    //     // Fetch all students in the class, regardless of marks
+    //     $students = StudentModel::whereHas('classes', fn($query) => $query->where('class_id', $classId))->get();
+    //     // Fetch additional details for the breadcrumb
+    //     $breadcrumbData = [
+    //         'examTypeName' => $examType->exam_type_name,
+    //         'syllabusName' => $syllabus->syllabus_name,
+    //         'className' => $class->name,
+    //         'subjectName' => $subject->subject_name,
+    //     ];
+    //     return view('teacher.examData.marks', compact(
+    //         'marks', 'students', 'yearId', 'selectedAcademicYear', 'examType', 'syllabus', 'subject', 'class', 'breadcrumbData'
+    //     ));
+    // }
+
     public function teacherSubjectClassMark($yearId = null, $examTypeId, $syllabusId, $subjectId, $classId)
     {
         $teacherId = auth()->id();
         $yearId = session('academic_year_id');
+
+        if (!$yearId) {
+            abort(404, 'No academic year is currently active.');
+        }
+
         $selectedAcademicYear = AcademicYearModel::findOrFail($yearId);
+
         // Fetch main data
         $examType = ExamTypeModel::findOrFail($examTypeId);
         $syllabus = SyllabusModel::findOrFail($syllabusId);
         $subject = SubjectModel::findOrFail($subjectId);
         $class = ClassModel::findOrFail($classId);
+
+        // Fetch all students in the class, regardless of marks
+        $students = StudentModel::whereHas('classes', fn($query) => $query->where('class_id', $classId))->get();
+
+        if ($students->isEmpty()) {
+            return redirect()->route('teacher.dashboard')
+                ->with('error', 'No students found in the assigned class.');
+        }
+
         // Fetch marks for the given class, subject, exam type, and academic year
-        $marks = MarkModel::with('student') // Load the related student data
+        $marks = MarkModel::with('student')
             ->where('class_id', $classId)
             ->where('exam_type_id', $examTypeId)
             ->where('syllabus_id', $syllabusId)
             ->where('academic_year_id', $yearId)
             ->where('subject_id', $subjectId)
             ->get();
-        // Fetch all students in the class, regardless of marks
-        $students = StudentModel::whereHas('classes', fn($query) => $query->where('class_id', $classId))->get();
-        // Fetch additional details for the breadcrumb
+
+        // Fetch examinations for the syllabus and class
+        $examinations = ExamModel::where('academic_year_id', $yearId)
+            ->where('syllabus_id', $syllabusId)
+            ->get();
+
+        // Check for available PPT and PAT exams
+        // $examPPT = $examinations->firstWhere(fn($exam) => $exam->exam_type_id === 1 &&
+        //     $exam->syllabus_id === $syllabus->id &&
+        //     $exam->status === 'available');
+
+        // $examPAT = $examinations->firstWhere(fn($exam) => $exam->exam_type_id === 2 &&
+        //     $exam->syllabus_id === $syllabus->id &&
+        //     $exam->status === 'available');
+
+        $examPPT = $this->getAvailableExam($syllabus->id, 1, $yearId);
+        $examPAT = $this->getAvailableExam($syllabus->id, 2, $yearId);
+
+        // Pass additional details for breadcrumb and exam availability
         $breadcrumbData = [
             'examTypeName' => $examType->exam_type_name,
             'syllabusName' => $syllabus->syllabus_name,
             'className' => $class->name,
             'subjectName' => $subject->subject_name,
         ];
+
         return view('teacher.examData.marks', compact(
-            'marks', 'students', 'yearId', 'selectedAcademicYear', 'examType', 'syllabus', 'subject', 'class', 'breadcrumbData'
+            'marks',
+            'students',
+            'yearId',
+            'selectedAcademicYear',
+            'examType',
+            'syllabus',
+            'subject',
+            'class',
+            'breadcrumbData',
+            'examinations',
+            'examPPT',
+            'examPAT'
         ));
+    }
+
+    private function getAvailableExam($syllabusId, $examTypeId, $yearId)
+    {
+        return ExamModel::where('academic_year_id', $yearId)
+            ->where('syllabus_id', $syllabusId)
+            ->where('exam_type_id', $examTypeId)
+            ->where('status', 'available')
+            ->first();
     }
 
     public function teacherSubjectClassMarkEdit(Request $request)
@@ -417,6 +501,8 @@ class MarkController extends Controller
             ->where('syllabus_id', $syllabusId)
             ->first(); // Retrieve the first matching exam
 
+        $exam = $exams2; // Assign single exam object
+
         if (!$syllabus || !$examType || !$exams) {
             return redirect()->back()->with('error', 'Required data (syllabus, exam type, or exam) is not available.');
         }
@@ -472,46 +558,10 @@ class MarkController extends Controller
             'marks',
             'studentsSummary',
             'students',
-            'subjects'
+            'subjects',
+            'exam'
         ));
     }
-
-    // public function writeSummaryClassTeacher($yearId, $examTypeId, $syllabusId, $examId, $classId, $studentId)
-    // {
-    //     // Fetch academic year and check validity
-    //     $selectedAcademicYear = AcademicYearModel::find($yearId);
-    //     if (!$selectedAcademicYear) {
-    //         return redirect()->back()->with('error', 'Invalid academic year.');
-    //     }
-
-    //     // Fetch student
-    //     $student = StudentModel::findOrFail($studentId);
-
-    //     // Fetch marks for the student
-    //     $marks = MarkModel::where('student_id', $studentId)
-    //         ->where('class_id', $classId)
-    //         ->where('exam_type_id', $examTypeId)
-    //         ->where('syllabus_id', $syllabusId)
-    //         ->where('academic_year_id', $yearId)
-    //         ->get();
-
-    //     // Fetch summary for the student
-    //     $studentSummary = StudentSummaryModel::where('exam_id', $examId)
-    //         ->where('class_id', $classId)
-    //         ->where('student_id', $studentId)
-    //         ->first();
-
-    //     return view('teacher.classTeacher.writeSummary', compact(
-    //         'selectedAcademicYear',
-    //         'examTypeId',
-    //         'syllabusId',
-    //         'examId',
-    //         'classId',
-    //         'student',
-    //         'marks',
-    //         'studentSummary'
-    //     ));
-    // }
 
     public function writeSummaryClassTeacher($yearId, $examTypeId, $syllabusId, $examId, $classId, $studentId)
     {
@@ -564,8 +614,6 @@ class MarkController extends Controller
             'summary' => 'nullable|string|max:500',
         ]);
 
-        \Log::info($request->all());
-
         try {
             // Update or create student summary
             StudentSummaryModel::updateOrCreate(
@@ -586,128 +634,12 @@ class MarkController extends Controller
         }
     }
 
-    // //Report
-    // public function positionInClassReport($yearId, $examTypeId, $syllabusId, $classId, $studentId)
-    // {
-    //     // Use the repository to fetch the student summary
-    //     $studentSummary = $this->summaryRepository->getStudentSummary($studentId, $classId, $examTypeId, $syllabusId, $yearId);
-
-    //     // Check if summary exists and fetch positions
-    //     if ($studentSummary) {
-    //         // Assuming the position calculation is done periodically or before this request
-    //         $positionInClass = $studentSummary->position_in_class;
-    //     } else {
-    //         // Handle cases where the summary is not available
-    //         $positionInClass = 'Not available';
-    //     }
-
-    //     // Prepare data for the PDF
-    //     $data = [
-    //         'student' => $studentSummary->student,
-    //         'positionInClass' => $positionInClass,
-    //     ];
-
-    //     // Generate and return the PDF
-    //     $pdf = Pdf::loadView('your.view.path', $data);
-    //     return $pdf->stream('position_in_class_report.pdf');
-    // }
-
-    // public function positionInYearLevelReport($yearId, $examTypeId, $syllabusId, $classId, $studentId)
-    // {
-    //     // Load necessary models
-    //     $student = StudentModel::findOrFail($studentId);
-    //     $year = AcademicYearModel::findOrFail($yearId);
-
-    //     // Assume some method to calculate rank or fetch it if already calculated
-    //     $positionInYearLevel = $this->summaryRepository->getStudentSummary($studentId, $classId, $examTypeId, $syllabusId, $yearId);
-
-    //     // Prepare data for the PDF
-    //     $data = [
-    //         'student' => $student,
-    //         'year' => $year,
-    //         'positionInYearLevel' => $positionInYearLevel,
-    //     ];
-
-    //     // Load the PDF view and pass the data
-    //     $pdf = Pdf::loadView('admin.examManagement.exams.marks.positionInYearLevelReport', $data);
-
-    //     // Return PDF stream
-    //     return $pdf->stream('Position_in_Year_Level_Report_' . $student->full_name . '.pdf');
-    // }
-
-    // public function positionInClassReport($yearId, $examTypeId, $syllabusId, $classId, $studentId)
-    // {
-    //     try {
-    //         $studentSummary = $this->summaryRepository->getStudentSummary($studentId, $classId, $examTypeId, $syllabusId, $yearId);
-
-    //         if (!$studentSummary) {
-    //             abort(404, 'Student summary not available.');
-    //         }
-
-    //         $data = [
-    //             'student' => $studentSummary->student,
-    //             'positionInClass' => $studentSummary->position_in_class ?? 'Not available',
-    //         ];
-
-    //         $pdf = PDF::loadView('admin.examManagement.exams.marks.class-position', $data);
-    //         return $pdf->stream('position_in_class_report_' . $studentSummary->student->full_name . '.pdf');
-    //     } catch (\Exception $e) {
-    //         return redirect()->back()->withErrors('Error generating report: ' . $e->getMessage());
-    //     }
-    // }
-
-    // public function positionInYearLevelReport($yearId, $examTypeId, $syllabusId, $classId, $studentId)
-    // {
-    //     try {
-    //         $student = StudentModel::findOrFail($studentId);
-    //         $year = AcademicYearModel::findOrFail($yearId);
-
-    //         $studentSummary = $this->summaryRepository->getStudentSummary($studentId, $classId, $examTypeId, $syllabusId, $yearId);
-
-    //         if (!$studentSummary) {
-    //             abort(404, 'Student summary not available.');
-    //         }
-
-    //         $data = [
-    //             'student' => $student,
-    //             'year' => $year,
-    //             'positionInYearLevel' => $studentSummary->position_in_year_level ?? 'Not available',
-    //         ];
-
-    //         $pdf = PDF::loadView('admin.examManagement.exams.marks.year-level-position', $data);
-    //         return $pdf->stream('Position_in_Year_Level_Report_' . $student->full_name . '.pdf');
-    //     } catch (\Exception $e) {
-    //         return redirect()->back()->withErrors('Error generating report: ' . $e->getMessage());
-    //     }
-    // }
-
-    // public function positionInClassReport($yearId, $examTypeId, $syllabusId, $classId, $examId, $studentId)
-    // {
-    //     // try {
-    //     $studentSummary = $this->summaryRepository->getStudentSummary($studentId, $classId, $examTypeId, $syllabusId, $yearId, $examId);
-
-    //     if (!$studentSummary) {
-    //         abort(404, 'Student summary not available.');
-    //     }
-
-    //     $data = [
-    //         'student' => $studentSummary->student,
-    //         'positionInClass' => $studentSummary->position_in_class ?? 'Not available',
-    //     ];
-
-    //     $pdf = PDF::loadView('admin.examManagement.exams.marks.class-position', $data);
-    //     return $pdf->stream('position_in_class_report_' . $studentSummary->student->full_name . '.pdf');
-    //     // } catch (\Exception $e) {
-    //     //     return redirect()->back()->withErrors('Error generating report: ' . $e->getMessage());
-    //     // }
-    // }
-
     public function positionInClassReport($yearId, $examTypeId, $syllabusId, $classId, $examId, $studentId)
     {
         try {
             $student = StudentModel::findOrFail($studentId);
             $year = AcademicYearModel::findOrFail($yearId);
-            $class = ClassModel::findOrFail($classId);  // Ensure $class is fetched here
+            $class = ClassModel::findOrFail($classId); // Ensure $class is fetched here
 
             // Fetch all summaries for the class based on the exam ID
             $studentSummaries = $this->summaryRepository->getSummariesAscending($examId, $classId);
@@ -718,9 +650,9 @@ class MarkController extends Controller
 
             // Prepare the data for the view
             $data = [
-                'class' => $class,  // Make sure to include this
+                'class' => $class, // Make sure to include this
                 'year' => $year,
-                'studentSummaries' => $studentSummaries  // Changed from 'studentSummary' to 'studentSummaries'
+                'studentSummaries' => $studentSummaries, // Changed from 'studentSummary' to 'studentSummaries'
             ];
 
             // Load the view with the appropriate data
@@ -736,7 +668,7 @@ class MarkController extends Controller
         try {
             $student = StudentModel::findOrFail($studentId);
             $year = AcademicYearModel::findOrFail($yearId);
-            $class = ClassModel::findOrFail($classId);  // Ensure $class is fetched here
+            $class = ClassModel::findOrFail($classId); // Ensure $class is fetched here
 
             // Fetch all summaries for the class based on the exam ID
             $studentSummaries = $this->summaryRepository->getSummariesAscending($examId, $classId);
@@ -747,9 +679,9 @@ class MarkController extends Controller
 
             // Prepare the data for the view
             $data = [
-                'class' => $class,  // Make sure to include this
+                'class' => $class, // Make sure to include this
                 'year' => $year,
-                'studentSummaries' => $studentSummaries  // Changed from 'studentSummary' to 'studentSummaries'
+                'studentSummaries' => $studentSummaries, // Changed from 'studentSummary' to 'studentSummaries'
             ];
 
             // Load the view with the appropriate data
@@ -759,6 +691,5 @@ class MarkController extends Controller
             return redirect()->back()->withErrors('Error generating report: ' . $e->getMessage());
         }
     }
-
 
 }

@@ -2,13 +2,15 @@
 
 @section('content')
 <div class="content-wrapper">
+
     <!-- Content Header -->
-    <section class="content-header">
+    <section class="content-header bg-cyan">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-12">
-                    <h1>Marks for {{ $examType->exam_type_name }} - {{ $syllabus->syllabus_name }}
-                        ({{ $selectedAcademicYear->academic_year_name }}) : {{ $class->name }}</h1>
+                    <h1><strong> Marks for {{ $examType->exam_type_name }} - {{ $syllabus->syllabus_name }}
+                        ({{ $selectedAcademicYear->academic_year_name }}) : {{ $class->name }} </strong></h1>
+                        <h5> Please enter marks below. </h5>
                 </div>
             </div>
         </div>
@@ -18,13 +20,11 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="{{ route('teacher.classTeacher.examTypeList', ['yearId' => $currentAcademicYear->id]) }}">
-                    Class Report</a>
+                <a href="{{ route('teacher.dashboard') }}">Home </a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{{ route('teacher.classTeacher.examTypeList', ['yearId' => $currentAcademicYear->id]) }}">
-                    {{ $currentAcademicYear->academic_year_name }}
-                </a>
+                <a href="{{ route('teacher.classTeacher.examTypeList', ['yearId' => $currentAcademicYear->id]) }}">Class
+                    Report {{ $currentAcademicYear->academic_year_name }}</a>
             </li>
             <li class="breadcrumb-item">
                 <a
@@ -89,14 +89,6 @@
                             </td>
                             @endforeach
 
-                            {{-- @php
-                            $stdSummary = $studentsSummary->firstWhere('student_id', $student->id);
-                            @endphp
-                            <td>{{ $stdSummary->summary ?? 'N/A' }}</td> --}}
-                            {{-- <td>
-                                <a href="{{ route('teacher.classTeacher.writeSummary', [$selectedAcademicYear->id, $examType->id,$syllabus->id, $exams2->id , $class->id, $student->id]) }}"
-                                    class="btn btn-warning btn-sm">Write Summary</a>
-                            </td> --}}
                             <td>
                                 @php
                                 // Find the student's summary if it exists
@@ -140,6 +132,20 @@
     <!-- Summary Table -->
     <section class="content">
         <div class="card">
+
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2>Student Performance Summary</h2>
+                <!-- Buttons to trigger PDF download -->
+                <div class="ml-auto">
+                    <a href="{{ route('exams.marks.positionInYearLevel', [$selectedAcademicYear->id, 'examTypeId' => $examType->id, $syllabus->id,  $class->id, 'examId' => $exam->id, 'studentId' => $student->id]) }}"
+                        class="btn btn-primary mr-2" target="_blank"><i class="bi bi-download"></i> Position in Class
+                        Report</a>
+                    <a href="{{ route('exams.marks.positionInYearLevel', [$selectedAcademicYear->id, 'examTypeId' => $examType->id, $syllabus->id,  $class->id, 'examId' => $exam->id, 'studentId' => $student->id]) }}"
+                        class="btn btn-secondary" target="_blank"><i class="bi bi-download"></i> Position in Grade
+                        Report</a>
+                </div>
+            </div>
+
             <div class="card-body">
                 @if($studentsSummary->isEmpty())
                 <p class="text-center text-danger">No student summaries available for this exam.</p>

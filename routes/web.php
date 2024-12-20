@@ -194,9 +194,6 @@ Route::group(['middleware' => 'auth'], function () {
     // Route to generate PDF report for a specific student
     // Common PDF Generation Route for Admin and Teacher
     Route::get('/examsReport/{yearId}/{examTypeId}/{syllabusId}/{classId}/{studentId}/report', [MarkController::class, 'generateStudentReport'])->name('exams.marks.studentReport');
-    // Route::get('/examsReport/{yearId}/{examTypeId}/{syllabusId}/{classId}/{examId}/{studentId}/position-in-class', [MarkController::class, 'positionInClassReport'])->name('exams.marks.positionInClass');
-    // Route::get('/examsReport/{yearId}/{examTypeId}/{syllabusId}/{classId}/{examId}/{studentId}/position-in-year-level', [MarkController::class, 'positionInYearLevelReport'])->name('exams.marks.positionInYearLevel');
-
     Route::get('/examsReport/{yearId}/{examTypeId}/{syllabusId}/{classId}/{examId}/{studentId}/position-in-class', [MarkController::class, 'positionInClassReport'])->name('exams.marks.positionInClass');
     Route::get('/examsReport/{yearId}/{examTypeId}/{syllabusId}/{classId}/{examId}/{studentId}/position-in-year-level', [MarkController::class, 'positionInYearLevelReport'])->name('exams.marks.positionInYearLevel');
 
@@ -243,20 +240,9 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/{yearId}/{examTypeId}/{syllabusId}/{examId}/class', [MarkController::class, 'classExamReportClassTeacher'])->name('teacher.classTeacher.classExamReport');
             Route::get('/{yearId}/{examTypeId}/{syllabusId}/{examId}/{classId}/{studentId}/write-summary', [MarkController::class, 'writeSummaryClassTeacher'])->name('teacher.classTeacher.writeSummary');
             Route::post('/{yearId}/{examTypeId}/{syllabusId}/{examId}/{classId}/{studentId}/write-summary', [MarkController::class, 'writeSummaryClassTeacherPost'])->name('teacher.classTeacher.writeSummary.post');
-            // Add summary routes
-            // Route::get('/{yearId}/{examTypeId}/{syllabusId}/{examId}/{classId}/{studentId}/write-summary',
-            //     [MarkController::class, 'writeSummaryClassTeacher'])
-            //     ->name('teacher.classTeacher.writeSummary');
-
-            // Route::post('/{yearId}/{examTypeId}/{syllabusId}/{examId}/{classId}/{studentId}/write-summary',
-            //     [MarkController::class, 'writeSummaryClassTeacherPost'])
-            //     ->name('teacher.classTeacher.writeSummary.post');
-
         });
 
         Route::prefix('analyticTeacher')->group(function () {
-            // bySubject analytics - no subject for teacher
-            // Route::get('/{yearId}/bySubject', [AnalyticController::class, 'subjectPerformanceTeacher'])->name('teacher.analytic.classPerformance');
             // byIndividual student analytics
             Route::get('/byIndividual/{yearId}', [AnalyticController::class, 'individualPerformanceTeacher'])->name('teacher.analytic.individualPerformance');
             // byClass-level analytics

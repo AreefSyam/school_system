@@ -118,14 +118,19 @@
     <section class="content">
         <div class="card">
 
-            <div class="card-header">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <h2>Student Performance Summary</h2>
                 <!-- Buttons to trigger PDF download -->
-                <div class="float-right">
-                    <a href="{{ route('exams.marks.positionInClass', ['yearId' => $year->id, 'examTypeId' => $examType->id, 'syllabusId' => $syllabus->id, 'classId' => $class->id, 'examId' => $exam->id, 'studentId' => $student->id]) }}" class="btn btn-primary" target="_blank">Download Position in Class Report</a>
-                    <a href="{{ route('exams.marks.positionInYearLevel', ['yearId' => $year->id, 'examTypeId' => $examType->id, 'syllabusId' => $syllabus->id, 'classId' => $class->id, 'examId' => $exam->id, 'studentId' => $student->id]) }}" class="btn btn-secondary" target="_blank">Download Position in Year-Level Report</a>
+                <div class="ml-auto">
+                    <a href="{{ route('exams.marks.positionInClass', ['yearId' => $year->id, 'examTypeId' => $examType->id, 'syllabusId' => $syllabus->id, 'classId' => $class->id, 'examId' => $exam->id, 'studentId' => $student->id]) }}"
+                        class="btn btn-primary mr-2" target="_blank"><i class="bi bi-download"></i> Position in Class
+                        Report</a>
+                    <a href="{{ route('exams.marks.positionInYearLevel', ['yearId' => $year->id, 'examTypeId' => $examType->id, 'syllabusId' => $syllabus->id, 'classId' => $class->id, 'examId' => $exam->id, 'studentId' => $student->id]) }}"
+                        class="btn btn-secondary" target="_blank"><i class="bi bi-download"></i> Position in Grade
+                        Report</a>
                 </div>
             </div>
+
 
             <div class="card-body">
                 <table id="summary-table" class="table table-bordered">

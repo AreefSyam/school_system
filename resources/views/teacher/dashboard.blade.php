@@ -1,20 +1,39 @@
 @extends('layouts.app')
 
 @section('content')
-
 <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <div class="content-header">
-        <div class="container-fluid">
-            <!-- Performance Metrics Section -->
-            <div class="row">
-                <div class="col-12 mb-1">
-                    <h4 class="font-weight-bold">Performance Metrics</h4>
-                </div>
 
+    <!-- Content Header -->
+    <section class="content-header bg-cyan">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <h1><strong>Welcome, {{ auth()->user()->name }}</strong></h1>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    {{-- Breadcrumb --}}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{{ route('teacher.dashboard') }}">Home</a>
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Performance Metrics Section -->
+    <section>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 mb-3">
+                    <h4 class="font-weight-bold">Performance:</h4>
+                </div>
                 <!-- Class Performance -->
                 <div class="col-md-6 col-lg-4">
-                    <div class="small-box bg-info">
+                    <div class="small-box bg-secondary">
                         <div class="inner">
                             <h3>Class</h3>
                             <p>Performance</p>
@@ -46,295 +65,86 @@
                     </div>
                 </div>
             </div>
-
-
-            {{--
-            <!-- Subject Section -->
-            <section class="content">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-12 mb-1">
-                            <h4 class="font-weight-bold">Subjects:</h4>
-                        </div>
-                        @if($assignedSubjects->isEmpty())
-                        <p class="text-center text-danger">No subjects are assigned to you for the selected academic
-                            year. Try reloading the page or select an academic year at the header.</p>
-                        @else
-                        @foreach($assignedSubjects as $assignment)
-                        @if($assignment->subject && $assignment->syllabus && $assignment->class)
-                        <div class="col-md-6 col-lg-4">
-                            <div class="small-box bg-danger">
-                                <div class="inner">
-                                    <h3>{{ $assignment->subject->subject_name }}</h3>
-                                    <p>{{ $assignment->class->name }} - {{ $assignment->syllabus->syllabus_name }}</p>
-                                </div>
-                                <div class="icon">
-                                    <i class="ion ion-stats-bars"></i>
-                                </div>
-                                @php
-                                // Check if there is a matching examination with available status and the specific exam
-                                type
-                                $examPPT = $examinations->firstWhere('exam_type_id', 1); // PPT Exam
-                                $examPAT = $examinations->firstWhere('exam_type_id', 2); // PAT Exam
-                                @endphp
-                                @if(($examPPT && $examPPT->status === 'available') || ($examPAT && $examPAT->status ===
-                                'available'))
-                                <div class="d-flex justify-content-around py-2">
-                                    <!-- Button for PPT Exam Type -->
-                                    @if($examPPT && $examPPT->status === 'available')
-                                    <a href="{{ route('teacher.exams.marks', [
-                                'yearId' => $currentAcademicYear->id ?? 0,
-                                'examTypeId' => 1, // PPT Exam Type ID
-                                'syllabusId' => $assignment->syllabus->id,
-                                'subjectId' => $assignment->subject->id,
-                                'classId' => $assignment->class->id
-                            ]) }}" class="btn btn-light">
-                                        Key in Marks - PPT
-                                    </a>
-                                    @endif
-
-                                    <!-- Button for PAT Exam Type -->
-                                    @if($examPAT && $examPAT->status === 'available')
-                                    <a href="{{ route('teacher.exams.marks', [
-                                'yearId' => $currentAcademicYear->id ?? 0,
-                                'examTypeId' => 2, // PAT Exam Type ID
-                                'syllabusId' => $assignment->syllabus->id,
-                                'subjectId' => $assignment->subject->id,
-                                'classId' => $assignment->class->id
-                            ]) }}" class="btn btn-light">
-                                        Key in Marks - PAT
-                                    </a>
-                                    @endif
-                                </div>
-                                @else
-                                <div class="py-2 text-center">
-                                    <span class="badge bg-secondary">Key in Marks Disabled</span>
-                                </div>
-                                @endif
-                            </div>
-                        </div>
-                        @else
-                        <div class="col-12">
-                            <p class="text-danger">Incomplete data for one or more assignments. Please contact admin.
-                            </p>
-                        </div>
-                        @endif
-                        @endforeach
-                        @endif
-                    </div>
-                </div>
-            </section> --}}
-
-            <!-- Subject Section -->
-            <section class="content">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-12 mb-1">
-                            <h4 class="font-weight-bold">Subjects:</h4>
-                        </div>
-                        @if($assignedSubjects->isEmpty())
-                        <p class="text-center text-danger">No subjects are assigned to you for the selected academic
-                            year. Try reloading the page or select an academic year at the header.</p>
-                        @else
-                        @foreach($assignedSubjects as $assignment)
-                        @if($assignment->subject && $assignment->syllabus && $assignment->class)
-                        <div class="col-md-6 col-lg-4">
-                            <div class="small-box bg-teal">
-                                <div class="inner">
-                                    <h3>{{ $assignment->subject->subject_name }}</h3>
-                                    <p>{{ $assignment->class->name }} - {{ $assignment->syllabus->syllabus_name }}</p>
-                                </div>
-                                <div class="icon">
-                                    <i class="ion ion-stats-bars"></i>
-                                </div>
-                                @php
-                                // Check if there is a matching examination with available status and the specific examtype
-                                $examPPT = $examinations->firstWhere(fn($exam) => $exam->exam_type_id === 1 &&
-                                $exam->syllabus_id === $assignment->syllabus->id && $exam->status === 'available');
-                                $examPAT = $examinations->firstWhere(fn($exam) => $exam->exam_type_id === 2 &&
-                                $exam->syllabus_id === $assignment->syllabus->id && $exam->status === 'available');
-                                @endphp
-                                @if($examPPT || $examPAT)
-                                <div class="d-flex justify-content-around py-2">
-                                    <!-- Button for PPT Exam Type -->
-                                    @if($examPPT)
-                                    <a href="{{ route('teacher.exams.marks', [
-                                'yearId' => $currentAcademicYear->id ?? 0,
-                                'examTypeId' => 1, // PPT Exam Type ID
-                                'syllabusId' => $assignment->syllabus->id,
-                                'subjectId' => $assignment->subject->id,
-                                'classId' => $assignment->class->id
-                            ]) }}" class="btn btn-light">
-                                        Key in Marks - PPT
-                                    </a>
-                                    @endif
-
-                                    <!-- Button for PAT Exam Type -->
-                                    @if($examPAT)
-                                    <a href="{{ route('teacher.exams.marks', [
-                                'yearId' => $currentAcademicYear->id ?? 0,
-                                'examTypeId' => 2, // PAT Exam Type ID
-                                'syllabusId' => $assignment->syllabus->id,
-                                'subjectId' => $assignment->subject->id,
-                                'classId' => $assignment->class->id
-                            ]) }}" class="btn btn-light">
-                                        Key in Marks - PAT
-                                    </a>
-                                    @endif
-                                </div>
-                                @else
-                                <div class="py-2 text-center">
-                                    <span class="badge bg-secondary">Key in Marks Disabled</span>
-                                </div>
-                                @endif
-                            </div>
-                        </div>
-                        @else
-                        <div class="col-12">
-                            <p class="text-danger">Incomplete data for one or more assignments. Please contact admin.
-                            </p>
-                        </div>
-                        @endif
-                        @endforeach
-                        @endif
-                    </div>
-                </div>
-            </section>
-
-
-
-
-
         </div>
-    </div>
+    </section>
+
+    <!-- Subject Section -->
+    <section class="content mt-4">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 mb-3">
+                    <h4 class="font-weight-bold">Subjects:</h4>
+                </div>
+
+                @if($assignedSubjects->isEmpty())
+                <p class="text-center text-danger">No subjects are assigned to you for the selected academic year. Try
+                    reloading the page or select an academic year at the header.</p>
+                @else
+                @foreach($assignedSubjects as $assignment)
+                @if($assignment->subject && $assignment->syllabus && $assignment->class)
+                <div class="col-md-6 col-lg-4">
+                    <div class="small-box bg-teal">
+                        <div class="inner">
+                            <h3>{{ $assignment->subject->subject_name }}</h3>
+                            <p>{{ $assignment->class->name }} - {{ $assignment->syllabus->syllabus_name }}</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-stats-bars"></i>
+                        </div>
+                        @php
+                        // Check for available exams
+                        $examPPT = $examinations->firstWhere(fn($exam) => $exam->exam_type_id === 1 &&
+                        $exam->syllabus_id === $assignment->syllabus->id &&
+                        $exam->status === 'available');
+                        $examPAT = $examinations->firstWhere(fn($exam) => $exam->exam_type_id === 2 &&
+                        $exam->syllabus_id === $assignment->syllabus->id &&
+                        $exam->status === 'available');
+                        @endphp
+                        @if($examPPT || $examPAT)
+                        <div class="d-flex justify-content-around py-2">
+                            <!-- Button for PPT Exam Type -->
+                            @if($examPPT)
+                            <a href="{{ route('teacher.exams.marks', [
+                                'yearId' => $currentAcademicYear->id ?? 0,
+                                'examTypeId' => 1,
+                                'syllabusId' => $assignment->syllabus->id,
+                                'subjectId' => $assignment->subject->id,
+                                'classId' => $assignment->class->id
+                            ]) }}" class="btn btn-light">
+                                Key in Marks - PPT
+                            </a>
+                            @endif
+
+                            <!-- Button for PAT Exam Type -->
+                            @if($examPAT)
+                            <a href="{{ route('teacher.exams.marks', [
+                                'yearId' => $currentAcademicYear->id ?? 0,
+                                'examTypeId' => 2,
+                                'syllabusId' => $assignment->syllabus->id,
+                                'subjectId' => $assignment->subject->id,
+                                'classId' => $assignment->class->id
+                            ]) }}" class="btn btn-light">
+                                Key in Marks - PAT
+                            </a>
+                            @endif
+                        </div>
+                        @else
+                        <div class="py-2 text-center">
+                            <span class="badge bg-secondary">Key in Marks Disabled</span>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+                @else
+                <div class="col-12">
+                    <p class="text-danger">Incomplete data for one or more assignments. Please contact admin.</p>
+                </div>
+                @endif
+                @endforeach
+                @endif
+            </div>
+        </div>
+    </section>
+
 </div>
-
 @endsection
-
-
-{{--
-<!-- Subject Section -->
-<section class="content">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12 mb-1">
-                <h4 class="font-weight-bold">Subjects:</h4>
-            </div>
-            @if($assignedSubjects->isEmpty())
-            <p class="text-center text-danger">No subjects are assigned to you for the selected academic
-                year. Try reload the page Or Select an academic year at the header.
-            </p>
-            @else
-            @foreach($assignedSubjects as $assignment)
-            @if($assignment->subject && $assignment->syllabus && $assignment->class)
-            <div class="col-md-6 col-lg-4">
-                <div class="small-box bg-danger">
-                    <div class="inner">
-                        <h3>{{ $assignment->subject->subject_name }}</h3>
-                        <p>{{ $assignment->class->name }} - {{ $assignment->syllabus->syllabus_name }}</p>
-                    </div>
-                    <div class="icon">
-                        <i class="ion ion-stats-bars"></i>
-                    </div>
-                    <div class="d-flex justify-content-around py-2">
-                        <!-- Button for PPT Exam Type -->
-                        <a href="{{ route('teacher.exams.marks', [
-                            'yearId' => $currentAcademicYear->id ?? 0,
-                            'examTypeId' => 1, // PPT Exam Type ID
-                            'syllabusId' => $assignment->syllabus->id,
-                            'subjectId' => $assignment->subject->id,
-                            'classId' => $assignment->class->id
-                        ]) }}" class="btn btn-light">
-                            Key in Marks - PPT
-                        </a>
-
-                        <!-- Button for PAT Exam Type -->
-                        <a href="{{ route('teacher.exams.marks', [
-                            'yearId' => $currentAcademicYear->id ?? 0,
-                            'examTypeId' => 2, // PAT Exam Type ID
-                            'syllabusId' => $assignment->syllabus->id,
-                            'subjectId' => $assignment->subject->id,
-                            'classId' => $assignment->class->id
-                        ]) }}" class="btn btn-light">
-                            Key in Marks - PAT
-                        </a>
-                    </div>
-                </div>
-            </div>
-            @else
-            <div class="col-12">
-                <p class="text-danger">Incomplete data for one or more assignments. Please contact admin.
-                </p>
-            </div>
-            @endif
-            @endforeach
-            @endif
-        </div>
-    </div>
-</section> --}}
-
-{{--
-<!-- Subject Section -->
-<section class="content">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12 mb-1">
-                <h4 class="font-weight-bold">Subjects:</h4>
-            </div>
-            @if($assignedSubjects->isEmpty())
-            <p class="text-center text-danger">No subjects are assigned to you for the selected academic
-                year. Try reloading the page or select an academic year at the header.</p>
-            @else
-            @foreach($assignedSubjects as $assignment)
-            @if($assignment->subject && $assignment->syllabus && $assignment->class)
-            <div class="col-md-6 col-lg-4">
-                <div class="small-box bg-danger">
-                    <div class="inner">
-                        <h3>{{ $assignment->subject->subject_name }}</h3>
-                        <p>{{ $assignment->class->name }} - {{ $assignment->syllabus->syllabus_name }}</p>
-                    </div>
-                    <div class="icon">
-                        <i class="ion ion-stats-bars"></i>
-                    </div>
-                    @if($assignment->exam && $assignment->exam->status === 'available')
-                    <div class="d-flex justify-content-around py-2">
-                        <!-- Button for PPT Exam Type -->
-                        <a href="{{ route('teacher.exams.marks', [
-                                            'yearId' => $currentAcademicYear->id ?? 0,
-                                            'examTypeId' => 1, // PPT Exam Type ID
-                                            'syllabusId' => $assignment->syllabus->id,
-                                            'subjectId' => $assignment->subject->id,
-                                            'classId' => $assignment->class->id
-                                        ]) }}" class="btn btn-light">
-                            Key in Marks - PPT
-                        </a>
-
-                        <!-- Button for PAT Exam Type -->
-                        <a href="{{ route('teacher.exams.marks', [
-                                            'yearId' => $currentAcademicYear->id ?? 0,
-                                            'examTypeId' => 2, // PAT Exam Type ID
-                                            'syllabusId' => $assignment->syllabus->id,
-                                            'subjectId' => $assignment->subject->id,
-                                            'classId' => $assignment->class->id
-                                        ]) }}" class="btn btn-light">
-                            Key in Marks - PAT
-                        </a>
-                    </div>
-                    @else
-                    <div class="py-2 text-center">
-                        <span class="badge bg-secondary">Key in Marks Disabled</span>
-                    </div>
-                    @endif
-                </div>
-            </div>
-            @else
-            <div class="col-12">
-                <p class="text-danger">Incomplete data for one or more assignments. Please contact admin.
-                </p>
-            </div>
-            @endif
-            @endforeach
-            @endif
-        </div>
-    </div>
-</section> --}}

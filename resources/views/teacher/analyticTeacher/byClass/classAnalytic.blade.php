@@ -5,7 +5,7 @@
 <div class="content-wrapper">
 
     <!-- Content Header -->
-    <section class="content-header">
+    <section class="content-header bg-cyan">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-12">
@@ -18,6 +18,18 @@
             </div>
         </div>
     </section>
+
+        {{-- breadcrumb --}}
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{{ route('teacher.dashboard') }}">Home </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{{ route('teacher.analytic.classPerformance', ['yearId' => $currentAcademicYear->id]) }}">Class Performance</a>
+                </li>
+            </ol>
+        </nav>
 
     <!-- Filters Section -->
     <section class="content">

@@ -12,57 +12,6 @@ use Illuminate\Support\Facades\Auth;
 class DashboardController extends Controller
 {
 
-    // public function dashboard()
-    // {
-    //     $data['header_title'] = 'Dashboard';
-
-    //     // Check the role of the authenticated user
-    //     if (Auth::user()->role == 'admin') {
-    //         // Fetch summary metrics for admin
-    //         $data['totalStudents'] = StudentModel::count();
-    //         $data['totalTeachers'] = User::where('role', 'teacher')->count();
-    //         $data['totalClasses'] = ClassModel::count();
-    //         return view('admin.dashboard', $data);
-    //     } elseif (Auth::user()->role == 'teacher') {
-    //         $yearId = session('academic_year_id'); // Use session year ID if no parameter provided
-
-    //         if (!$yearId) {
-    //             // If not set, fetch the current academic year and set it in the session
-    //             $currentYear = AcademicYearModel::orderBy('start_date', 'desc')->first();
-
-    //             if ($currentYear) {
-    //                 $yearId = $currentYear->id;
-    //                 session(['academic_year_id' => $yearId]);
-    //             } else {
-    //                 $data['error'] = 'No academic year is currently active.';
-    //                 return view('teacher.dashboard', $data);
-    //             }
-    //         }
-
-    //         // Get current academic year details
-    //         $data['currentAcademicYear'] = AcademicYearModel::find($yearId);
-    //         if (!$data['currentAcademicYear']) {
-    //             $data['error'] = 'No academic year is currently selected.';
-    //         }
-    //         // Fetch additional data for teacher dashboard if necessary
-    //         $teacherId = auth()->id(); // Get logged-in teacher ID
-    //         // Get assigned subjects for the teacher
-    //         $data['assignedSubjects'] = TeacherAssignClasses::with(['subject', 'syllabus', 'class', 'exam'])
-    //             ->where('user_id', $teacherId)
-    //             ->where('academic_year_id', $yearId)
-    //             ->get();
-
-    //         $data['examinations'] = ExamModel::where('academic_year_id', $yearId)
-    //             ->where('syllabus_id', $assignment->syllabus->id)
-    //             ->get();
-
-    //         return view('teacher.dashboard', $data);
-    //     }
-
-    //     // Default fallback, should not occur unless roles are misconfigured
-    //     return redirect()->route('home')->with('error', 'Unauthorized access.');
-    // }
-
     public function dashboard()
     {
         $data['header_title'] = 'Dashboard';

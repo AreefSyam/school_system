@@ -2,11 +2,13 @@
 
 @section('content')
 <div class="content-wrapper">
-    <section class="content-header">
+    <!-- Content Header -->
+    <section class="content-header bg-cyan">
         <div class="container-fluid">
-            <div class="row mb-2">
+            <div class="row">
                 <div class="col-sm-12">
-                    <h1>Write Summary for {{ $student->full_name }}</h1>
+                    <h1><strong> Write Summary for {{ $student->full_name }} </strong></h1>
+                    <h5> Please enter the summary below. </h5>
                 </div>
             </div>
         </div>
@@ -16,14 +18,11 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="{{ route('teacher.classTeacher.examTypeList', [$selectedAcademicYear->id]) }}">
-                    Class Report
-                </a>
+                <a href="{{ route('teacher.dashboard') }}">Home </a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{{ route('teacher.classTeacher.examTypeList', [$selectedAcademicYear->id]) }}">
-                    {{ $selectedAcademicYear->academic_year_name }}
-                </a>
+                <a href="{{ route('teacher.classTeacher.examTypeList', ['yearId' => $currentAcademicYear->id]) }}">Class
+                    Report {{ $currentAcademicYear->academic_year_name }}</a>
             </li>
             <li class="breadcrumb-item">
                 <a href="{{ route('teacher.classTeacher.syllabusList', [$selectedAcademicYear->id, $examTypeId]) }}">
