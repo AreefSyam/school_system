@@ -92,9 +92,13 @@
                             @php
                             $stdSummary = $studentsSummary->firstWhere('student_id', $student->id);
                             @endphp
-                            <td class="{{ empty($stdSummary->summary) ? 'text-danger' : '' }}">
+                            {{-- <td class="{{ empty($stdSummary->summary) ? 'text-danger' : '' }}">
                                 {{ $stdSummary->summary ?? 'N/A' }}
+                            </td> --}}
+                            <td class="{{ empty($stdSummary->summary) ? 'text-danger' : '' }}">
+                                <span class="text-truncate">{{ $stdSummary->summary ?? 'N/A' }}</span>
                             </td>
+
                             <td>
                                 <a href="{{ route('exams.marks.studentReport', [$year->id, $examType->id, $syllabus->id, $class->id, $student->id]) }}"
                                     class="btn btn-primary btn-sm" target="_blank">View Report</a>
@@ -169,6 +173,16 @@
     @endif
 
 </div>
+
+<style>
+    .text-truncate {
+        display: inline-block;
+        max-width: 60px; /* Adjust based on your layout */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
 
 <!-- Sorting Script -->
 <script>

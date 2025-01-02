@@ -301,38 +301,6 @@ class MarkController extends Controller
     }
 
     // //TEACHER
-    // public function teacherSubjectClassMark($yearId = null, $examTypeId, $syllabusId, $subjectId, $classId)
-    // {
-    //     $teacherId = auth()->id();
-    //     $yearId = session('academic_year_id');
-    //     $selectedAcademicYear = AcademicYearModel::findOrFail($yearId);
-    //     // Fetch main data
-    //     $examType = ExamTypeModel::findOrFail($examTypeId);
-    //     $syllabus = SyllabusModel::findOrFail($syllabusId);
-    //     $subject = SubjectModel::findOrFail($subjectId);
-    //     $class = ClassModel::findOrFail($classId);
-    //     // Fetch marks for the given class, subject, exam type, and academic year
-    //     $marks = MarkModel::with('student') // Load the related student data
-    //         ->where('class_id', $classId)
-    //         ->where('exam_type_id', $examTypeId)
-    //         ->where('syllabus_id', $syllabusId)
-    //         ->where('academic_year_id', $yearId)
-    //         ->where('subject_id', $subjectId)
-    //         ->get();
-    //     // Fetch all students in the class, regardless of marks
-    //     $students = StudentModel::whereHas('classes', fn($query) => $query->where('class_id', $classId))->get();
-    //     // Fetch additional details for the breadcrumb
-    //     $breadcrumbData = [
-    //         'examTypeName' => $examType->exam_type_name,
-    //         'syllabusName' => $syllabus->syllabus_name,
-    //         'className' => $class->name,
-    //         'subjectName' => $subject->subject_name,
-    //     ];
-    //     return view('teacher.examData.marks', compact(
-    //         'marks', 'students', 'yearId', 'selectedAcademicYear', 'examType', 'syllabus', 'subject', 'class', 'breadcrumbData'
-    //     ));
-    // }
-
     public function teacherSubjectClassMark($yearId = null, $examTypeId, $syllabusId, $subjectId, $classId)
     {
         $teacherId = auth()->id();
