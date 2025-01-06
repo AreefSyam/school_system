@@ -171,7 +171,7 @@
                             <a href="{{ route('analytic.reportStudentLess60Percent') }}"
                                 class="nav-link @if (Request::segment(3) == 'refinementClass') active @endif">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Student < 60%</p>
+                                <p>Student < 61%</p>
                             </a>
                         </li>
                     </ul>
@@ -243,7 +243,7 @@
                             <a href="{{ route('teacher.analytic.reportStudentLess60Percent' , ['yearId' => $currentAcademicYear->id ?? '']) }}"
                                 class="nav-link @if (Request::segment(3) == 'refinementClass') active @endif">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Student < 60%</p>
+                                <p>Student < 61%</p>
                             </a>
                         </li>
                     </ul>

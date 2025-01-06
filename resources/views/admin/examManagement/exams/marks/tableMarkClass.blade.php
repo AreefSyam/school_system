@@ -177,7 +177,8 @@
 <style>
     .text-truncate {
         display: inline-block;
-        max-width: 60px; /* Adjust based on your layout */
+        max-width: 60px;
+        /* Adjust based on your layout */
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
