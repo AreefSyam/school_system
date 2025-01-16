@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Route;
 
 // Public (Guest) Routes
 Route::group(['middleware' => 'guest'], function () {
-    // Home or welcome page
 // Home or welcome page
     Route::get('/', function () {
         return view('pages.welcome');
@@ -32,8 +31,8 @@ Route::group(['middleware' => 'guest'], function () {
     Route::post('/login', [AuthController::class, 'postLogin'])->name('login.post');
 
     // Registration routes
-    Route::get('/register', [AuthController::class, 'register'])->name('register');
-    Route::post('/register', [AuthController::class, 'postRegister'])->name('register.post');
+    // Route::get('/register', [AuthController::class, 'register'])->name('register');
+    // Route::post('/register', [AuthController::class, 'postRegister'])->name('register.post');
 
     // Forgot password
     Route::get('/forgot-password', [AuthController::class, 'forgotPassword'])->name('forgot-password');
@@ -86,17 +85,6 @@ Route::group(['middleware' => 'auth'], function () {
             // Delete a specific class assignment for a teacher
             Route::delete('/teacher/class-assignments/{assignmentId}', [TeacherController::class, 'deleteAssignment'])->name('teacher.deleteAssignment');
 
-            // // AJAX Routes for Dynamic Dropdowns
-            // // Fetch classes dynamically based on the selected academic year
-            // Route::post('/teacher/get-classes', [TeacherController::class, 'getClassesByAcademicYear'])->name('teacher.getClasses');
-            // // Fetch subjects dynamically based on the selected academic year
-            // Route::post('/teacher/get-subjects', [TeacherController::class, 'getSubjectsByAcademicYear'])->name('teacher.getSubjects');
-            // // Fetch the syllabus dynamically based on the selected subject
-            // Route::post('/teacher/get-syllabus', [TeacherController::class, 'getSyllabusBySubject'])->name('teacher.getSyllabus');
-            // // Fetch the grade level dynamically based on the selected class
-            // Route::post('/teacher/get-grade-level', [TeacherController::class, 'getGradeLevelByClass'])->name('teacher.getGradeLevel');
-            // // Fetch the student name dynamically based on the selected class
-            // Route::post('/teacher/get-students', [TeacherController::class, 'getStudentsByClass'])->name('teacher.getStudents');
         });
 
         // Class Management

@@ -11,7 +11,6 @@
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <link rel="icon" type="image/x-icon" href="{{ asset('assets\icons\KAJILAH_V2.svg') }}" />
 
-
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{ url('plugins/fontawesome-free/css/all.min.css') }}">
     <!-- icheck bootstrap -->
@@ -63,20 +62,6 @@
                     @error('email')
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
-
-                    {{--
-                    <!-- Password Input -->
-                    <div class="input-group mb-3">
-                        <input type="password" name="password" class="form-control" placeholder="Password" required>
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-lock"></span>
-                            </div>
-                        </div>
-                    </div>
-                    @error('password')
-                    <span class="text-danger">{{ $message }}</span>
-                    @enderror --}}
 
                     <!-- Password Input -->
                     <div class="form-group">

@@ -21,9 +21,6 @@ class AuthController extends Controller
 
     public function login()
     {
-        if (Auth::check()) {
-            return $this->redirectToDashboard();  // Redirect to the correct dashboard if already logged in
-        }
         return view('auth.login');
     }
 
