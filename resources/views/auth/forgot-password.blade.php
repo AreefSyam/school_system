@@ -39,10 +39,10 @@
 </head>
 
 <body class="hold-transition register-page">
-    {{-- Alert Message --}}
     <div class="register-box">
+        <!-- Alert Message -->
         @include('messages.alert')
-        <!-- /.login-logo -->
+        <!-- card forgot password -->
         <div class="card card-outline card-success">
             <!-- Header Title Centered -->
             <div class="card-header text-center">
@@ -52,6 +52,7 @@
                 <p class="login-box-msg">Write your email address</p>
                 <form action="{{ route('forgot-password.post') }}" method="post">
                     @csrf
+
                     <!-- Email Field -->
                     <div class="input-group mb-3">
                         <input type="email" name="email" class="form-control" placeholder="Email"
@@ -66,6 +67,7 @@
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
 
+                    <!-- Button -->
                     <div class="row justify-content-end">
                         <div class="col-4">
                             <a href="{{ route('login') }}" class="btn btn-light btn-block">

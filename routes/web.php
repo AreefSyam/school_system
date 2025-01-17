@@ -30,7 +30,7 @@ Route::group(['middleware' => 'guest'], function () {
     Route::get('/login', [AuthController::class, 'login'])->name('login');
     Route::post('/login', [AuthController::class, 'postLogin'])->name('login.post');
 
-    // Registration routes
+    // Future References: Registration routes (Admin Module: Only Admin Can Add User)
     // Route::get('/register', [AuthController::class, 'register'])->name('register');
     // Route::post('/register', [AuthController::class, 'postRegister'])->name('register.post');
 
@@ -47,8 +47,10 @@ Route::group(['middleware' => 'guest'], function () {
 // Protected Routes for Logged-In Users
 Route::group(['middleware' => 'auth'], function () {
 
+    // User Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+    // User Profile
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
@@ -165,6 +167,7 @@ Route::group(['middleware' => 'auth'], function () {
             });
         });
 
+        // Analytic Management
         Route::prefix('analyticManagement')->group(function () {
             // Subject analytics
             Route::get('/bySubject', [AnalyticController::class, 'subjectPerformance'])->name('analytic.subjectPerformance');
@@ -172,7 +175,6 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/byIndividual', [AnalyticController::class, 'individualPerformance'])->name('analytic.individualPerformance');
             // Class analytics
             Route::get('/byClass', [AnalyticController::class, 'classPerformance'])->name('analytic.classPerformance');
-
             // Report Student Below 60%
             Route::get('/refinementClass', [AnalyticController::class, 'reportStudentLess60Percent'])->name('analytic.reportStudentLess60Percent');
 
@@ -210,12 +212,13 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/{yearId}/types', [ExamController::class, 'examTypeListTeacher'])->name('teacher.exams.examTypeList');
             // Step 2: Display syllabi for the selected exam type
             Route::get('/{yearId}/{examTypeId}/syllabus', [ExamController::class, 'syllabusListTeacher'])->name('teacher.exams.syllabusList');
-            // **New Step: Display subjects for the selected syllabus**
+            // Step 3: Display subjects for the selected syllabus
             Route::get('/{yearId}/{examTypeId}/{syllabusId}/subjects', [ExamController::class, 'subjectListTeacher'])->name('teacher.exams.subjectList');
-            // Step 3: Display classes assigned to the teacher
+            // Step 4: Display classes assigned to the teacher
             Route::get('/{yearId}/{examTypeId}/{syllabusId}/{subjectId}/classes', [ExamController::class, 'classListTeacher'])->name('teacher.exams.classList');
-            // Step 4: View and update marks for students in a specific class
+            // Step 5: View marks for students in a specific class
             Route::get('/{yearId}/{examTypeId}/{syllabusId}/{subjectId}/{classId}/marks', [MarkController::class, 'teacherSubjectClassMark'])->name('teacher.exams.marks');
+            // Update marks for students in a specific class
             Route::put('/{yearId}/{examTypeId}/{syllabusId}/{subjectId}/{classId}/marks', [MarkController::class, 'teacherSubjectClassMarkEdit'])->name('teacher.exams.marks.store');
         });
 

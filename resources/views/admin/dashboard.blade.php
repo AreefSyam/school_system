@@ -15,7 +15,7 @@
         </div>
     </section>
 
-    {{-- breadcrumb --}}
+    <!-- breadcrumb -->
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
@@ -27,11 +27,13 @@
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
+
             <!-- Summary Metrics Section -->
             <div class="row mb-4">
                 <div class="col-12 mb-1">
                     <h4 class="font-weight-bold">Summary Metrics</h4>
                 </div>
+
                 <!-- Total Students -->
                 <div class="col-md-6 col-lg-4">
                     <div class="small-box bg-primary">
@@ -47,6 +49,7 @@
                         </a>
                     </div>
                 </div>
+
                 <!-- Total Teachers -->
                 <div class="col-md-6 col-lg-4">
                     <div class="small-box bg-success">
@@ -136,7 +139,6 @@
             </div>
         </div>
     </section>
-    <!-- /.content -->
 </div>
 
 @endsection

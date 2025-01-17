@@ -396,8 +396,8 @@
                         <li class="list-inline-item"><a href="" class="text-decoration-none text-light">Privacy
                                 Policy</a></li>
                     </ul>
-                    <p class="text-muted small mb-0">&copy; KajiLah - Kafa Kelas Pengajian Islam As-Saadah 2024. All
-                        Rights Reserved.</p>
+                    <strong>Copyright &copy; 2025 KajiLah - Kafa Kelas Pengajian Islam As-Saadah.</strong>
+                    All rights reserved.
                 </div>
             </div>
         </div>
