@@ -21,7 +21,8 @@
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                {{-- Admin Modules --}}
+
+                {{-- 1. Admin Modules --}}
                 @if (Auth::user()->role == 'admin')
                 <li class="nav-header">MENU</li>
                 <!-- Admin Dashboard -->
@@ -44,7 +45,7 @@
                         </p>
                     </a>
                 </li>
-                <!-- User Management Menu -->
+                <!-- User Management -->
                 <li class="nav-item @if (Request::segment(2) == 'userManagement') menu-is-opening menu-open @endif">
                     <a href="#" class="nav-link @if (Request::segment(2) == 'userManagement') active @endif">
                         <i class="nav-icon fas fa-users"></i>
@@ -103,7 +104,7 @@
                         </p>
                     </a>
                 </li>
-                <!-- Examination Menu -->
+                <!-- Examination Management -->
                 <li class="nav-item @if (Request::segment(2) == 'examManagement') menu-is-opening menu-open @endif">
                     <a href="#" class="nav-link @if (Request::segment(2) == 'examManagement') active @endif">
                         <i class="nav-icon far bi bi-journal-bookmark"></i>
@@ -132,10 +133,7 @@
                         </li>
                     </ul>
                 </li>
-
-
-
-                {{-- analyticManagement --}}
+                {{-- Analytic Management --}}
                 <li class="nav-item @if (Request::segment(2) == 'analyticManagement') menu-is-opening menu-open @endif">
                     <a href="#" class="nav-link @if (Request::segment(2) == 'analyticManagement') active @endif">
                         <i class="nav-icon far bi bi-bar-chart-fill"></i>
@@ -178,9 +176,7 @@
                 </li>
                 @endif
 
-
-
-                {{-- Teacher Modules --}}
+                {{-- 2. Teacher Modules --}}
                 @if (Auth::user()->role == 'teacher')
                 <li class="nav-header">MENU</li>
                 <li class="nav-item">
@@ -192,7 +188,6 @@
                         </p>
                     </a>
                 </li>
-
                 {{-- Exam Data --}}
                 <li class="nav-item">
                     <a href="{{ route('teacher.exams.examTypeList', ['yearId' => $currentAcademicYear->id ?? '']) }}"
@@ -203,7 +198,6 @@
                         </p>
                     </a>
                 </li>
-
                 {{-- Teacher Class --}}
                 <li class="nav-item">
                     <a href="{{ route('teacher.classTeacher.examTypeList', ['yearId' => $currentAcademicYear->id ?? '']) }}"
@@ -214,7 +208,7 @@
                         </p>
                     </a>
                 </li>
-                {{-- analyticManagement --}}
+                {{-- Analytic --}}
                 <li class="nav-item @if (Request::segment(2) == 'analyticManagement') menu-is-opening menu-open @endif">
                     <a href="#" class="nav-link @if (Request::segment(2) == 'analyticTeacher') active @endif">
                         <i class="nav-icon far bi bi-bar-chart-fill"></i>
