@@ -11,7 +11,6 @@
                 <img src="{{ url('dist/img/LOGO_KAJILAH.svg')  }}" alt="Logo" class="brand-logo"
                     style="height: 50px; margin-right: 15px;">
             </a>
-
             @endif
 
             @if(auth()->user()->hasRole('teacher'))
@@ -23,10 +22,9 @@
         </li>
     </ul>
 
-
-
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
+
         <!-- Academic Year Selector -->
         @if(auth()->user()->hasRole('teacher'))
         <li class="nav-item dropdown">
@@ -70,8 +68,6 @@
                 </form>
             </div>
         </li>
-
-
     </ul>
 </nav>
 <!-- /.navbar -->
