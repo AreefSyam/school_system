@@ -158,8 +158,6 @@
                             <th>Total Grade</th>
                             <th>Total Marks</th>
                             <th>Percentage</th>
-                            {{-- <th>Position in Class</th>
-                            <th>Position in Grade</th> --}}
                             <th>Position in Class
                                 <i class="bi bi-sort-numeric-up" style="color:green" data-index="5"></i>
                             </th>
