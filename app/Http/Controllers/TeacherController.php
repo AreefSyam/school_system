@@ -288,6 +288,7 @@ class TeacherController extends Controller
     }
 
     /**
+     * Searching Feature
      * Retrieve subjects associated with a specific academic year.
      * Formats the response to include syllabus details.
      *
@@ -315,6 +316,7 @@ class TeacherController extends Controller
     }
 
     /**
+     * Searching Feature
      * Fetch syllabus details for a specific subject.
      * Validates input and ensures the subject and syllabus exist.
      *
@@ -343,6 +345,7 @@ class TeacherController extends Controller
     }
 
     /**
+     * Searching Feature
      * Retrieve the grade level for a specific class.
      * Validates input and ensures the class and grade level exist.
      *
@@ -371,6 +374,7 @@ class TeacherController extends Controller
     }
 
     /**
+     * Searching Feature
      * Retrieve students associated with a specific class and academic year.
      * Validates class and academic year IDs before fetching students.
      *
