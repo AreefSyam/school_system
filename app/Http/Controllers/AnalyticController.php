@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\AcademicYearModel;
@@ -15,19 +14,26 @@ use Illuminate\Support\Facades\DB;
 
 class AnalyticController extends Controller
 {
+    /**
+     * Analyzes and displays subject performance across various metrics.
+     * Filters data based on academic year, syllabus, grade levels, subject, and exam type.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\View\View
+     */
     public function subjectPerformance(Request $request)
     {
         // Fetch filter values from the request
-        $year = $request->input('academic_year_id');
-        $syllabus = $request->input('syllabus_id');
+        $year        = $request->input('academic_year_id');
+        $syllabus    = $request->input('syllabus_id');
         $gradeLevels = $request->input('grade_level_id', []); // Handle grade levels as an array
-        $subject = $request->input('subject_id');
-        $examType = $request->input('exam_type_id');
+        $subject     = $request->input('subject_id');
+        $examType    = $request->input('exam_type_id');
 
-        // Initialize the query builder but fetch data only if filters are applied
+                           // Initialize the query builder but fetch data only if filters are applied
         $data = collect(); // Empty collection by default
 
-        if ($year || $syllabus || !empty($gradeLevels) || $subject || $examType) {
+        if ($year || $syllabus || ! empty($gradeLevels) || $subject || $examType) {
             $data = DB::table('marks as m')
                 ->join('class as c', 'm.class_id', '=', 'c.id')
                 ->join('grade_level as g', 'c.grade_level_id', '=', 'g.id')
@@ -49,7 +55,7 @@ class AnalyticController extends Controller
                 ->when($syllabus, function ($query, $syllabus) {
                     $query->where('m.syllabus_id', $syllabus);
                 })
-                ->when(!empty($gradeLevels), function ($query) use ($gradeLevels) {
+                ->when(! empty($gradeLevels), function ($query) use ($gradeLevels) {
                     $query->whereIn('c.grade_level_id', $gradeLevels); // Use whereIn for multiple grade levels
                 })
                 ->when($subject, function ($query, $subject) {
@@ -62,13 +68,20 @@ class AnalyticController extends Controller
                 ->paginate(6);
         }
 
+        /**
+         * Displays class performance for selected filters.
+         * Filters performance data by academic year, class, exam type, and syllabus.
+         *
+         * @param  \Illuminate\Http\Request  $request
+         * @return \Illuminate\View\View
+         */
         // Fetch all filter options for the dropdowns
-        $subjects = SubjectModel::select('id', 'subject_name')->get();
-        $gradeLevels = GradeLevelModel::select('id', 'grade_name')->get();
+        $subjects      = SubjectModel::select('id', 'subject_name')->get();
+        $gradeLevels   = GradeLevelModel::select('id', 'grade_name')->get();
         $academicYears = AcademicYearModel::select('id', 'academic_year_name')->get();
-        $classes = ClassModel::select('id', 'name')->get();
-        $examTypes = ExamTypeModel::select('id', 'exam_type_name')->get();
-        $syllabuses = SyllabusModel::select('id', 'syllabus_name')->get();
+        $classes       = ClassModel::select('id', 'name')->get();
+        $examTypes     = ExamTypeModel::select('id', 'exam_type_name')->get();
+        $syllabuses    = SyllabusModel::select('id', 'syllabus_name')->get();
 
         // Return the view with the data and filter options
         return view('admin.analyticManagement.bySubject.subjectAnalytic', compact(
@@ -76,28 +89,35 @@ class AnalyticController extends Controller
         ));
     }
 
+    /**
+     * Displays class performance for selected filters.
+     * Filters performance data by academic year, class, exam type, and syllabus.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\View\View
+     */
     public function classPerformance(Request $request)
     {
         // Fetch filter values from the request
-        $year = $request->input('academic_year_id');
-        $class = $request->input('class_id'); // Directly use class_id
+        $year     = $request->input('academic_year_id');
+        $class    = $request->input('class_id'); // Directly use class_id
         $examType = $request->input('exam_type_id');
         $syllabus = $request->input('syllabus_id');
 
-        // Initialize the query builder but fetch data only if filters are applied
+                           // Initialize the query builder but fetch data only if filters are applied
         $data = collect(); // Empty collection by default
 
         // Fetch individual student performance data
         if ($year || $class || $syllabus || $examType) {
             // Query to get performance counts for each subject in the selected class
             $data = DB::table('marks as m')
-                ->join('subject as s', 'm.subject_id', '=', 's.id') // Join subject for subject name
+                ->join('subject as s', 'm.subject_id', '=', 's.id')               // Join subject for subject name
                 ->join('academic_year as ay', 'm.academic_year_id', '=', 'ay.id') // Join academic year for year name
-                ->join('class as c', 'm.class_id', '=', 'c.id') // Join class table for class name
+                ->join('class as c', 'm.class_id', '=', 'c.id')                   // Join class table for class name
                 ->select(
                     'ay.academic_year_name', // Fetch academic year name
-                    'c.name as class_name', // Fetch class name
-                    's.subject_name', // Fetch subject name
+                    'c.name as class_name',  // Fetch class name
+                    's.subject_name',        // Fetch subject name
                     DB::raw('COUNT(CASE WHEN m.mark >= 80 THEN 1 END) as count_A'),
                     DB::raw('COUNT(CASE WHEN m.mark >= 60 AND m.mark < 80 THEN 1 END) as count_B'),
                     DB::raw('COUNT(CASE WHEN m.mark >= 40 AND m.mark < 60 THEN 1 END) as count_C'),
@@ -114,9 +134,9 @@ class AnalyticController extends Controller
 
         // Fetch dropdown data
         $academicYears = AcademicYearModel::select('id', 'academic_year_name')->get();
-        $classes = ClassModel::select('id', 'name')->get();
-        $examTypes = ExamTypeModel::select('id', 'exam_type_name')->get();
-        $syllabuses = SyllabusModel::select('id', 'syllabus_name')->get();
+        $classes       = ClassModel::select('id', 'name')->get();
+        $examTypes     = ExamTypeModel::select('id', 'exam_type_name')->get();
+        $syllabuses    = SyllabusModel::select('id', 'syllabus_name')->get();
 
         // Return the view
         return view('admin.analyticManagement.byClass.classAnalytic', compact(
@@ -124,15 +144,22 @@ class AnalyticController extends Controller
         ));
     }
 
+    /**
+     * Displays individual student performance for selected filters.
+     * Filters performance data by academic year, class, syllabus, and student.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\View\View
+     */
     public function individualPerformance(Request $request)
     {
         // Fetch filter values from the request
-        $year = $request->input('academic_year_id');
-        $class = $request->input('class_id');
+        $year     = $request->input('academic_year_id');
+        $class    = $request->input('class_id');
         $syllabus = $request->input('syllabus_id');
-        $student = $request->input('student_id');
+        $student  = $request->input('student_id');
 
-        // Initialize the query builder but fetch data only if filters are applied
+                           // Initialize the query builder but fetch data only if filters are applied
         $data = collect(); // Empty collection by default
 
         if ($year || $class || $syllabus || $student) {
@@ -186,12 +213,11 @@ class AnalyticController extends Controller
 
         // Fetch dropdown data with applied filters
         $academicYears = AcademicYearModel::select('id', 'academic_year_name')->get();
-        $classes = ClassModel::select('id', 'name')->get();
-        $syllabuses = SyllabusModel::select('id', 'syllabus_name')->get();
-        $students = StudentModel::when($student, function ($query) use ($student) {
+        $classes       = ClassModel::select('id', 'name')->get();
+        $syllabuses    = SyllabusModel::select('id', 'syllabus_name')->get();
+        $students      = StudentModel::when($student, function ($query) use ($student) {
             return $query->where('id', $student); // Filter to the selected student
         })->get();
-        // $subjects = SubjectModel::all();
         // Fetch subjects filtered by the selected syllabus
         $subjects = SubjectModel::when($syllabus, function ($query) use ($syllabus, $year) {
             return $query->where('syllabus_id', $syllabus)
@@ -205,11 +231,28 @@ class AnalyticController extends Controller
         ));
     }
 
+    /**
+     * Retrieves and displays a report of students who scored below 61% in their exams.
+     * Filters the report based on academic year, class, syllabus, and exam type.
+     * Additional details include subjects where students failed or were absent.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\View\View
+     *
+     * Method filters:
+     * - Academic year, class, syllabus, and exam type are used to narrow down the results.
+     * - Only students with a total percentage below 61% are included in the report.
+     * - The report shows subjects where students scored below 40% or were absent.
+     *
+     * Outputs:
+     * - Generates a list of students along with their performance metrics.
+     * - Provides options for filters to help refine the search results.
+     */
     public function reportStudentLess60Percent(Request $request)
     {
         // Fetch filter values from the request
-        $year = $request->input('academic_year_id');
-        $class = $request->input('class_id');
+        $year     = $request->input('academic_year_id');
+        $class    = $request->input('class_id');
         $syllabus = $request->input('syllabus_id');
         $examType = $request->input('exam_type_id');
 
@@ -253,9 +296,9 @@ class AnalyticController extends Controller
 
         // Fetch dropdown options for filters
         $academicYears = AcademicYearModel::select('id', 'academic_year_name')->get();
-        $classes = ClassModel::select('id', 'name')->get();
-        $examTypes = ExamTypeModel::select('id', 'exam_type_name')->get();
-        $syllabuses = SyllabusModel::select('id', 'syllabus_name')->get();
+        $classes       = ClassModel::select('id', 'name')->get();
+        $examTypes     = ExamTypeModel::select('id', 'exam_type_name')->get();
+        $syllabuses    = SyllabusModel::select('id', 'syllabus_name')->get();
 
         // Return the view with the collected data
         return view('admin.analyticManagement.refinementClass.reportStudentLess60Percent', compact(
@@ -263,26 +306,31 @@ class AnalyticController extends Controller
         ));
     }
 
-    // ANALYTIC TEACHER
-    // [User:Teacher] -> Performance ByIndividual
+    /** ANALYTIC TEACHER
+     * [User:Teacher] -> Performance ByIndividual
+     * Fetches individual performance data for the current teacher's class,
+     * filtered by academic year, syllabus, and student.
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\View\View
+     */
     public function individualPerformanceTeacher(Request $request)
     {
-        $teacherId = auth()->id(); // Get Teacher ID
-        $yearId = session('academic_year_id'); // Get the selected academic year from the session
+        $teacherId            = auth()->id();                // Get Teacher ID
+        $yearId               = session('academic_year_id'); // Get the selected academic year from the session
         $selectedAcademicYear = AcademicYearModel::find($yearId);
 
         // Check if the selected academic year is valid
-        if (!$selectedAcademicYear) {
+        if (! $selectedAcademicYear) {
             // Return view with error but stay on the same page
             return view('teacher.analyticTeacher.byIndividual.individualAnalytic', [
-                'error' => 'The selected academic year is invalid or missing.',
-                'data' => collect(), // Empty collection
-                'students' => collect(),
-                'syllabuses' => collect(),
-                'marksByStudent' => [],
-                'chartData' => collect(),
-                'class' => null,
-                'subjects' => collect(),
+                'error'                => 'The selected academic year is invalid or missing.',
+                'data'                 => collect(), // Empty collection
+                'students'             => collect(),
+                'syllabuses'           => collect(),
+                'marksByStudent'       => [],
+                'chartData'            => collect(),
+                'class'                => null,
+                'subjects'             => collect(),
                 'selectedAcademicYear' => null,
             ]);
         }
@@ -294,16 +342,16 @@ class AnalyticController extends Controller
             ->first();
 
         // Handle missing class assignment
-        if (!$classTeacherYear || !$classTeacherYear->class) {
+        if (! $classTeacherYear || ! $classTeacherYear->class) {
             return view('teacher.analyticTeacher.byIndividual.individualAnalytic', [
-                'error' => 'No class is assigned to you for the selected academic year.',
-                'data' => collect(),
-                'students' => collect(),
-                'syllabuses' => collect(),
-                'marksByStudent' => [],
-                'chartData' => collect(),
-                'class' => null,
-                'subjects' => collect(),
+                'error'                => 'No class is assigned to you for the selected academic year.',
+                'data'                 => collect(),
+                'students'             => collect(),
+                'syllabuses'           => collect(),
+                'marksByStudent'       => [],
+                'chartData'            => collect(),
+                'class'                => null,
+                'subjects'             => collect(),
                 'selectedAcademicYear' => $selectedAcademicYear,
             ]);
         }
@@ -312,7 +360,7 @@ class AnalyticController extends Controller
 
         // Fetch filter values from the request
         $syllabusId = $request->input('syllabus_id');
-        $studentId = $request->input('student_id');
+        $studentId  = $request->input('student_id');
 
         // Initialize the query builder but fetch data only if filters are applied
         $data = collect();
@@ -364,7 +412,7 @@ class AnalyticController extends Controller
 
         // Fetch dropdown data
         $syllabuses = SyllabusModel::select('id', 'syllabus_name')->get();
-        $students = StudentModel::whereHas('classes', function ($query) use ($class) {
+        $students   = StudentModel::whereHas('classes', function ($query) use ($class) {
             $query->where('class_id', $class->id);
         })
             ->when($studentId, function ($query) use ($studentId) {
@@ -391,23 +439,29 @@ class AnalyticController extends Controller
         ));
     }
 
-    // [User:Teacher] -> Performance ByCLass
+    /**
+     * [User:Teacher] -> Performance ByCLass
+     * Fetches class performance data for the current teacher's class,
+     * filtered by exam type and syllabus.
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\View\View
+     */
     public function classPerformanceTeacher(Request $request)
     {
-        $teacherId = auth()->id(); // Get Teacher ID
-        $yearId = session('academic_year_id'); // Get the selected academic year from the session
+        $teacherId            = auth()->id();                // Get Teacher ID
+        $yearId               = session('academic_year_id'); // Get the selected academic year from the session
         $selectedAcademicYear = AcademicYearModel::find($yearId);
 
         // Validate academic year existence
-        if (!$selectedAcademicYear) {
+        if (! $selectedAcademicYear) {
             // Return view with error but stay on the same page
             return view('teacher.analyticTeacher.byClass.classAnalytic', [
-                'error' => 'No class is assigned to you for the selected academic year.',
-                'data' => collect(), // Empty collection
-                'examTypes' => collect(),
-                'syllabuses' => collect(),
+                'error'                => 'No class is assigned to you for the selected academic year.',
+                'data'                 => collect(), // Empty collection
+                'examTypes'            => collect(),
+                'syllabuses'           => collect(),
                 'selectedAcademicYear' => $selectedAcademicYear,
-                'class' => null,
+                'class'                => null,
             ]);
         }
 
@@ -418,14 +472,14 @@ class AnalyticController extends Controller
             ->first();
 
         // Handle missing class assignment
-        if (!$classTeacherYear || !$classTeacherYear->class) {
+        if (! $classTeacherYear || ! $classTeacherYear->class) {
             return view('teacher.analyticTeacher.byClass.classAnalytic', [
-                'error' => 'No class is assigned to you for the selected academic year.',
-                'data' => collect(),
-                'examTypes' => collect(),
-                'syllabuses' => collect(),
+                'error'                => 'No class is assigned to you for the selected academic year.',
+                'data'                 => collect(),
+                'examTypes'            => collect(),
+                'syllabuses'           => collect(),
                 'selectedAcademicYear' => $selectedAcademicYear,
-                'class' => null,
+                'class'                => null,
             ]);
         }
 
@@ -440,13 +494,13 @@ class AnalyticController extends Controller
 
         if ($examTypeId || $syllabusId) {
             $data = DB::table('marks as m')
-                ->join('subject as s', 'm.subject_id', '=', 's.id') // Join subject for subject name
+                ->join('subject as s', 'm.subject_id', '=', 's.id')               // Join subject for subject name
                 ->join('academic_year as ay', 'm.academic_year_id', '=', 'ay.id') // Join academic year for year name
-                ->join('class as c', 'm.class_id', '=', 'c.id') // Join class table for class name
+                ->join('class as c', 'm.class_id', '=', 'c.id')                   // Join class table for class name
                 ->select(
                     'ay.academic_year_name', // Fetch academic year name
-                    'c.name as class_name', // Fetch class name
-                    's.subject_name', // Fetch subject name
+                    'c.name as class_name',  // Fetch class name
+                    's.subject_name',        // Fetch subject name
                     DB::raw('COUNT(CASE WHEN m.mark >= 80 THEN 1 END) as count_A'),
                     DB::raw('COUNT(CASE WHEN m.mark >= 60 AND m.mark < 80 THEN 1 END) as count_B'),
                     DB::raw('COUNT(CASE WHEN m.mark >= 40 AND m.mark < 60 THEN 1 END) as count_C'),
@@ -466,7 +520,7 @@ class AnalyticController extends Controller
         }
 
         // Fetch dropdown data
-        $examTypes = ExamTypeModel::select('id', 'exam_type_name')->get();
+        $examTypes  = ExamTypeModel::select('id', 'exam_type_name')->get();
         $syllabuses = SyllabusModel::select('id', 'syllabus_name')->get();
 
         // Return the view with data
@@ -479,22 +533,28 @@ class AnalyticController extends Controller
         ));
     }
 
+    /**
+     * Provides a report of students scoring less than 60% in the current teacher's class,
+     * filtered by exam type and syllabus.
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\View\View
+     */
     public function reportStudentLess60PercentTeacher(Request $request)
     {
-        $teacherId = auth()->id(); // Logged-in teacher's ID
-        $yearId = session('academic_year_id'); // Academic year from session
+        $teacherId            = auth()->id();                // Logged-in teacher's ID
+        $yearId               = session('academic_year_id'); // Academic year from session
         $selectedAcademicYear = AcademicYearModel::find($yearId);
 
         // Initialize the query builder but fetch data only if filters are applied
         $data = collect();
 
         // Validate academic year existence
-        if (!$selectedAcademicYear) {
+        if (! $selectedAcademicYear) {
             return view('teacher.analyticTeacher.refinementClass.reportStudentLess60Percent', [
-                'error' => 'No academic year is currently selected.',
-                'data' => collect(), // Empty collection
-                'examTypes' => collect(),
-                'syllabuses' => collect(),
+                'error'                => 'No academic year is currently selected.',
+                'data'                 => collect(), // Empty collection
+                'examTypes'            => collect(),
+                'syllabuses'           => collect(),
                 'selectedAcademicYear' => null,
             ]);
         }
@@ -505,12 +565,12 @@ class AnalyticController extends Controller
             ->where('academic_year_id', $yearId)
             ->first();
 
-        if (!$classTeacherYear || !$classTeacherYear->class) {
+        if (! $classTeacherYear || ! $classTeacherYear->class) {
             return view('teacher.analyticTeacher.refinementClass.reportStudentLess60Percent', [
-                'error' => 'No class is assigned to you for the selected academic year.',
-                'data' => collect(),
-                'examTypes' => collect(),
-                'syllabuses' => collect(),
+                'error'                => 'No class is assigned to you for the selected academic year.',
+                'data'                 => collect(),
+                'examTypes'            => collect(),
+                'syllabuses'           => collect(),
                 'selectedAcademicYear' => $selectedAcademicYear,
             ]);
         }
@@ -521,7 +581,6 @@ class AnalyticController extends Controller
         $examTypeId = $request->input('exam_type_id');
         $syllabusId = $request->input('syllabus_id');
 
-        // Query for students below 61%
         // Query for students below 61% only if filters are applied
         if ($examTypeId || $syllabusId) {
             $data = DB::table('students_summary as ss')
@@ -555,7 +614,7 @@ class AnalyticController extends Controller
                 ->get();
         }
 
-        $examTypes = ExamTypeModel::select('id', 'exam_type_name')->get();
+        $examTypes  = ExamTypeModel::select('id', 'exam_type_name')->get();
         $syllabuses = SyllabusModel::select('id', 'syllabus_name')->get();
 
         return view('teacher.analyticTeacher.refinementClass.reportStudentLess60Percent', compact(
