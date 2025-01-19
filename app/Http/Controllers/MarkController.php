@@ -138,8 +138,6 @@ class MarkController extends Controller
 
     public function updateAll(Request $request)
     {
-        // \Log::info('Marks:', $request->input('marks'));
-        // \Log::info('Status:', $request->input('status'));
 
         // Validate request input
         $request->validate([
@@ -156,8 +154,6 @@ class MarkController extends Controller
             'status' => 'array',
             'status.*.*' => 'in:present,absent',
         ]);
-
-        // \Log::info('Validated:', $validated);
 
         // Extract data
         $marks = $request->input('marks', []);
@@ -254,11 +250,6 @@ class MarkController extends Controller
                     'status' => $status,
                 ]
             );
-            // if ($markRecord->wasRecentlyCreated || $markRecord->wasChanged()) {
-            //     \Log::info("Mark successfully updated for student {$studentId}, subject {$subjectId}");
-            // } else {
-            //     \Log::error("Failed to update mark for student {$studentId}, subject {$subjectId}");
-            // }
             if ($status !== 'absent') {
                 $totalMarks += $finalMark;
             }
@@ -341,14 +332,6 @@ class MarkController extends Controller
             ->get();
 
         // Check for available PPT and PAT exams
-        // $examPPT = $examinations->firstWhere(fn($exam) => $exam->exam_type_id === 1 &&
-        //     $exam->syllabus_id === $syllabus->id &&
-        //     $exam->status === 'available');
-
-        // $examPAT = $examinations->firstWhere(fn($exam) => $exam->exam_type_id === 2 &&
-        //     $exam->syllabus_id === $syllabus->id &&
-        //     $exam->status === 'available');
-
         $examPPT = $this->getAvailableExam($syllabus->id, 1, $yearId);
         $examPAT = $this->getAvailableExam($syllabus->id, 2, $yearId);
 
