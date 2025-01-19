@@ -17,17 +17,19 @@
                 <form action="{{ route('profile.update') }}" method="POST">
                     @csrf
                     <div class="card-body">
+                        <!-- Name Input -->
                         <div class="form-group">
                             <label for="name">Name</label>
                             <input type="text" id="name" name="name" value="{{ old('name', $user->name) }}"
                                 class="form-control" required>
                         </div>
+                        <!-- Email Input -->
                         <div class="form-group">
                             <label for="email">Email</label>
                             <input type="email" id="email" name="email" value="{{ old('email', $user->email) }}"
                                 class="form-control" required>
                         </div>
-                        <!-- Password (optional) -->
+                        <!-- Password Input -->
                         <div class="form-group">
                             <label>Password</label>
                             <div class="input-group">
@@ -44,7 +46,7 @@
                         @if($errors->has('password'))
                         <span class="text-danger">{{ $errors->first('password') }}</span>
                         @endif
-                        <!-- Confirm Password (optional) -->
+                        <!-- Confirm Password Input -->
                         <div class="form-group">
                             <label>Confirm Password</label>
                             <div class="input-group">
@@ -60,6 +62,7 @@
                         @if($errors->has('password'))
                         <span class="text-danger">{{ $errors->first('password') }}</span>
                         @endif
+                        <!-- Action Buttons -->
                         <div class="d-flex justify-content-end mt-3">
                             <a href="{{ route('profile.show') }}" class="btn btn-secondary col-md-1 me-2">Cancel</a>
                             <button type="submit" class="btn btn-success col-md-1">Save</button>
