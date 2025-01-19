@@ -33,11 +33,6 @@ class StudentSummaryRepository
             ->get();
     }
 
-    public function upsertSummaries(array $summaries)
-    {
-        return StudentSummaryModel::upsert($summaries, ['student_id', 'class_id', 'exam_type_id', 'syllabus_id', 'academic_year_id'], ['attendance', 'total_marks', 'percentage', 'total_grade']);
-    }
-
     public function calculatePositions($classId, $examTypeId, $syllabusId, $academicYearId, $gradeLevelId)
     {
         // Fetch summaries for position in class
