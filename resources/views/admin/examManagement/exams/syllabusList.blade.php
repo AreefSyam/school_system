@@ -11,7 +11,6 @@
                     </h1>
                 </div>
             </div>
-            {{-- <a>Data Exam / {{ $year->academic_year_name }} / {{ $examType->exam_type_name }}</a> --}}
         </div>
     </section>
 

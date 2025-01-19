@@ -10,7 +10,7 @@
                     <h1>Select Examination Year</h1>
                 </div>
             </div>
-        </div><!-- /.container-fluid -->
+        </div>
     </section>
 
     {{-- breadcrumb --}}
@@ -24,7 +24,6 @@
             </li>
         </ol>
     </nav>
-
 
     <!-- Main content -->
     <section class="content">

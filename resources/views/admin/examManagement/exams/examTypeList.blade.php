@@ -10,7 +10,6 @@
                     <h1> Select Exam Types for {{ $year->academic_year_name }}</h1>
                 </div>
             </div>
-            {{-- <a>Data Exam / {{ $year->academic_year_name }}  </a> --}}
         </div>
     </section>
 

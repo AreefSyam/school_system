@@ -11,8 +11,6 @@
                         $year->academic_year_name }}] </h1>
                 </div>
             </div>
-            {{-- <a>Data Exam / {{ $year->academic_year_name }} / {{ $examType->exam_type_name }} / {{
-                $syllabus->syllabus_name }}</a> --}}
         </div>
     </section>
 
@@ -51,10 +49,6 @@
                         <div class="inner">
                             <h3>{{ $class->name }}</h3>
                         </div>
-                        {{-- <a href="{{ route('exams.marks', ['yearId' => $year->id, 'examTypeId' => $examType->id, 'syllabusId' => $syllabus->id, 'classId' => $class->id]) }}"
-                            class="small-box-footer">
-                            View Marks <i class="fas fa-arrow-circle-right"></i>
-                        </a> --}}
                         <a href="{{ route('exams.marks', ['yearId' => $year->id, 'examTypeId' => $examType->id, 'syllabusId' => $syllabus->id, 'classId' => $class->id, 'examId' => $exam->id]) }}"
                             class="small-box-footer">
                             View Marks <i class="fas fa-arrow-circle-right"></i>
