@@ -3,7 +3,7 @@
 @section('content')
 <div class="content-wrapper">
 
-    <!-- Content Header -->
+    <!-- Content Header with dynamic titles -->
     <section class="content-header bg-dark">
         <div class="container-fluid">
             <div class="row">
@@ -15,7 +15,7 @@
         </div>
     </section>
 
-    <!-- breadcrumb -->
+    <!-- Breadcrumb navigation -->
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
@@ -50,6 +50,7 @@
         </ol>
     </nav>
 
+    <!-- Main content section for form -->
     <section class="content">
         <div class="card">
             <div class="card-body">
@@ -65,6 +66,7 @@
                     <input type="hidden" name="exam_type_id" value="{{ $examType->id }}">
                     <input type="hidden" name="academic_year_id" value="{{ $year->id }}">
 
+                    <!-- Table for inputting marks -->
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -72,7 +74,6 @@
                                 @foreach($subjects as $subject)
                                 <th>{{ $subject->subject_name }}</th>
                                 @endforeach
-                                {{-- <th>Total Attendance</th> --}}
                                 <th> Summary</th>
                             </tr>
                         </thead>
@@ -85,18 +86,19 @@
                                 $studentMark = $marks->get($student->id)?->firstWhere('subject_id',
                                 $subject->subject_id);
                                 $isAbsent = $studentMark ? $studentMark->status === 'absent' : false;
-                                // Ensure $studentMark is not null before accessing status
-
                                 @endphp
                                 <td>
+                                    <!-- Input field for marks, disable if absent -->
                                     <input type="number" id="marks-{{ $student->id }}-{{ $subject->subject_id }}"
                                         name="marks[{{ $student->id }}][{{ $subject->subject_id }}]"
                                         value="{{ $isAbsent ? '0' : $studentMark->mark ?? '' }}" class="form-control"
                                         min="0" max="100" {{ $isAbsent ? '' : '' }} required>
 
+                                    <!-- Hidden input to manage presence status -->
                                     <input type="hidden" name="status[{{ $student->id }}][{{ $subject->subject_id }}]"
                                         value="{{ $isAbsent ? 'absent' : 'present' }}">
 
+                                    <!-- Checkbox to toggle absence -->
                                     <div>
                                         <input type="checkbox" class="absence-checkbox"
                                             data-student-id="{{ $student->id }}"
@@ -108,10 +110,7 @@
 
                                 @endforeach
                                 <td>
-                                    {{-- <input type="number" name="attendance[{{ $student->id }}]"
-                                        value="{{ $studentsSummary->firstWhere('student_id', $student->id)?->summary ?? '' }}"
-                                        class="form-control" /> --}}
-                                    <!-- Text input for performance summary -->
+                                    <!-- Textarea for additional student performance summary -->
                                     <textarea name="summary[{{ $student->id }}]" class="form-control" rows="2"
                                         maxlength="500"
                                         placeholder="Describe this student's performance here...">{{ $studentsSummary->firstWhere('student_id', $student->id)?->summary ?? '' }}</textarea>
@@ -121,7 +120,7 @@
                         </tbody>
                     </table>
 
-                    <!-- Buttons -->
+                    <!-- Action buttons for form submission and cancellation -->
                     <div class="d-flex justify-content-end mt-3">
                         <a href="{{ route('exams.marks', ['yearId' => $year->id, 'examTypeId' => $examType->id, 'syllabusId' => $syllabus->id, 'classId' => $class->id, 'examId' => $exam->id]) }}"
                             class="btn btn-secondary me-2 mt-3">
@@ -138,8 +137,8 @@
 </div>
 @endsection
 
-{{-- No 2 --}}
 <script>
+    // Script to handle form interactions and data validation
     document.addEventListener('DOMContentLoaded', function () {
     const checkboxes = document.querySelectorAll('.absence-checkbox');
     const markInputs = document.querySelectorAll('input[type="number"]');
@@ -151,7 +150,7 @@
         }
     });
 
-    // Function to handle checkbox changes
+    // Function to toggle absence state and adjust mark input
     const handleAbsenceToggle = (checkbox) => {
         const studentId = checkbox.dataset.studentId;
         const subjectId = checkbox.dataset.subjectId;
@@ -169,7 +168,7 @@
         }
     };
 
-    // Initialize the page by setting readonly for checked checkboxes
+    // Apply initial readonly state based on absence status
     checkboxes.forEach(checkbox => {
         const studentId = checkbox.dataset.studentId;
         const subjectId = checkbox.dataset.subjectId;
@@ -185,7 +184,7 @@
         });
     });
 
-    // Ensure all inputs are valid before form submission
+    // Ensure valid input data on form submission
     const form = document.querySelector('form');
     form.addEventListener('submit', function () {
         checkboxes.forEach(checkbox => {

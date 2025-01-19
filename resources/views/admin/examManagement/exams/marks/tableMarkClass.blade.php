@@ -57,7 +57,6 @@
                             @foreach ($subjects as $subject)
                             <th>{{ $subject->subject_name }}</th>
                             @endforeach
-                            {{-- <th>Attendance</th> --}}
                             <th>Summary</th>
                             <th>Action</th>
                         </tr>
@@ -71,30 +70,22 @@
                             @foreach ($subjects as $subject)
                             @php
                             $studentMark = $marks->get($student->id)?->firstWhere('subject_id', $subject->subject_id);
-                            // $markValue = $studentMark->mark ?? 'N/A';
                             $markValue = $studentMark?->status === 'absent' ? 'TH' : ($studentMark->mark ?? 'N/A');
-
                             @endphp
-                            <td {{--
-                                class="{{ is_numeric($markValue) ? ($markValue >= 80 ? 'text-success' : ($markValue < 40 ? 'text-danger' : '')) : '' }}">
-                                {{ $markValue }} --}}
-                                class="{{
+                            <td class="{{
                                 $markValue === 'TH'
                                 ? 'text-danger font-weight-bold'
                                 : (is_numeric($markValue)
                                 ? ($markValue >= 80
                                 ? 'text-success'
                                 : ($markValue < 40 ? 'text-danger' : '' )) : '' ) }}">
-                                    {{ $markValue }}
+                                {{ $markValue }}
                             </td>
                             @endforeach
 
                             @php
                             $stdSummary = $studentsSummary->firstWhere('student_id', $student->id);
                             @endphp
-                            {{-- <td class="{{ empty($stdSummary->summary) ? 'text-danger' : '' }}">
-                                {{ $stdSummary->summary ?? 'N/A' }}
-                            </td> --}}
                             <td class="{{ empty($stdSummary->summary) ? 'text-danger' : '' }}">
                                 <span class="text-truncate">{{ $stdSummary->summary ?? 'N/A' }}</span>
                             </td>
@@ -108,7 +99,7 @@
                     </tbody>
                 </table>
 
-                <!-- Right-aligned button for editing -->
+                <!-- Button for editing -->
                 <div class="d-flex justify-content-end mt-3">
                     <a href="{{ route('exams.marks.edit', [$year->id, $examType->id, $syllabus->id, $class->id, $exam->id]) }}"
                         class="btn btn-success">Edit Marks</a>
@@ -134,7 +125,6 @@
                         Report</a>
                 </div>
             </div>
-
 
             <div class="card-body">
                 <table id="summary-table" class="table table-bordered">
