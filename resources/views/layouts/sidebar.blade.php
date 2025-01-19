@@ -1,6 +1,6 @@
 <aside class="main-sidebar sidebar-dark-olive bg-navy elevation-4">
 
-    <!-- Brand Logo -->
+    <!-- Route to Decide Dashboard -->
     @if(auth()->user()->hasRole('admin'))
     <a href="{{ route('admin.dashboard') }}" class="brand-link">
         <img src="{{ url('dist/img/AbimPahang.png') }}" alt="Logo" class="brand-image img-circle elevation-3"
