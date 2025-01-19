@@ -89,7 +89,7 @@
                                 </label>
                             </div>
                         </div>
-                        <!-- Forgot Password & Register -->
+                        <!-- Forgot Password -->
                         <p class="col-12">
                             <a href="{{ route('forgot-password') }}">Forgot Password</a>
                         </p>

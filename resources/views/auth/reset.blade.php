@@ -4,8 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Set Title -->
     <title>Reset Password</title>
-
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -19,7 +19,7 @@
 
     <style>
         body {
-            background-image: url('{{asset('assets/images/bg23.svg') }}');
+            background-image: url('{{asset(' assets/images/bg23.svg') }}');
             background-size: cover;
             background-repeat: no-repeat;
             background-attachment: fixed;
@@ -37,24 +37,20 @@
 
 <body class="hold-transition register-page">
     <div class="register-box">
-        <!-- /.login-logo -->
         <div class="card card-outline card-success">
-            {{-- Alert Message --}}
+            <!-- Alert Message -->
             @include('messages.alert')
 
-            <!-- Header Title Centered -->
+            <!-- Header Title -->
             <div class="card-header text-center">
                 <p href="" class="h1"><b>Reset Password</b></p>
             </div>
 
-
-
+            <!-- Body -->
             <div class="card-body">
                 <p class="login-box-msg">Reset password for: {{ $email }}</p>
-
                 <form action="{{ route('reset.post', ['token' => $user->remember_token]) }}" method="post">
                     @csrf
-
                     <!-- Password Field -->
                     <div class="input-group mb-3">
                         <input type="password" name="password" class="form-control" placeholder="Password" required>
@@ -67,7 +63,6 @@
                     @error('password')
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
-
                     <!-- Confirm Password Field -->
                     <div class="input-group mb-3">
                         <input type="password" name="confirm_password" class="form-control"
@@ -81,7 +76,7 @@
                     @error('password')
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
-
+                    <!-- Button -->
                     <div class="row justify-content-end">
                         <!-- Back Button (Cancel) -->
                         <div class="col-4">
@@ -94,13 +89,9 @@
                             <button type="submit" class="btn btn-success btn-block">Submit</button>
                         </div>
                     </div>
-
-
                 </form>
-
-
-
             </div>
+
         </div>
     </div>
 

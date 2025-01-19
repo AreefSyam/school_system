@@ -1,3 +1,5 @@
+{{-- Future References : Register Page --}}
+
 <!DOCTYPE html>
 <html lang="en">
 
