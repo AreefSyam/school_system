@@ -61,33 +61,6 @@
                                     @endforeach
                                 </select>
                             </div>
-                            {{--
-                            <!-- Academic Year -->
-                            <div class="form-group col-md-2">
-                                <label>Academic Year</label>
-                                <select class="form-control" name="academic_year_id">
-                                    <option value="">-- Select Year --</option>
-                                    @foreach($academicYears as $year)
-                                    <option value="{{ $year->id }}" {{ request('academic_year_id')==$year->id ?
-                                        'selected' : '' }}>
-                                        {{ $year->academic_year_name }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <!-- Class -->
-                            <div class="form-group col-md-2">
-                                <label>Class</label>
-                                <select class="form-control" name="class_id">
-                                    <option value="">-- Select Class --</option>
-                                    @foreach($classes as $class)
-                                    <option value="{{ $class->id }}" {{ request('class_id')==$class->id ? 'selected' :
-                                        '' }}>
-                                        {{ $class->name }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                            </div> --}}
                             <!-- Exam Type -->
                             <div class="form-group col-md-2">
                                 <label>Exam Type</label>
