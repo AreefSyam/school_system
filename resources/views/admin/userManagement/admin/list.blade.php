@@ -34,10 +34,10 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
+                        <!-- card-header -->
                         <div class="card-header">
                             <h3 class="card-title">Search Admin</h3>
                         </div>
-                        <!-- /.card-header -->
                         <!-- form start -->
                         <form method="get" action="">
                             <div class="card-body">
@@ -63,20 +63,13 @@
                                         <a href="{{ route('admin.list') }}" class="btn btn-success"
                                             style="margin-top: 30px">Reset</a>
                                     </div>
-
                                 </div>
-
                             </div>
-                            <!-- /.card-body -->
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-
-
-
-
     </section>
 
     <!-- Main content -->
@@ -86,10 +79,10 @@
                 <div class="col-md-12">
                     @include('messages.alert')
                     <div class="card">
+                        <!-- card-header -->
                         <div class="card-header">
                             <h3 class="card-title">Admin List (Total : {{ $get_record->total() }})</h3>
                         </div>
-                        <!-- /.card-header -->
                         <div class="card-body p-0">
                             <table class="table table-striped">
                                 <thead>
@@ -120,30 +113,20 @@
                                                 Delete
                                             </a>
                                         </td>
-
                                     </tr>
                                     @endforeach
-
                                 </tbody>
                             </table>
-
                             <div style="padding: 10px; float: right;">
                                 {!! $get_record->appends(Illuminate\Support\Facades\Request::except('page'))->links()
                                 !!}
                             </div>
                         </div>
-                        <!-- /.card-body -->
                     </div>
                 </div>
-                <!-- /.card -->
             </div>
-            <!-- /.col -->
         </div>
-        <!-- /.row -->
+    </section>
 
-        <!-- /.row -->
-</div><!-- /.container-fluid -->
-</section>
-<!-- /.content -->
 </div>
 @endsection

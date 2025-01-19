@@ -151,24 +151,6 @@ class TeacherController extends Controller
             ->with('success', 'Class assigned to teacher successfully.');
     }
 
-    // public function classAssignments($id)
-    // {
-    //     $teacher = User::where('id', $id)->where('role', 'teacher')->firstOrFail();
-
-    //     $classAssignments = TeacherAssignClasses::with([
-    //         'academicYear',
-    //         'class',
-    //         'gradeLevel',
-    //         'subject',
-    //         'syllabus',
-    //     ])->where('user_id', $teacher->id)->get();
-
-    //     return view('admin.userManagement.teacher.teacherClassList', [
-    //         'teacher' => $teacher,
-    //         'classAssignments' => $classAssignments,
-    //     ]);
-    // }
-
     public function classAssignments($id, Request $request)
     {
         $teacher = User::where('id', $id)->where('role', 'teacher')->firstOrFail();

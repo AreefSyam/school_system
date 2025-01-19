@@ -60,16 +60,6 @@
                             @endif
                         </div>
 
-                        {{--
-                        <!-- Password -->
-                        <div class="form-group">
-                            <label>Password</label>
-                            <input type="password" name="password" class="form-control" placeholder="Password" required>
-                            @if($errors->has('password'))
-                            <span class="text-danger">{{ $errors->first('password') }}</span>
-                            @endif
-                        </div> --}}
-
                         <!-- Password Input -->
                         <div class="form-group">
                             <label>Password</label>

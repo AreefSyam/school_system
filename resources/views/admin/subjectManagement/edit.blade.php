@@ -108,9 +108,9 @@
                             <a href="{{ route('subjectManagement.list') }}" class="btn btn-secondary">Cancel</a>
                             <button type="submit" class="btn btn-primary">Save Changes</button>
                         </div>
+                    </div>
                 </form>
             </div>
-
         </div>
     </section>
 </div>

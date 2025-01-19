@@ -33,60 +33,61 @@
     <section class="content">
         <div class="container-fluid">
 
-                    <div class="card card-primary">
-                        <div class="card-header">
-                            <h3 class="card-title">Adjust The Detail Below</h3>
+            <div class="card card-primary">
+                <!-- Card header -->
+                <div class="card-header">
+                    <h3 class="card-title">Adjust The Detail Below</h3>
+                </div>
+
+                <form method="post" action="{{ route('admin.edit.post', $user->id) }}">
+                    @csrf
+                    @method('PUT')
+                    <div class="card-body">
+                        <!-- Name -->
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" name="name" class="form-control" value="{{ old('name', $user->name) }}"
+                                required>
+                            @if($errors->has('name'))
+                            <span class="text-danger">{{ $errors->first('name') }}</span>
+                            @endif
                         </div>
 
-                        <form method="post" action="{{ route('admin.edit.post', $user->id) }}">
-                            @csrf
-                            @method('PUT')
-                            <div class="card-body">
-                                <!-- Name -->
-                                <div class="form-group">
-                                    <label>Name</label>
-                                    <input type="text" name="name" class="form-control"
-                                        value="{{ old('name', $user->name) }}" required>
-                                    @if($errors->has('name'))
-                                    <span class="text-danger">{{ $errors->first('name') }}</span>
-                                    @endif
-                                </div>
+                        <!-- Email -->
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" name="email" class="form-control"
+                                value="{{ old('email', $user->email) }}" required>
+                            @if($errors->has('email'))
+                            <span class="text-danger">{{ $errors->first('email') }}</span>
+                            @endif
+                        </div>
 
-                                <!-- Email -->
-                                <div class="form-group">
-                                    <label>Email</label>
-                                    <input type="email" name="email" class="form-control"
-                                        value="{{ old('email', $user->email) }}" required>
-                                    @if($errors->has('email'))
-                                    <span class="text-danger">{{ $errors->first('email') }}</span>
-                                    @endif
+                        <!-- Password (optional) -->
+                        <div class="form-group">
+                            <label>Password</label>
+                            <div class="input-group">
+                                <input type="password" name="password" id="password" class="form-control"
+                                    placeholder="New password (optional)" required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text" id="togglePassword" style="cursor: pointer;">
+                                        <i class="fas fa-eye"></i>
+                                    </span>
                                 </div>
-
-                                <!-- Password (optional) -->
-                                <div class="form-group">
-                                    <label>Password</label>
-                                    <div class="input-group">
-                                        <input type="password" name="password" id="password" class="form-control"
-                                            placeholder="New password (optional)" required>
-                                        <div class="input-group-append">
-                                            <span class="input-group-text" id="togglePassword" style="cursor: pointer;">
-                                                <i class="fas fa-eye"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <small style="color: red">Leave empty if you don't want to change the
-                                        password</small>
-                                </div>
-                                @if($errors->has('password'))
-                                <span class="text-danger">{{ $errors->first('password') }}</span>
-                                @endif
                             </div>
-                            <div class="card-footer text-right">
-                                <a href="{{ route('admin.list') }}" class="btn btn-secondary">Cancel</a>
-                                <button type="submit" class="btn btn-primary">Save Changes</button>
-                            </div>
-                        </form>
+                            <small style="color: red">Leave empty if you don't want to change the
+                                password</small>
+                        </div>
+                        @if($errors->has('password'))
+                        <span class="text-danger">{{ $errors->first('password') }}</span>
+                        @endif
                     </div>
+                    <div class="card-footer text-right">
+                        <a href="{{ route('admin.list') }}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
 
         </div>
     </section>
