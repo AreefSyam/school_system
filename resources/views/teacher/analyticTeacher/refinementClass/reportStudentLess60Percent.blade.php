@@ -10,7 +10,6 @@
                             {{ $class->name ??
                             'N/A'
                             }}</strong> </h1>
-
                 </div>
             </div>
         </div>
@@ -23,8 +22,9 @@
                 <a href="{{ route('teacher.dashboard') }}">Home </a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{{ route('teacher.analytic.reportStudentLess60Percent', ['yearId' => $currentAcademicYear->id]) }}">Report < 61%
-                    Performance</a>
+                <a
+                    href="{{ route('teacher.analytic.reportStudentLess60Percent', ['yearId' => $currentAcademicYear->id]) }}">Report
+                    < 61% Performance</a>
             </li>
         </ol>
     </nav>
@@ -108,8 +108,6 @@
                                 <td>{{ $student->class_name }}</td>
                                 <td class="{{ $student->percentage < 40 ? 'text-danger' : '' }}">{{
                                     round($student->percentage, 2) }}%</td>
-                                {{-- <td>{{ $student->failed_subjects ?: 'None' }}</td>
-                                <td>{{ $student->absent_subjects ?: 'None' }}</td> --}}
                                 <td>{{ $student->total_marks }}</td>
                                 <td>{{ $student->total_grade ?? 'N/A' }}</td>
                                 <td class="{{ $student->failed_subjects ? 'text-danger' : 'text-dark' }}">
