@@ -28,7 +28,6 @@
         </ol>
     </nav>
 
-
     <section class="content">
         <div class="container-fluid">
             <div class="row">
@@ -102,10 +101,10 @@
                     @include('messages.alert')
 
                     <div class="card">
+                        <!-- card-header -->
                         <div class="card-header">
                             <h3 class="card-title">Examination List</h3>
                         </div>
-                        <!-- /.card-header -->
                         <div class="card-body p-0">
                             <table class="table table-striped">
                                 <thead>
@@ -152,16 +151,10 @@
                                 !!}
                             </div>
                         </div>
-                        <!-- /.card-body -->
                     </div>
                 </div>
-                <!-- /.card -->
             </div>
-            <!-- /.col -->
         </div>
-        <!-- /.row -->
-</div><!-- /.container-fluid -->
-</section>
-<!-- /.content -->
+    </section>
 </div>
 @endsection

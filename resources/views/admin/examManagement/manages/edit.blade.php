@@ -35,10 +35,10 @@
         <div class="container-fluid">
             <!-- General form elements -->
             <div class="card card-primary">
+                <!-- card-header -->
                 <div class="card-header">
                     <h3 class="card-title">Adjust The Details Below</h3>
                 </div>
-                <!-- /.card-header -->
                 <!-- Form start -->
                 <form method="post" action="{{ route('examManagement.edit.post', $exam->id) }}">
                     @csrf
