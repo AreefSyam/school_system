@@ -34,10 +34,10 @@
         <div class="container-fluid">
             <!-- General form elements -->
             <div class="card card-primary">
+                <!-- card-header -->
                 <div class="card-header">
                     <h3 class="card-title">Adjust Student Details Below</h3>
                 </div>
-                <!-- /.card-header -->
                 <!-- Form start -->
                 <form method="post" action="{{ route('studentManagement.edit.post', $student->id) }}">
                     @csrf

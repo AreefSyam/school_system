@@ -33,14 +33,15 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
+                        <!-- card-header -->
                         <div class="card-header">
                             <h3 class="card-title">Search Student</h3>
                         </div>
-                        <!-- /.card-header -->
                         <!-- form start -->
                         <form method="get" action="">
                             <div class="card-body">
                                 <div class="row">
+                                    <!-- Full Name -->
                                     <div class="form-group col-md-3">
                                         <label>Full Name</label>
                                         <input type="text" name="full_name" class="form-control"
@@ -61,7 +62,7 @@
                                         <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
-
+                                    <!-- Button -->
                                     <div class="form-group col-md-3">
                                         <button class="btn btn-primary" type="submit"
                                             style="margin-top: 30px">Search</button>
