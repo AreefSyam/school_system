@@ -52,9 +52,6 @@
                         <div class="inner">
                             <h3>{{ $syllabus->syllabus_name }}</h3>
                         </div>
-                        {{-- <a
-                            href="{{ route('teacher.exams.classList', ['yearId' => $yearId, 'examTypeId' => $examTypeId, 'syllabusId' => $syllabus->id],'subjectId' => $subject->id]) }}"
-                            class="small-box-footer"> --}}
                             <a href="{{ route('teacher.exams.subjectList', ['yearId' => $yearId, 'examTypeId' => $examType->id, 'syllabusId' => $syllabus->id]) }}"
                                 class="small-box-footer">
                                 View Subject <i class="fas fa-arrow-circle-right"></i>

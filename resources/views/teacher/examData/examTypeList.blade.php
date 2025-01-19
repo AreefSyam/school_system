@@ -11,7 +11,6 @@
                     <h5> Please select exam type below. </h5>
                 </div>
             </div>
-            {{-- <a>Exam Data / {{ $currentAcademicYear->academic_year_name }} </a> --}}
         </div>
     </section>
 
