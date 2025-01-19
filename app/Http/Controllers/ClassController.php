@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\AcademicYearModel;
@@ -14,41 +13,59 @@ use Illuminate\Support\Facades\Log;
 
 class ClassController extends Controller
 {
+    /**
+     * Display a listing of classes.
+     * Retrieves all class records along with related grade levels and academic years for filtering options.
+     *
+     * @return \Illuminate\View\View
+     */
     public function list()
     {
-        $data['header_title'] = "Class Management";
-        $data['get_record'] = ClassModel::getRecordClass(); // Get the class data
-        $data['gradeLevels'] = DB::table('grade_level')->get(); // Fetch grade levels to use in the filter dropdown
+        $data['header_title']  = "Class Management";
+        $data['get_record']    = ClassModel::getRecordClass();    // Get the class data
+        $data['gradeLevels']   = DB::table('grade_level')->get(); // Fetch grade levels to use in the filter dropdown
         $data['academicYears'] = DB::table('academic_year')->get();
 
         return view('admin.classManagement.list', $data);
     }
 
+    /**
+     * Show the form for creating a new class.
+     * Provides necessary data to populate select options like grade levels and academic years.
+     *
+     * @return \Illuminate\View\View
+     */
     public function add()
     {
-        $data['header_title'] = "Add Class";
+        $data['header_title']  = "Add Class";
         $data['academicYears'] = DB::table('academic_year')->get();
-        $data['gradeLevels'] = DB::table('grade_level')->get(); // Fetch grade levels for the form dropdown
+        $data['gradeLevels']   = DB::table('grade_level')->get(); // Fetch grade levels for the form dropdown
         return view('admin.classManagement.add', $data);
     }
 
-    // Post Add
+    /**
+     * Store a newly created class in the database.
+     * Validates input data and creates a new class record.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function postAdd(Request $request)
     {
         // Validate inputs
         $request->validate([
-            'className' => 'required|string|max:255|unique:class,name', // Ensures class name is unique
-            'status' => 'required|in:0,1',
+            'className'      => 'required|string|max:255|unique:class,name', // Ensures class name is unique
+            'status'         => 'required|in:0,1',
             'grade_level_id' => 'required|exists:grade_level,id', // Make sure the grade level exists
         ]);
         try {
             // Create the new class
-            $class = new ClassModel;
-            $class->name = trim($request->className);
-            $class->status = $request->status;
-            $class->grade_level_id = $request->grade_level_id;
+            $class                   = new ClassModel;
+            $class->name             = trim($request->className);
+            $class->status           = $request->status;
+            $class->grade_level_id   = $request->grade_level_id;
             $class->academic_year_id = $request->academic_year_id; // Store academic year
-            $class->created_by = Auth::user()->id;
+            $class->created_by       = Auth::user()->id;
             $class->save();
             return redirect()->route('class.list')->with('success', 'New class successfully created');
         } catch (\Exception $e) {
@@ -59,6 +76,13 @@ class ClassController extends Controller
         }
     }
 
+    /**
+     * Show the form for editing the specified class.
+     * Fetches and passes class details along with necessary select option data.
+     *
+     * @param  int $id
+     * @return \Illuminate\View\View
+     */
     public function edit($id)
     {
         // Fetch the class details using the provided ID
@@ -69,50 +93,78 @@ class ClassController extends Controller
         $gradeLevels = DB::table('grade_level')->orderBy('grade_name', 'asc')->get();
         // Pass the data to the view
         return view('admin.classManagement.edit', [
-            'header_title' => 'Edit Class',
-            'class' => $class,
-            'gradeLevels' => $gradeLevels,
+            'header_title'  => 'Edit Class',
+            'class'         => $class,
+            'gradeLevels'   => $gradeLevels,
             'academicYears' => $academicYears, // Pass the academic years here
         ]);
     }
 
-    // Update the editing class
+    /**
+     * Update the specified class in the database.
+     * Validates input and updates the class details.
+     *
+     * @param  int $id
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function update($id, Request $request)
     {
         // Find the class record by ID
         $class = ClassModel::findOrFail($id);
         // Validate the input with uniqueness check for class name
         $request->validate([
-            'className' => 'required|string|max:255|unique:class,name,' . $class->id, // Ensure name is unique except for the current class
-            'status' => 'required|in:0,1',
+            'className'      => 'required|string|max:255|unique:class,name,' . $class->id, // Ensure name is unique except for the current class
+            'status'         => 'required|in:0,1',
             'grade_level_id' => 'required|exists:grade_level,id', // Validate grade level exists
         ]);
         // Update the class details
-        $class->name = trim($request->className);
-        $class->status = $request->status;
-        $class->grade_level_id = $request->grade_level_id;
+        $class->name             = trim($request->className);
+        $class->status           = $request->status;
+        $class->grade_level_id   = $request->grade_level_id;
         $class->academic_year_id = $request->academic_year_id;
         $class->save();
         // Redirect to the class list with a success message
         return redirect()->route('class.list')->with('success', 'Class details updated successfully.');
     }
 
-    // Delete Class Model
+    /**
+     * Delete the specified class from the database.
+     * Performs a soft deletion and redirects with a success message.
+     *
+     * @param  int $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function delete($id)
     {
         $class = ClassModel::findOrFail($id); // Use findOrFail to simplify error handling
-        $class->delete(); // No need to call save() after delete()
+        $class->delete();                     // No need to call save() after delete()
         return redirect()->route('class.list')->with('success', 'Class deleted successfully.');
     }
 
+    /**
+     * Display the form and handle the assignment of students to a class.
+     *
+     * @param  int  $classId  The identifier for the class.
+     * @return \Illuminate\View\View
+     */
     public function assignStudents($classId)
     {
-        $class = ClassModel::with('students')->findOrFail($classId);
+        $class         = ClassModel::with('students')->findOrFail($classId);
         $academicYears = AcademicYearModel::all();
-        $students = StudentModel::searchStudents(request('student_name'), 10);
+        $students      = StudentModel::searchStudents(request('student_name'), 10);
         return view('admin.classManagement.assignStudents', compact('class', 'students', 'academicYears'));
     }
 
+    /**
+     * Process the assignment of students to a class.
+     *
+     * Validates the request, checks for existing assignments, and updates the database.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $classId
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function postAssignStudents(Request $request, $classId)
     {
         $class = ClassModel::with('academicYear')->findOrFail($classId);
@@ -120,7 +172,7 @@ class ClassController extends Controller
         $alreadyAssignedStudents = $request->input('already_assigned_students', []);
         // Validate that student_ids are provided and exist in the database
         $request->validate([
-            'student_ids' => 'required|array',
+            'student_ids'   => 'required|array',
             'student_ids.*' => 'exists:student,id',
         ]);
 
@@ -145,6 +197,13 @@ class ClassController extends Controller
         return redirect()->route('class.assignStudents', $classId)->with('success', 'Students assigned to class successfully.');
     }
 
+    /**
+     * Remove a student from a class.
+     *
+     * @param  int  $classId
+     * @param  int  $studentId
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function removeStudent($classId, $studentId)
     {
         $class = ClassModel::findOrFail($classId);
@@ -152,6 +211,12 @@ class ClassController extends Controller
         return redirect()->route('class.assignStudents', $classId)->with('success', 'Student removed from class successfully.');
     }
 
+    /**
+     * Display the form for assigning a class teacher to a class.
+     *
+     * @param  int  $classId
+     * @return \Illuminate\View\View
+     */
     public function assignTeacher($classId)
     {
         // Fetch the class details
@@ -165,6 +230,15 @@ class ClassController extends Controller
         return view('admin.classManagement.assignTeacher', compact('class', 'teachers', 'assignedTeacher'));
     }
 
+    /**
+     * Handle the assignment of a teacher to a class.
+     *
+     * Validates the request and updates the teacher assignment for the class.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $classId
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function postAssignTeacher(Request $request, $classId)
     {
         $class = ClassModel::with('academicYear')->findOrFail($classId);
@@ -184,7 +258,7 @@ class ClassController extends Controller
         // Assign or update the teacher for the class and academic year
         ClassTeacherYearModel::updateOrCreate(
             [
-                'class_id' => $classId,
+                'class_id'         => $classId,
                 'academic_year_id' => $class->academic_year_id,
             ],
             [
@@ -194,6 +268,13 @@ class ClassController extends Controller
         return redirect()->route('class.assignTeacher', $classId)->with('success', 'Teacher assigned to class successfully.');
     }
 
+    /**
+     * Remove a teacher from a class assignment.
+     *
+     * @param  int  $classId
+     * @param  int  $teacherId
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function removeTeacher($classId, $teacherId)
     {
         // Remove the teacher from the class in the specific academic year

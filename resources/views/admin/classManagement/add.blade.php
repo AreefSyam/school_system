@@ -39,7 +39,6 @@
                 <div class="card-header">
                     <h3 class="card-title">Insert The Details Below</h3>
                 </div>
-                <!-- /.card-header -->
                 <!-- form start -->
                 <form method="post" action="{{ route('class.add.post') }}">
                     @csrf
@@ -95,9 +94,8 @@
                             @endif
                         </div>
 
-
                     </div>
-                    <!-- /.card-body -->
+                    <!-- Button -->
                     <div class="card-footer  text-right">
                         <a href="{{ route('class.list') }}" class="btn btn-secondary">Cancel</a>
                         <button type="submit" class="btn btn-primary">Register New Class</button>

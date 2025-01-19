@@ -36,7 +36,6 @@
                 <div class="card-header">
                     <h3 class="card-title">Adjust The Details Below</h3>
                 </div>
-                <!-- /.card-header -->
                 <!-- Form start -->
                 <form method="post" action="{{ route('class.edit.post', $class->id) }}">
                     @csrf

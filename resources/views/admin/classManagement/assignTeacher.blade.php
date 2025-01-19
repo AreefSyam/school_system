@@ -105,7 +105,6 @@
                                 <tr>
                                     <th>No.</th>
                                     <th>Student Name</th>
-                                    {{-- <th>Action</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
@@ -113,15 +112,6 @@
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
                                     <td>{{ $student->full_name }}</td>
-                                    {{-- <td>
-                                        <form method="post"
-                                            action="{{ route('class.removeStudent', ['classId' => $class->id, 'studentId' => $student->id]) }}"
-                                            onsubmit="return confirm('Are you sure you want to remove this student from the class?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">Remove</button>
-                                        </form>
-                                    </td> --}}
                                 </tr>
                                 @endforeach
                             </tbody>

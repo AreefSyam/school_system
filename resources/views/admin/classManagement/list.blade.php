@@ -96,8 +96,8 @@
                                 <th>No.</th>
                                 <th>Name</th>
                                 <th>Grade</th>
-                                <th>Year</th> <!-- Added Year Column -->
-                                <th>Status</th> <!-- Status Column fixed here -->
+                                <th>Year</th>
+                                <th>Status</th>
                                 <th>Created By</th>
                                 <th>Updated Date</th>
                                 <th>Action</th>
