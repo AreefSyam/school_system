@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\AcademicYearModel;
@@ -17,41 +16,57 @@ use Illuminate\Support\Facades\Log;
 
 class ExamController extends Controller
 {
-    // List Exams
+    /**
+     * Display a listing of all exams.
+     * Fetches data from multiple models to display in the exam management view.
+     *
+     * @return \Illuminate\View\View
+     */
     public function list()
     {
-        $data['header_title'] = "Exam Management";
-        $data['exam_types'] = ExamTypeModel::all(); // Fetch all exam types
-        $data['syllabuses'] = SyllabusModel::all(); // Fetch all syllabus options
-        $data['academic_years'] = AcademicYearModel::all(); // Fetch all academic years
-        $data['get_record'] = ExamModel::getRecordExam(); // Use the search function
+        $data['header_title']   = "Exam Management";
+        $data['exam_types']     = ExamTypeModel::all();       // Fetch all exam types
+        $data['syllabuses']     = SyllabusModel::all();       // Fetch all syllabus options
+        $data['academic_years'] = AcademicYearModel::all();   // Fetch all academic years
+        $data['get_record']     = ExamModel::getRecordExam(); // Use the search function
 
         return view('admin.examManagement.manages.list', $data);
     }
 
-    // Show Add Exam Page
+    /**
+     * Show the form for creating a new exam.
+     * Includes necessary data to populate dropdowns for exam types, syllabuses, and academic years.
+     *
+     * @return \Illuminate\View\View
+     */
     public function add()
     {
-        $data['header_title'] = "Add Exam";
-        $data['exam_types'] = ExamTypeModel::all(); // Fetch all exam types
-        $data['syllabuses'] = SyllabusModel::all(); // Fetch all syllabus options
+        $data['header_title']   = "Add Exam";
+        $data['exam_types']     = ExamTypeModel::all();     // Fetch all exam types
+        $data['syllabuses']     = SyllabusModel::all();     // Fetch all syllabus options
         $data['academic_years'] = AcademicYearModel::all(); // Fetch all academic years
 
         return view('admin.examManagement.manages.add', $data);
     }
 
-    // Store New Exam
+    /**
+     * Store a newly created exam in the database after validation.
+     * Checks for duplicate entries based on exam type, syllabus, and academic year before saving.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function postAdd(Request $request)
     {
         // Validate inputs
         $request->validate([
-            'exam_name' => 'required|string|max:255',
-            'exam_type_id' => 'required|exists:exam_type,id',
-            'syllabus_id' => 'required|exists:syllabus,id',
+            'exam_name'        => 'required|string|max:255',
+            'exam_type_id'     => 'required|exists:exam_type,id',
+            'syllabus_id'      => 'required|exists:syllabus,id',
             'academic_year_id' => 'required|exists:academic_year,id',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-            'status' => 'required|in:available,unavailable', // Add status validation
+            'start_date'       => 'required|date',
+            'end_date'         => 'required|date|after_or_equal:start_date',
+            'status'           => 'required|in:available,unavailable', // Add status validation
         ]);
 
         // Check if the combination already exists
@@ -68,15 +83,15 @@ class ExamController extends Controller
 
         try {
             // Create the new exam
-            $exam = new ExamModel();
-            $exam->exam_name = trim($request->exam_name);
-            $exam->exam_type_id = $request->exam_type_id;
-            $exam->syllabus_id = $request->syllabus_id;
+            $exam                   = new ExamModel();
+            $exam->exam_name        = trim($request->exam_name);
+            $exam->exam_type_id     = $request->exam_type_id;
+            $exam->syllabus_id      = $request->syllabus_id;
             $exam->academic_year_id = $request->academic_year_id;
-            $exam->start_date = $request->start_date;
-            $exam->end_date = $request->end_date;
-            $exam->status = $request->status; // Add status field
-            $exam->created_by = Auth::user()->id; // Store the creator
+            $exam->start_date       = $request->start_date;
+            $exam->end_date         = $request->end_date;
+            $exam->status           = $request->status; // Add status field
+            $exam->created_by       = Auth::user()->id; // Store the creator
             $exam->save();
 
             return redirect()->route('examManagement.list')->with('success', 'New exam successfully created');
@@ -86,15 +101,21 @@ class ExamController extends Controller
         }
     }
 
-    // Show Edit Exam Page
+    /**
+     * Show the form for editing an existing exam.
+     * Fetches the exam and related data for dropdowns.
+     *
+     * @param  int $id
+     * @return \Illuminate\View\View
+     */
     public function edit($id)
     {
         try {
-            $exam = ExamModel::findOrFail($id);
-            $data['header_title'] = "Edit Exam";
-            $data['exam'] = $exam;
-            $data['exam_types'] = ExamTypeModel::all();
-            $data['syllabuses'] = SyllabusModel::all();
+            $exam                   = ExamModel::findOrFail($id);
+            $data['header_title']   = "Edit Exam";
+            $data['exam']           = $exam;
+            $data['exam_types']     = ExamTypeModel::all();
+            $data['syllabuses']     = SyllabusModel::all();
             $data['academic_years'] = AcademicYearModel::all();
 
             return view('admin.examManagement.manages.edit', $data);
@@ -104,29 +125,36 @@ class ExamController extends Controller
         }
     }
 
-    // Update the Exam
+    /**
+     * Update the specified exam in the database.
+     * Validates input data and updates the exam details.
+     *
+     * @param  int $id
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function update($id, Request $request)
     {
         $exam = ExamModel::findOrFail($id);
 
         $request->validate([
-            'exam_name' => 'required|string|max:255',
-            'exam_type_id' => 'required|exists:exam_type,id',
-            'syllabus_id' => 'required|exists:syllabus,id',
+            'exam_name'        => 'required|string|max:255',
+            'exam_type_id'     => 'required|exists:exam_type,id',
+            'syllabus_id'      => 'required|exists:syllabus,id',
             'academic_year_id' => 'required|exists:academic_year,id',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-            'status' => 'required|in:available,unavailable', // Add status validation
+            'start_date'       => 'required|date',
+            'end_date'         => 'required|date|after_or_equal:start_date',
+            'status'           => 'required|in:available,unavailable', // Add status validation
         ]);
 
         try {
-            $exam->exam_name = trim($request->exam_name);
-            $exam->exam_type_id = $request->exam_type_id;
-            $exam->syllabus_id = $request->syllabus_id;
+            $exam->exam_name        = trim($request->exam_name);
+            $exam->exam_type_id     = $request->exam_type_id;
+            $exam->syllabus_id      = $request->syllabus_id;
             $exam->academic_year_id = $request->academic_year_id;
-            $exam->start_date = $request->start_date;
-            $exam->end_date = $request->end_date;
-            $exam->status = $request->status; // Save the status field
+            $exam->start_date       = $request->start_date;
+            $exam->end_date         = $request->end_date;
+            $exam->status           = $request->status; // Save the status field
             $exam->save();
 
             return redirect()->route('examManagement.list')->with('success', 'Exam details updated successfully.');
@@ -136,7 +164,13 @@ class ExamController extends Controller
         }
     }
 
-    // Delete Exam
+    /**
+     * Delete the specified exam from the database.
+     * Performs a soft deletion on the exam record.
+     *
+     * @param  int $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function delete($id)
     {
         try {
@@ -150,14 +184,24 @@ class ExamController extends Controller
         }
     }
 
-    // List of academic years
+    /**
+     * Display a list of all academic years ordered by their start date.
+     *
+     * @return \Illuminate\View\View
+     */
     public function yearList()
     {
         $academicYears = DB::table('academic_year')->orderBy('start_date', 'desc')->get();
         return view('admin.examManagement.exams.years', compact('academicYears'));
     }
 
-    // List of exam types (PPT, PAT) for a specific year
+    /**
+     * List all exam types available for a specific academic year.
+     * This function retrieves distinct exam types that have exams registered for the given year.
+     *
+     * @param  int $yearId The ID of the academic year
+     * @return \Illuminate\View\View
+     */
     public function examTypeList($yearId)
     {
         $year = AcademicYearModel::findOrFail($yearId);
@@ -173,11 +217,19 @@ class ExamController extends Controller
         return view('admin.examManagement.exams.examTypeList', compact('year', 'examTypes'));
     }
 
-    // List of syllabi (KAFA or YTP) for the selected year and exam type
+    /**
+     * List of syllabi (KAFA or YTP) for the selected year and exam type
+     * Display a list of syllabi for a selected year and exam type.
+     * Fetches distinct syllabi that are associated with examinations for the specified year and exam type.
+     *
+     * @param  int $yearId The ID of the academic year
+     * @param  int $examTypeID The ID of the exam type
+     * @return \Illuminate\View\View
+     */
     public function syllabusList($yearId, $examTypeID)
     {
         // Find the selected academic year and exam type
-        $year = AcademicYearModel::findOrFail($yearId);
+        $year     = AcademicYearModel::findOrFail($yearId);
         $examType = ExamTypeModel::findOrFail($examTypeID);
 
         // Fetch distinct syllabi that are registered for the given year and exam type
@@ -192,38 +244,51 @@ class ExamController extends Controller
         return view('admin.examManagement.exams.syllabusList', compact('year', 'examType', 'syllabi'));
     }
 
-    // List of classes for the selected syllabus and exam type
+    /**
+     * List all classes available for a selected syllabus, exam type, and academic year.
+     * Retrieves classes that are linked to a specific syllabus and exam type within the given year.
+     *
+     * @param  int $yearId The ID of the academic year
+     * @param  int $examTypeID The ID of the exam type
+     * @param  int $syllabusID The ID of the syllabus
+     * @return \Illuminate\View\View
+     */
     public function classList($yearId, $examTypeID, $syllabusID)
     {
-        $year = AcademicYearModel::findOrFail($yearId);
+        $year     = AcademicYearModel::findOrFail($yearId);
         $examType = ExamTypeModel::findOrFail($examTypeID);
         $syllabus = SyllabusModel::findOrFail($syllabusID);
-        $classes = ClassModel::where('academic_year_id', $yearId)->get(); // Fetch classes assigned to this exam
+        $classes  = ClassModel::where('academic_year_id', $yearId)->get(); // Fetch classes assigned to this exam
 
         // Fetch the specific examination instance
         $exam = ExamModel::where([
             'academic_year_id' => $yearId,
-            'exam_type_id' => $examTypeID,
-            'syllabus_id' => $syllabusID,
+            'exam_type_id'     => $examTypeID,
+            'syllabus_id'      => $syllabusID,
         ])->firstOrFail();
 
         return view('admin.examManagement.exams.classList', compact('year', 'examType', 'syllabus', 'classes', 'exam'));
     }
 
     // TEACHER
-    // Exam Data
-    // Step 1: Display available exam types
+    /**
+     * Display a list of available exam types for the current academic year.
+     * This function retrieves distinct exam types associated with the authenticated teacher and the academic year from session.
+     *
+     * @param  int|null $yearId The academic year ID from the session if not provided.
+     * @return \Illuminate\View\View
+     */
     public function examTypeListTeacher($yearId)
     {
         $currentAcademicYear = AcademicYearModel::findOrFail(session('academic_year_id')); // Get the academic year from the session
-        if (!$currentAcademicYear) { // If no current academic year is found, redirect with an error message
+        if (! $currentAcademicYear) {                                                       // If no current academic year is found, redirect with an error message
             return redirect()->back()->with('error', 'No academic year is set as current. Please select an academic year.');
         }
         $examTypes = DB::table('examination') // Fetch distinct exam types for the given academic year
             ->join('exam_type', 'examination.exam_type_id', '=', 'exam_type.id')
             ->where('examination.academic_year_id', $currentAcademicYear->id) // Filter by academic year
-            ->select('exam_type.id', 'exam_type.exam_type_name') // Fetch only relevant fields
-            ->distinct() // Ensure no duplicates
+            ->select('exam_type.id', 'exam_type.exam_type_name')              // Fetch only relevant fields
+            ->distinct()                                                      // Ensure no duplicates
             ->get();
         $breadcrumbData = [
             'academicYearName' => $currentAcademicYear->academic_year_name,
@@ -231,14 +296,21 @@ class ExamController extends Controller
         return view('teacher.examData.examTypeList', compact('currentAcademicYear', 'examTypes', 'breadcrumbData'));
     }
 
-    // Step 2: Display available syllabi
+    /**
+     * List all syllabi for a specific exam type and academic year.
+     * Retrieves syllabi that have examinations scheduled within the selected academic year and exam type.
+     *
+     * @param  int|null $yearId Optional academic year ID; defaults to session value if not provided.
+     * @param  int $examTypeId The ID of the exam type.
+     * @return \Illuminate\View\View
+     */
     public function syllabusListTeacher($yearId = null, $examTypeId)
     {
-        $yearId = session('academic_year_id'); // Use session year ID if no parameter provided
+        $yearId               = session('academic_year_id'); // Use session year ID if no parameter provided
         $selectedAcademicYear = AcademicYearModel::findOrFail($yearId);
         // fetch data
         $examType = ExamTypeModel::findOrFail($examTypeId);
-        $syllabi = DB::table('examination')
+        $syllabi  = DB::table('examination')
             ->join('syllabus', 'examination.syllabus_id', '=', 'syllabus.id')
             ->where('examination.academic_year_id', $selectedAcademicYear->id)
             ->where('examination.exam_type_id', $examTypeId)
@@ -247,19 +319,28 @@ class ExamController extends Controller
             ->get();
         $breadcrumbData = [
             'academicYearName' => $selectedAcademicYear->academic_year_name,
-            'examTypeName' => $examType->exam_type_name,
+            'examTypeName'     => $examType->exam_type_name,
         ];
         return view('teacher.examData.syllabusList', compact('syllabi', 'yearId', 'examType', 'selectedAcademicYear', 'breadcrumbData'));
     }
 
+    /**
+     * List subjects assigned to the authenticated teacher for a specific syllabus and exam type.
+     * This includes fetching the subjects where the teacher has classes assigned within the given academic parameters.
+     *
+     * @param  int|null $yearId Optional academic year ID; defaults to session value if not provided.
+     * @param  int $examTypeId The ID of the exam type.
+     * @param  int $syllabusId The ID of the syllabus.
+     * @return \Illuminate\View\View
+     */
     public function subjectListTeacher($yearId = null, $examTypeId, $syllabusId)
     {
-        $teacherId = auth()->id(); // Get the authenticated teacher's ID
-        $teacher = auth()->user(); // Fetch the authenticated user object to get user name
-        $yearId = session('academic_year_id'); // Use session year ID if no parameter provided
+        $teacherId            = auth()->id();                           // Get the authenticated teacher's ID
+        $teacher              = auth()->user();                         // Fetch the authenticated user object to get user name
+        $yearId               = session('academic_year_id');            // Use session year ID if no parameter provided
         $selectedAcademicYear = AcademicYearModel::findOrFail($yearId); // Fetch the academic year for display
-        $examType = ExamTypeModel::findOrFail($examTypeId); // fetch data
-        $syllabus = SyllabusModel::findOrFail($syllabusId);
+        $examType             = ExamTypeModel::findOrFail($examTypeId); // fetch data
+        $syllabus             = SyllabusModel::findOrFail($syllabusId);
         // Fetch the subjects assigned to the teacher for the given syllabus and academic year
         $subjects = TeacherAssignClasses::join('subject', 'teacherassignclasses.subject_id', '=', 'subject.id')
             ->select('subject.id', 'subject.subject_name')
@@ -271,22 +352,31 @@ class ExamController extends Controller
         // Fetch the name for breadcrumb
         $breadcrumbData = [
             'academicYearName' => $selectedAcademicYear->academic_year_name,
-            'examTypeName' => $examType->exam_type_name,
-            'syllabusName' => $syllabus->syllabus_name,
+            'examTypeName'     => $examType->exam_type_name,
+            'syllabusName'     => $syllabus->syllabus_name,
         ];
         // Pass all data to the view
         return view('teacher.examData.subjectList', compact('subjects', 'yearId', 'examType', 'syllabus', 'selectedAcademicYear', 'breadcrumbData', 'teacher'));
     }
 
-    // Step 3: Display assigned classes
+    /**
+     * Display classes assigned to a teacher for a specific subject, syllabus, and exam type.
+     * Retrieves classes that the teacher is assigned to teach within the selected academic parameters.
+     *
+     * @param  int|null $yearId Optional academic year ID; defaults to session value if not provided.
+     * @param  int $examTypeId The ID of the exam type.
+     * @param  int $syllabusId The ID of the syllabus.
+     * @param  int $subjectId The ID of the subject.
+     * @return \Illuminate\View\View
+     */
     public function classListTeacher($yearId = null, $examTypeId, $syllabusId, $subjectId)
     {
-        $teacherId = auth()->id();
-        $yearId = session('academic_year_id'); // Use session year ID if no parameter provided
+        $teacherId            = auth()->id();
+        $yearId               = session('academic_year_id');            // Use session year ID if no parameter provided
         $selectedAcademicYear = AcademicYearModel::findOrFail($yearId); // Fetch the academic year for display
-        $examType = ExamTypeModel::findOrFail($examTypeId);
-        $syllabus = SyllabusModel::findOrFail($syllabusId);
-        $subject = SubjectModel::findOrFail($subjectId);
+        $examType             = ExamTypeModel::findOrFail($examTypeId);
+        $syllabus             = SyllabusModel::findOrFail($syllabusId);
+        $subject              = SubjectModel::findOrFail($subjectId);
         // Fetch classes assigned to the teacher
         $classes = TeacherAssignClasses::join('class', 'teacherassignclasses.class_id', '=', 'class.id')
             ->select('class.id', 'class.name')
@@ -298,22 +388,27 @@ class ExamController extends Controller
             ->get();
         $breadcrumbData = [
             'academicYearName' => $selectedAcademicYear->academic_year_name,
-            'examTypeName' => $examType->exam_type_name,
-            'syllabusName' => $syllabus->syllabus_name,
-            'subjectName' => $subject->subject_name,
+            'examTypeName'     => $examType->exam_type_name,
+            'syllabusName'     => $syllabus->syllabus_name,
+            'subjectName'      => $subject->subject_name,
         ];
         return view('teacher.examData.classList', compact('classes', 'yearId', 'examType', 'syllabus', 'subject', 'teacherId', 'breadcrumbData'));
     }
 
-    // Class Report
-    // Class Report for teacher view: examTypeList
+    /**
+     * Display a list of exam types for the current academic year for the teacher view.
+     * This method fetches exam types that have exams associated with them within the specified academic year from session.
+     *
+     * @param  int|null $yearId The academic year ID; defaults to the session's academic year if not provided.
+     * @return \Illuminate\View\View
+     */
     public function examTypeListClassTeacher($yearId = null)
     {
-        $teacherId = auth()->id();
-        $yearId = session('academic_year_id'); // Use session year ID if no parameter provided
+        $teacherId           = auth()->id();
+        $yearId              = session('academic_year_id'); // Use session year ID if no parameter provided
         $currentAcademicYear = AcademicYearModel::findOrFail($yearId);
         // If no current academic year is found
-        if (!$currentAcademicYear) {
+        if (! $currentAcademicYear) {
             return redirect()->back()->with('error', 'No academic year is set as current. Please select an academic year.');
         }
         // Fetch distinct exam types for the given academic year
@@ -328,12 +423,19 @@ class ExamController extends Controller
         return view('teacher.classTeacher.examTypeList', compact('examTypes', 'currentAcademicYear'));
     }
 
-    // Class Report for teacher view: syllabusList
+    /**
+     * Display a list of syllabi available for a specific exam type within the selected academic year.
+     * Retrieves distinct syllabi that are scheduled for exams under the given exam type for class report purposes.
+     *
+     * @param  int|null $yearId Optional academic year ID; uses session value if not provided.
+     * @param  int $examTypeId The ID of the exam type.
+     * @return \Illuminate\View\View
+     */
     public function syllabusListClassTeacher($yearId = null, $examTypeId)
     {
-        $yearId = session('academic_year_id'); // Use session year ID if no parameter provided
+        $yearId               = session('academic_year_id'); // Use session year ID if no parameter provided
         $selectedAcademicYear = AcademicYearModel::findOrFail($yearId);
-        $examType = ExamTypeModel::select('id', 'exam_type_name')
+        $examType             = ExamTypeModel::select('id', 'exam_type_name')
             ->where('id', $examTypeId)
             ->firstOrFail();
         // Fetch the exam type name
@@ -352,12 +454,12 @@ class ExamController extends Controller
         // Extract syllabus IDs
         $syllabusIds = $syllabi->pluck('id')->toArray();
 
-        // Fetch all exams for the given year, exam type, and syllabi
+        // Fetch all exams that match the current academic year, exam type, and involved syllabi.
         $exams = ExamModel::where('academic_year_id', $yearId)
             ->where('exam_type_id', $examTypeId)
             ->whereIn('syllabus_id', $syllabusIds)
             ->get()
-            ->keyBy('syllabus_id'); // Key exams by syllabus_id for easy lookup
+            ->keyBy('syllabus_id'); // Mapping exams to their respective syllabi for easy access.
 
         return view('teacher.classTeacher.syllabusList', compact('syllabi', 'yearId', 'examType', 'selectedAcademicYear', 'examTypeName', 'exams'));
     }
