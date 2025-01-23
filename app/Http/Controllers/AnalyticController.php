@@ -615,8 +615,20 @@ class AnalyticController extends Controller
                     'ss.total_marks',
                     'ss.percentage',
                     'ss.total_grade',
-                    DB::raw('GROUP_CONCAT(DISTINCT CASE WHEN m.mark < 40 AND m.status = "present" THEN s.subject_name ELSE NULL END) as failed_subjects'),
-                    DB::raw('GROUP_CONCAT(DISTINCT CASE WHEN m.status = "absent" THEN s.subject_name ELSE NULL END) as absent_subjects')
+                    DB::raw('GROUP_CONCAT(DISTINCT CASE
+                    WHEN m.mark < 40 AND m.status = "present" AND
+                         (m.academic_year_id = ss.academic_year_id AND
+                          m.class_id = ss.class_id AND
+                          m.exam_type_id = ss.exam_type_id AND
+                          m.syllabus_id = ss.syllabus_id)
+                    THEN s.subject_name ELSE NULL END) as failed_subjects'),
+                    DB::raw('GROUP_CONCAT(DISTINCT CASE
+                    WHEN m.status = "absent" AND
+                         (m.academic_year_id = ss.academic_year_id AND
+                          m.class_id = ss.class_id AND
+                          m.exam_type_id = ss.exam_type_id AND
+                          m.syllabus_id = ss.syllabus_id)
+                    THEN s.subject_name ELSE NULL END) as absent_subjects')
                 )
                 ->where('ss.class_id', $class->id)
                 ->where('ss.academic_year_id', $yearId)

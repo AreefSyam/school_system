@@ -87,41 +87,43 @@
                 </div>
                 <div class="card-body">
                     @if($data->isNotEmpty())
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Class</th>
-                                <th>Percentage</th>
-                                <th>Total Marks</th>
-                                <th>Grade</th>
-                                <th>Failed Subjects</th>
-                                <th>Absent Subjects</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($data as $student)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $student->student_name }}</td>
-                                <td>{{ $student->class_name }}</td>
-                                <td class="{{ $student->percentage < 40 ? 'text-danger' : '' }}">{{
-                                    round($student->percentage, 2) }}%</td>
-                                <td>{{ $student->total_marks }}</td>
-                                <td>{{ $student->total_grade ?? 'N/A' }}</td>
-                                <td class="{{ $student->failed_subjects ? 'text-danger' : 'text-dark' }}">
-                                    {{ $student->failed_subjects ? implode(', ', explode(',',
-                                    $student->failed_subjects)) : 'None' }}
-                                </td>
-                                <td class="{{ $student->absent_subjects ? 'text-warning' : 'text-dark' }}">
-                                    {{ $student->absent_subjects ? implode(', ', explode(',',
-                                    $student->absent_subjects)) : 'None' }}
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                    <div style="overflow-x: auto;">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Class</th>
+                                    <th>Percentage</th>
+                                    <th>Total Marks</th>
+                                    <th>Grade</th>
+                                    <th>Failed Subjects</th>
+                                    <th>Absent Subjects</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($data as $student)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $student->student_name }}</td>
+                                    <td>{{ $student->class_name }}</td>
+                                    <td class="{{ $student->percentage < 40 ? 'text-danger' : '' }}">{{
+                                        round($student->percentage, 2) }}%</td>
+                                    <td>{{ $student->total_marks }}</td>
+                                    <td>{{ $student->total_grade ?? 'N/A' }}</td>
+                                    <td class="{{ $student->failed_subjects ? 'text-danger' : 'text-dark' }}">
+                                        {{ $student->failed_subjects ? implode(', ', explode(',',
+                                        $student->failed_subjects)) : 'None' }}
+                                    </td>
+                                    <td class="{{ $student->absent_subjects ? 'text-warning' : 'text-dark' }}">
+                                        {{ $student->absent_subjects ? implode(', ', explode(',',
+                                        $student->absent_subjects)) : 'None' }}
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                     @else
                     <p class="text-center text-danger">No students below 61% for the selected filters.</p>
                     @endif
