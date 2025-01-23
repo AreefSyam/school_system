@@ -84,39 +84,41 @@
                             <h3 class="card-title">Admin List (Total : {{ $get_record->total() }})</h3>
                         </div>
                         <div class="card-body p-0">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Role</th>
-                                        <th>Created Date</th>
-                                        <th>Updated Date</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($get_record as $value)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $value->name }}</td>
-                                        <td>{{ $value->email }}</td>
-                                        <td>{{ $value->role }}</td>
-                                        <td>{{ date('d-m-Y H:i A', strtotime($value->created_at)) }}</td>
-                                        <td>{{ date('d-m-Y H:i A', strtotime($value->updated_at)) }}</td>
-                                        <td><a href="{{ route('admin.edit', $value->id) }}"
-                                                class="btn btn-primary">Edit</a>
-                                            <!-- Add confirmation on delete button -->
-                                            <a href="{{ route('admin.delete', $value->id) }}" class="btn btn-danger"
-                                                onclick="return confirm('Are you sure you want to delete this admin? This action cannot be undone.');">
-                                                Delete
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                            <div style="overflow-x: auto;">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Role</th>
+                                            <th>Created Date</th>
+                                            <th>Updated Date</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($get_record as $value)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $value->name }}</td>
+                                            <td>{{ $value->email }}</td>
+                                            <td>{{ $value->role }}</td>
+                                            <td>{{ date('d-m-Y H:i A', strtotime($value->created_at)) }}</td>
+                                            <td>{{ date('d-m-Y H:i A', strtotime($value->updated_at)) }}</td>
+                                            <td><a href="{{ route('admin.edit', $value->id) }}"
+                                                    class="btn btn-primary">Edit</a>
+                                                <!-- Add confirmation on delete button -->
+                                                <a href="{{ route('admin.delete', $value->id) }}" class="btn btn-danger"
+                                                    onclick="return confirm('Are you sure you want to delete this admin? This action cannot be undone.');">
+                                                    Delete
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                             <div style="padding: 10px; float: right;">
                                 {!! $get_record->appends(Illuminate\Support\Facades\Request::except('page'))->links()
                                 !!}

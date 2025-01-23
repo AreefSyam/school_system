@@ -34,10 +34,10 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
+                        <!-- card-header -->
                         <div class="card-header">
                             <h3 class="card-title">Search Academic Year</h3>
                         </div>
-                        <!-- /.card-header -->
                         <!-- form start -->
                         <form method="get" action="">
                             <div class="card-body">
@@ -84,56 +84,59 @@
                     @include('messages.alert')
 
                     <div class="card">
+                        <!-- card-header -->
                         <div class="card-header">
                             <h3 class="card-title">Academic Year List</h3>
                         </div>
-                        <!-- /.card-header -->
+                        <!-- card-body -->
                         <div class="card-body p-0">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>No.</th>
-                                        <th>Year</th>
-                                        <th>Status</th>
-                                        <th>Start Date</th>
-                                        <th>End Date</th>
-                                        <th>Created By</th>
-                                        <th>Created Date</th>
-                                        <th>Updated Date</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($get_record as $value)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $value->academic_year_name }}</td>
-                                        <td>
-                                            @if ($value->status == 0)
-                                            <span class="text-success">Active</span> <!-- Green text -->
-                                            @else
-                                            <span class="text-danger">Inactive</span> <!-- Red text -->
-                                            @endif
-                                        </td>
-                                        <td>{{ date('d-m-Y', strtotime($value->start_date)) }}</td>
-                                        <td>{{ date('d-m-Y', strtotime($value->end_date)) }}</td>
-                                        <td>{{ $value->created_by_name }}</td>
-                                        <td>{{ date('d-m-Y H:i A', strtotime($value->created_at)) }}</td>
-                                        <td>{{ date('d-m-Y H:i A', strtotime($value->updated_at)) }}</td>
-                                        <td>
-                                            <a href="{{ route('academicYear.edit', $value->id) }}"
-                                                class="btn btn-primary">Edit</a>
-                                            <a href="{{ route('academicYear.delete', $value->id) }}"
-                                                class="btn btn-danger"
-                                                onclick="return confirm('Are you sure you want to delete this academic year? This action cannot be undone.');">
-                                                Delete
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-
+                            <div style="overflow-x: auto;">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>Year</th>
+                                            <th>Status</th>
+                                            <th>Start Date</th>
+                                            <th>End Date</th>
+                                            <th>Created By</th>
+                                            <th>Created Date</th>
+                                            <th>Updated Date</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($get_record as $value)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $value->academic_year_name }}</td>
+                                            <td>
+                                                @if ($value->status == 0)
+                                                <span class="text-success">Active</span> <!-- Green text -->
+                                                @else
+                                                <span class="text-danger">Inactive</span> <!-- Red text -->
+                                                @endif
+                                            </td>
+                                            <td>{{ date('d-m-Y', strtotime($value->start_date)) }}</td>
+                                            <td>{{ date('d-m-Y', strtotime($value->end_date)) }}</td>
+                                            <td>{{ $value->created_by_name }}</td>
+                                            <td>{{ date('d-m-Y H:i A', strtotime($value->created_at)) }}</td>
+                                            <td>{{ date('d-m-Y H:i A', strtotime($value->updated_at)) }}</td>
+                                            <td>
+                                                <a href="{{ route('academicYear.edit', $value->id) }}"
+                                                    class="btn btn-primary">Edit</a>
+                                                <a href="{{ route('academicYear.delete', $value->id) }}"
+                                                    class="btn btn-danger"
+                                                    onclick="return confirm('Are you sure you want to delete this academic year? This action cannot be undone.');">
+                                                    Delete
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                            
                             <div style="padding: 10px; float: right;">
                                 {!! $get_record->appends(Illuminate\Support\Facades\Request::except('page'))->links()
                                 !!}

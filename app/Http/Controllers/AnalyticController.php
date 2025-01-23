@@ -271,6 +271,7 @@ class AnalyticController extends Controller
                         ->on('ss.academic_year_id', '=', 'm.academic_year_id');
                 })
                 ->join('subject as s', 'm.subject_id', '=', 's.id')
+                ->join('syllabus as sy', 'ss.syllabus_id', '=', 'sy.id') // Join syllabus table
                 ->select(
                     'ss.id as summary_id',
                     'st.full_name as student_name',
@@ -279,8 +280,21 @@ class AnalyticController extends Controller
                     'ss.total_marks',
                     'ss.percentage',
                     'ss.total_grade',
-                    DB::raw('GROUP_CONCAT(DISTINCT CASE WHEN m.mark < 40 AND m.status = "present" THEN s.subject_name ELSE NULL END) as failed_subjects'),
-                    DB::raw('GROUP_CONCAT(DISTINCT CASE WHEN m.status = "absent" THEN s.subject_name ELSE NULL END) as absent_subjects')
+                    DB::raw('GROUP_CONCAT(DISTINCT CASE
+                    WHEN m.mark < 40 AND m.status = "present" AND
+                         (m.academic_year_id = ss.academic_year_id AND
+                          m.class_id = ss.class_id AND
+                          m.syllabus_id = ss.syllabus_id AND
+                          m.exam_type_id = ss.exam_type_id)
+                    THEN s.subject_name ELSE NULL END) as failed_subjects'),
+                    DB::raw('GROUP_CONCAT(DISTINCT CASE
+                    WHEN m.status = "absent" AND
+                         (m.academic_year_id = ss.academic_year_id AND
+                          m.class_id = ss.class_id AND
+                          m.syllabus_id = ss.syllabus_id AND
+                          m.exam_type_id = ss.exam_type_id)
+                    THEN s.subject_name ELSE NULL END) as absent_subjects')
+
                 )
                 ->when($year, fn($query) => $query->where('ss.academic_year_id', $year))
                 ->when($class, fn($query) => $query->where('ss.class_id', $class))

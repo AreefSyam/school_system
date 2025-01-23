@@ -46,4 +46,13 @@
         </div>
     </section>
 </div>
+
+<style>
+    .small-box .inner h3 {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
+
 @endsection

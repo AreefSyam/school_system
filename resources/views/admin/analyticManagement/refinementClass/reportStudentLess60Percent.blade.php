@@ -111,47 +111,49 @@
                 </div>
                 <div class="card-body">
                     @if($data->isNotEmpty())
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Student Name</th>
-                                <th>Year</th>
-                                <th>Class</th>
-                                <th>Percentage</th>
-                                <th>Total Marks</th>
-                                <th>Grade</th>
-                                <th>Failed Subjects</th>
-                                <th>Absent Subjects</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($data as $index => $student)
-                            <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $student->student_name }}</td>
-                                <td>{{ $student->academic_year_name }}</td>
-                                <td>{{ $student->class_name }}</td>
-                                <td>
-                                    <span
-                                        class="@if($student->percentage < 40) text-danger @elseif($student->percentage > 79) text-success @endif">
-                                        {{ round($student->percentage, 2) }}%
-                                    </span>
-                                </td>
-                                <td>{{ $student->total_marks }}</td>
-                                <td>{{ $student->total_grade ?? 'N/A' }}</td>
-                                <td class="{{ $student->failed_subjects ? 'text-danger' : 'text-dark' }}">
-                                    {{ $student->failed_subjects ? implode(', ', explode(',',
-                                    $student->failed_subjects)) : 'None' }}
-                                </td>
-                                <td class="{{ $student->absent_subjects ? 'text-warning' : 'text-dark' }}">
-                                    {{ $student->absent_subjects ? implode(', ', explode(',',
-                                    $student->absent_subjects)) : 'None' }}
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                    <div style="overflow-x: auto;">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Student Name</th>
+                                    <th>Year</th>
+                                    <th>Class</th>
+                                    <th>Percentage</th>
+                                    <th>Total Marks</th>
+                                    <th>Grade</th>
+                                    <th>Failed Subjects</th>
+                                    <th>Absent Subjects</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($data as $index => $student)
+                                <tr>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $student->student_name }}</td>
+                                    <td>{{ $student->academic_year_name }}</td>
+                                    <td>{{ $student->class_name }}</td>
+                                    <td>
+                                        <span
+                                            class="@if($student->percentage < 40) text-danger @elseif($student->percentage > 79) text-success @endif">
+                                            {{ round($student->percentage, 2) }}%
+                                        </span>
+                                    </td>
+                                    <td>{{ $student->total_marks }}</td>
+                                    <td>{{ $student->total_grade ?? 'N/A' }}</td>
+                                    <td class="{{ $student->failed_subjects ? 'text-danger' : 'text-dark' }}">
+                                        {{ $student->failed_subjects ? implode(', ', explode(',',
+                                        $student->failed_subjects)) : 'None' }}
+                                    </td>
+                                    <td class="{{ $student->absent_subjects ? 'text-warning' : 'text-dark' }}">
+                                        {{ $student->absent_subjects ? implode(', ', explode(',',
+                                        $student->absent_subjects)) : 'None' }}
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                     @else
                     <p class="text-center">
                         No students require Kelas Pemulihan at this time. Please apply filters to refine your search or

@@ -81,14 +81,14 @@
 
                     <div class="">
                         <!-- Remember Me -->
-                        <div class="col-8">
+                        {{-- <div class="col-8">
                             <div class="icheck-primary">
                                 <input type="checkbox" id="remember" name="remember">
                                 <label for="remember">
                                     Remember Me
                                 </label>
                             </div>
-                        </div>
+                        </div> --}}
                         <!-- Forgot Password -->
                         <p class="col-12">
                             <a href="{{ route('forgot-password') }}">Forgot Password</a>

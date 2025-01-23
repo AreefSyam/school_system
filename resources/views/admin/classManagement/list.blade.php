@@ -90,50 +90,53 @@
                     <h3 class="card-title">Class List</h3>
                 </div>
                 <div class="card-body p-0">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>No.</th>
-                                <th>Name</th>
-                                <th>Grade</th>
-                                <th>Year</th>
-                                <th>Status</th>
-                                <th>Created By</th>
-                                <th>Updated Date</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($get_record as $value)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $value->name }}</td>
-                                <td>{{ $value->grade_name }}</td>
-                                <td>{{ $value->academic_year_name }}</td> <!-- Displaying Academic Year -->
-                                <td>
-                                    @if ($value->status == 0)
-                                    <span class="text-success">Active</span> <!-- Green text for Active -->
-                                    @else
-                                    <span class="text-danger">Inactive</span> <!-- Red text for Inactive -->
-                                    @endif
-                                </td>
-                                <td>{{ $value->created_by_name }}</td>
-                                <td>{{ date('d-m-Y H:i A', strtotime($value->updated_at)) }}</td>
-                                <td>
-                                    <a href="{{ route('class.edit', $value->id) }}" class="btn btn-primary">Edit</a>
-                                    <a href="{{ route('class.assignStudents', $value->id) }}"
-                                        class="btn btn-warning">Assign Students</a>
-                                    <a href="{{ route('class.assignTeacher', $value->id) }}" class="btn btn-info">Assign
-                                        Teacher</a>
-                                    <a href="{{ route('class.delete', $value->id) }}" class="btn btn-danger"
-                                        onclick="return confirm('Are you sure you want to delete this class? This action cannot be undone.');">
-                                        Delete
-                                    </a>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                    <div style="overflow-x: auto;">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Name</th>
+                                    <th>Grade</th>
+                                    <th>Year</th>
+                                    <th>Status</th>
+                                    <th>Created By</th>
+                                    <th>Updated Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($get_record as $value)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $value->name }}</td>
+                                    <td>{{ $value->grade_name }}</td>
+                                    <td>{{ $value->academic_year_name }}</td> <!-- Displaying Academic Year -->
+                                    <td>
+                                        @if ($value->status == 0)
+                                        <span class="text-success">Active</span> <!-- Green text for Active -->
+                                        @else
+                                        <span class="text-danger">Inactive</span> <!-- Red text for Inactive -->
+                                        @endif
+                                    </td>
+                                    <td>{{ $value->created_by_name }}</td>
+                                    <td>{{ date('d-m-Y H:i A', strtotime($value->updated_at)) }}</td>
+                                    <td>
+                                        <a href="{{ route('class.edit', $value->id) }}" class="btn btn-primary">Edit</a>
+                                        <a href="{{ route('class.assignStudents', $value->id) }}"
+                                            class="btn btn-warning">Assign Students</a>
+                                        <a href="{{ route('class.assignTeacher', $value->id) }}"
+                                            class="btn btn-info">Assign
+                                            Teacher</a>
+                                        <a href="{{ route('class.delete', $value->id) }}" class="btn btn-danger"
+                                            onclick="return confirm('Are you sure you want to delete this class? This action cannot be undone.');">
+                                            Delete
+                                        </a>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
 
                     <div class="pagination-wrapper" style="padding: 10px; float: right;">
                         {!! $get_record->appends(request()->except('page'))->links() !!}

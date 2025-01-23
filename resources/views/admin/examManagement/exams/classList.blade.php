@@ -32,8 +32,10 @@
                     $examType->exam_type_name }}</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{{ route('exams.classList',  ['yearId' => $year->id, 'syllabusId' => $syllabus->id, 'examTypeId' => $examType->id]) }}"> {{
-                $syllabus->syllabus_name }}</a>
+                <a
+                    href="{{ route('exams.classList',  ['yearId' => $year->id, 'syllabusId' => $syllabus->id, 'examTypeId' => $examType->id]) }}">
+                    {{
+                    $syllabus->syllabus_name }}</a>
             </li>
         </ol>
     </nav>
@@ -60,4 +62,13 @@
         </div>
     </section>
 </div>
+
+
+<style>
+    .small-box .inner h3 {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
 @endsection

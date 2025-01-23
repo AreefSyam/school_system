@@ -111,47 +111,49 @@
                             <h3 class="card-title">Subject List</h3>
                         </div>
                         <div class="card-body p-0">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>No.</th>
-                                        <th>Subject Name</th>
-                                        <th>Syllabus</th>
-                                        <th>Grade Levels</th>
-                                        <th>Academic Year</th>
-                                        <th>Created By</th>
-                                        <th>Updated Date</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($get_record as $index => $value)
-                                    <tr>
-                                        <td>{{ $index + 1 }}</td>
-                                        <td>{{ $value->subject_name }}</td>
-                                        <td>{{ $value->syllabus->syllabus_name ?? 'N/A' }}</td>
-                                        <td>
-                                            @foreach($value->gradeLevels->where('pivot.active', 1) as $grade)
-                                            {{ $grade->grade_order }}{{ !$loop->last ? ', ' : '' }}
-                                            @endforeach
-                                        </td>
-                                        <td>{{ $value->academicYear->academic_year_name ?? 'N/A' }}</td>
-                                        <!-- Display Academic Year -->
-                                        <td>{{ $value->creator->name ?? 'N/A' }}</td>
-                                        <td>{{ date('d-m-Y H:i A', strtotime($value->updated_at)) }}</td>
-                                        <td>
-                                            <a href="{{ route('subjectManagement.edit', $value->id) }}"
-                                                class="btn btn-primary">Edit</a>
-                                            <a href="{{ route('subjectManagement.delete', $value->id) }}"
-                                                class="btn btn-danger"
-                                                onclick="return confirm('Are you sure you want to delete this subject? This action cannot be undone.');">
-                                                Delete
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                            <div style="overflow-x: auto;">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>Subject Name</th>
+                                            <th>Syllabus</th>
+                                            <th>Grade Levels</th>
+                                            <th>Academic Year</th>
+                                            <th>Created By</th>
+                                            <th>Updated Date</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($get_record as $index => $value)
+                                        <tr>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>{{ $value->subject_name }}</td>
+                                            <td>{{ $value->syllabus->syllabus_name ?? 'N/A' }}</td>
+                                            <td>
+                                                @foreach($value->gradeLevels->where('pivot.active', 1) as $grade)
+                                                {{ $grade->grade_order }}{{ !$loop->last ? ', ' : '' }}
+                                                @endforeach
+                                            </td>
+                                            <td>{{ $value->academicYear->academic_year_name ?? 'N/A' }}</td>
+                                            <!-- Display Academic Year -->
+                                            <td>{{ $value->creator->name ?? 'N/A' }}</td>
+                                            <td>{{ date('d-m-Y H:i A', strtotime($value->updated_at)) }}</td>
+                                            <td>
+                                                <a href="{{ route('subjectManagement.edit', $value->id) }}"
+                                                    class="btn btn-primary">Edit</a>
+                                                <a href="{{ route('subjectManagement.delete', $value->id) }}"
+                                                    class="btn btn-danger"
+                                                    onclick="return confirm('Are you sure you want to delete this subject? This action cannot be undone.');">
+                                                    Delete
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
 
                             <div style="padding: 10px; float: right;">
                                 {!! $get_record->appends(Request::except('page'))->links() !!}

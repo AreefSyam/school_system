@@ -67,58 +67,62 @@
                     <input type="hidden" name="academic_year_id" value="{{ $year->id }}">
 
                     <!-- Table for inputting marks -->
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Student Name</th>
-                                @foreach($subjects as $subject)
-                                <th>{{ $subject->subject_name }}</th>
+                    <div style="overflow-x: auto;">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Student Name</th>
+                                    @foreach($subjects as $subject)
+                                    <th>{{ $subject->subject_name }}</th>
+                                    @endforeach
+                                    <th> Summary</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($students as $student)
+                                <tr>
+                                    <td>{{ $student->full_name }}</td>
+                                    @foreach($subjects as $subject)
+                                    @php
+                                    $studentMark = $marks->get($student->id)?->firstWhere('subject_id',
+                                    $subject->subject_id);
+                                    $isAbsent = $studentMark ? $studentMark->status === 'absent' : false;
+                                    @endphp
+                                    <td>
+                                        <!-- Input field for marks, disable if absent -->
+                                        <input type="number2" id="marks-{{ $student->id }}-{{ $subject->subject_id }}"
+                                            name="marks[{{ $student->id }}][{{ $subject->subject_id }}]"
+                                            value="{{ $isAbsent ? '0' : $studentMark->mark ?? '' }}"
+                                            class="form-control" min="0" max="100" {{ $isAbsent ? '' : '' }}
+                                            data-col="{{ $loop->index }}" required>
+
+                                        <!-- Hidden input to manage presence status -->
+                                        <input type="hidden"
+                                            name="status[{{ $student->id }}][{{ $subject->subject_id }}]"
+                                            value="{{ $isAbsent ? 'absent' : 'present' }}">
+
+                                        <!-- Checkbox to toggle absence -->
+                                        <div>
+                                            <input type="checkbox" class="absence-checkbox"
+                                                data-student-id="{{ $student->id }}"
+                                                data-subject-id="{{ $subject->subject_id }}"
+                                                onchange="handleAbsenceToggle(this, {{ $student->id }}, {{ $subject->subject_id }})"
+                                                {{ $isAbsent ? 'checked' : '' }}> TH
+                                        </div>
+                                    </td>
+
+                                    @endforeach
+                                    <td>
+                                        <!-- Textarea for additional student performance summary -->
+                                        <textarea name="summary[{{ $student->id }}]" class="form-control" rows="2"
+                                            maxlength="500"
+                                            placeholder="Describe this student's performance here...">{{ $studentsSummary->firstWhere('student_id', $student->id)?->summary ?? '' }}</textarea>
+                                    </td>
+                                </tr>
                                 @endforeach
-                                <th> Summary</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($students as $student)
-                            <tr>
-                                <td>{{ $student->full_name }}</td>
-                                @foreach($subjects as $subject)
-                                @php
-                                $studentMark = $marks->get($student->id)?->firstWhere('subject_id',
-                                $subject->subject_id);
-                                $isAbsent = $studentMark ? $studentMark->status === 'absent' : false;
-                                @endphp
-                                <td>
-                                    <!-- Input field for marks, disable if absent -->
-                                    <input type="number" id="marks-{{ $student->id }}-{{ $subject->subject_id }}"
-                                        name="marks[{{ $student->id }}][{{ $subject->subject_id }}]"
-                                        value="{{ $isAbsent ? '0' : $studentMark->mark ?? '' }}" class="form-control"
-                                        min="0" max="100" {{ $isAbsent ? '' : '' }} required>
-
-                                    <!-- Hidden input to manage presence status -->
-                                    <input type="hidden" name="status[{{ $student->id }}][{{ $subject->subject_id }}]"
-                                        value="{{ $isAbsent ? 'absent' : 'present' }}">
-
-                                    <!-- Checkbox to toggle absence -->
-                                    <div>
-                                        <input type="checkbox" class="absence-checkbox"
-                                            data-student-id="{{ $student->id }}"
-                                            data-subject-id="{{ $subject->subject_id }}"
-                                            onchange="handleAbsenceToggle(this, {{ $student->id }}, {{ $subject->subject_id }})"
-                                            {{ $isAbsent ? 'checked' : '' }}> TH
-                                    </div>
-                                </td>
-
-                                @endforeach
-                                <td>
-                                    <!-- Textarea for additional student performance summary -->
-                                    <textarea name="summary[{{ $student->id }}]" class="form-control" rows="2"
-                                        maxlength="500"
-                                        placeholder="Describe this student's performance here...">{{ $studentsSummary->firstWhere('student_id', $student->id)?->summary ?? '' }}</textarea>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
 
                     <!-- Action buttons for form submission and cancellation -->
                     <div class="d-flex justify-content-end mt-3">
@@ -138,10 +142,95 @@
 @endsection
 
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const numberInputs = document.querySelectorAll('input[type="number2"]');
+        let currentIndex = 0;
+
+        // Function to navigate to the previous input
+        function navigatePrevious() {
+          if (currentIndex > 0) {
+            currentIndex--;
+            numberInputs[currentIndex].focus();
+          }
+        }
+
+        // Function to navigate to the next input
+        function navigateNext() {
+          if (currentIndex < numberInputs.length - 1) {
+            currentIndex++;
+            numberInputs[currentIndex].focus();
+          }
+        }
+
+        // Function to navigate up
+        function navigateUp() {
+          const currentInput = numberInputs[currentIndex];
+          const currentRow = currentInput.closest('tr');
+          const previousRow = currentRow.previousElementSibling;
+          if (previousRow) {
+            const previousInput = previousRow.querySelector(`input[data-col="${currentInput.dataset.col}"]`);
+            if (previousInput) {
+              previousInput.focus();
+              currentIndex = Array.from(numberInputs).indexOf(previousInput);
+            }
+          }
+        }
+
+        // Function to navigate down
+        function navigateDown() {
+          const currentInput = numberInputs[currentIndex];
+          const currentRow = currentInput.closest('tr');
+          const nextRow = currentRow.nextElementSibling;
+          if (nextRow) {
+            const nextInput = nextRow.querySelector(`input[data-col="${currentInput.dataset.col}"]`);
+            if (nextInput) {
+              nextInput.focus();
+              currentIndex = Array.from(numberInputs).indexOf(nextInput);
+            }
+          }
+        }
+
+        // Add event listeners to the document for arrow keys
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'ArrowLeft') {
+            navigatePrevious();
+          } else if (event.key === 'ArrowRight') {
+            navigateNext();
+          } else if (event.key === 'ArrowUp') {
+            navigateUp();
+          } else if (event.key === 'ArrowDown') {
+            navigateDown();
+          }
+        });
+
+        // Add event listeners to handle focus and blur events
+        numberInputs.forEach(input => {
+          input.addEventListener('focus', function() {
+            if (this.value === '0') {
+              this.value = '';
+            }
+          });
+
+          input.addEventListener('blur', function() {
+            if (this.value === '') {
+              this.value = '0';
+            }
+          });
+        });
+
+        // Initial focus on the first input
+        numberInputs[0].focus();
+      });
+</script>
+
+
+
+
+<script>
     // Script to handle form interactions and data validation
     document.addEventListener('DOMContentLoaded', function () {
     const checkboxes = document.querySelectorAll('.absence-checkbox');
-    const markInputs = document.querySelectorAll('input[type="number"]');
+    const markInputs = document.querySelectorAll('input[type="number2"]');
 
     // Initialize the page: Set marks to 0 if null or empty
     markInputs.forEach(markInput => {
@@ -212,7 +301,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-    const markInputs = document.querySelectorAll('input[type="number"]');
+    const markInputs = document.querySelectorAll('input[type="number2"]');
 
     markInputs.forEach(input => {
         input.addEventListener('invalid', function () {

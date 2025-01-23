@@ -167,36 +167,38 @@
                 </div>
                 <div class="card-body">
                     @if($data->isNotEmpty())
-                    <table class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Year</th>
-                                <th>Grade Year</th>
-                                <th>Subject</th>
-                                <th>Total A</th>
-                                <th>Total B</th>
-                                <th>Total C</th>
-                                <th>Total D</th>
-                                <th>Total TH</th> <!-- New column for absent students -->
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($data as $row)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $row->academic_year_name }}</td>
-                                <td>{{ $row->grade_name }}</td>
-                                <td>{{ $row->subject_name }}</td>
-                                <td>{{ $row->count_A }}</td>
-                                <td>{{ $row->count_B }}</td>
-                                <td>{{ $row->count_C }}</td>
-                                <td>{{ $row->count_D }}</td>
-                                <td>{{ $row->count_TH }}</td> <!-- Display absent count -->
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                    <div style="overflow-x: auto;">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Year</th>
+                                    <th>Grade Year</th>
+                                    <th>Subject</th>
+                                    <th>Total A</th>
+                                    <th>Total B</th>
+                                    <th>Total C</th>
+                                    <th>Total D</th>
+                                    <th>Total TH</th> <!-- New column for absent students -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($data as $row)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $row->academic_year_name }}</td>
+                                    <td>{{ $row->grade_name }}</td>
+                                    <td>{{ $row->subject_name }}</td>
+                                    <td>{{ $row->count_A }}</td>
+                                    <td>{{ $row->count_B }}</td>
+                                    <td>{{ $row->count_C }}</td>
+                                    <td>{{ $row->count_D }}</td>
+                                    <td>{{ $row->count_TH }}</td> <!-- Display absent count -->
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                     @else
                     <p class="text-center">No data available for the selected filters.</p>
                     @endif

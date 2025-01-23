@@ -137,42 +137,44 @@
                 </div>
                 <div class="card-body">
                     @if($data->isNotEmpty())
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Student Name</th>
-                                @foreach($subjects as $subject)
-                                <th>{{ $subject->subject_name }}</th>
-                                @endforeach
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($students as $index => $student)
-                            <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $student->full_name }}</td>
-                                @foreach($subjects as $subject)
-                                <td>
-                                    @php
-                                    $mark = $marksByStudent[$student->id][$subject->id]['PPT'] ?? null;
-                                    @endphp
+                    <div style="overflow-x: auto;">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Student Name</th>
+                                    @foreach($subjects as $subject)
+                                    <th>{{ $subject->subject_name }}</th>
+                                    @endforeach
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($students as $index => $student)
+                                <tr>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $student->full_name }}</td>
+                                    @foreach($subjects as $subject)
+                                    <td>
+                                        @php
+                                        $mark = $marksByStudent[$student->id][$subject->id]['PPT'] ?? null;
+                                        @endphp
 
-                                    @if ($mark === 'TH')
-                                    <span style="color: red; font-weight: bold;">{{ $mark }}</span>
-                                    @elseif (is_numeric($mark) && $mark < 40) <span style="color: red;">{{ $mark
-                                        }}</span>
-                                        @elseif (is_numeric($mark) && $mark > 79)
-                                        <span style="color: green;">{{ $mark }}</span>
-                                        @else
-                                        {{ $mark ?? 'N/A' }}
-                                        @endif
-                                </td>
+                                        @if ($mark === 'TH')
+                                        <span style="color: red; font-weight: bold;">{{ $mark }}</span>
+                                        @elseif (is_numeric($mark) && $mark < 40) <span style="color: red;">{{ $mark
+                                            }}</span>
+                                            @elseif (is_numeric($mark) && $mark > 79)
+                                            <span style="color: green;">{{ $mark }}</span>
+                                            @else
+                                            {{ $mark ?? 'N/A' }}
+                                            @endif
+                                    </td>
+                                    @endforeach
+                                </tr>
                                 @endforeach
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                     @else
                     <p class="text-center">No PPT data available for the selected filters.</p>
                     @endif
@@ -186,42 +188,44 @@
                 </div>
                 <div class="card-body">
                     @if($data->isNotEmpty())
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Student Name</th>
-                                @foreach($subjects as $subject)
-                                <th>{{ $subject->subject_name }}</th>
-                                @endforeach
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($students as $index => $student)
-                            <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $student->full_name }}</td>
-                                @foreach($subjects as $subject)
-                                <td>
-                                    @php
-                                    $mark = $marksByStudent[$student->id][$subject->id]['PAT'] ?? null;
-                                    @endphp
+                    <div style="overflow-x: auto;">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Student Name</th>
+                                    @foreach($subjects as $subject)
+                                    <th>{{ $subject->subject_name }}</th>
+                                    @endforeach
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($students as $index => $student)
+                                <tr>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $student->full_name }}</td>
+                                    @foreach($subjects as $subject)
+                                    <td>
+                                        @php
+                                        $mark = $marksByStudent[$student->id][$subject->id]['PAT'] ?? null;
+                                        @endphp
 
-                                    @if ($mark === 'TH')
-                                    <span style="color: red; font-weight: bold;">{{ $mark }}</span>
-                                    @elseif (is_numeric($mark) && $mark < 40) <span style="color: red;">{{ $mark
-                                        }}</span>
-                                        @elseif (is_numeric($mark) && $mark > 79)
-                                        <span style="color: green;">{{ $mark }}</span>
-                                        @else
-                                        {{ $mark ?? 'N/A' }}
-                                        @endif
-                                </td>
+                                        @if ($mark === 'TH')
+                                        <span style="color: red; font-weight: bold;">{{ $mark }}</span>
+                                        @elseif (is_numeric($mark) && $mark < 40) <span style="color: red;">{{ $mark
+                                            }}</span>
+                                            @elseif (is_numeric($mark) && $mark > 79)
+                                            <span style="color: green;">{{ $mark }}</span>
+                                            @else
+                                            {{ $mark ?? 'N/A' }}
+                                            @endif
+                                    </td>
+                                    @endforeach
+                                </tr>
                                 @endforeach
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                     @else
                     <p class="text-center">No PAT data available for the selected filters.</p>
                     @endif

@@ -106,45 +106,47 @@
                             <h3 class="card-title">Examination List</h3>
                         </div>
                         <div class="card-body p-0">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>No.</th>
-                                        <th>Examination Name</th>
-                                        <th>Status</th>
-                                        <th>Exam Type</th>
-                                        <th>Syllabus</th>
-                                        <th>Academic Year</th>
-                                        <th>Start Date</th>
-                                        <th>End Date</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($get_record as $value)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $value->exam_name }}</td>
-                                        <td
-                                            class="{{ $value->status === 'available' ? 'text-success' : 'text-danger' }}">
-                                            {{ ucfirst($value->status) }}
-                                        </td>
-                                        <td>{{ $value->examType->exam_type_name }}</td>
-                                        <td>{{ $value->syllabus->syllabus_name }}</td>
-                                        <td>{{ $value->academicYear->academic_year_name }}</td>
-                                        <td>{{ date('d-m-Y', strtotime($value->start_date)) }}</td>
-                                        <td>{{ date('d-m-Y', strtotime($value->end_date)) }}</td>
-                                        <td>
-                                            <a href="{{ route('examManagement.edit', $value->id) }}"
-                                                class="btn btn-primary">Edit</a>
-                                            <a href="{{ route('examManagement.delete', $value->id) }}"
-                                                class="btn btn-danger"
-                                                onclick="return confirm('Are you sure you want to delete this examination? This action cannot be undone.');">Delete</a>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                            <div style="overflow-x: auto;">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>Examination Name</th>
+                                            <th>Status</th>
+                                            <th>Exam Type</th>
+                                            <th>Syllabus</th>
+                                            <th>Academic Year</th>
+                                            <th>Start Date</th>
+                                            <th>End Date</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($get_record as $value)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $value->exam_name }}</td>
+                                            <td
+                                                class="{{ $value->status === 'available' ? 'text-success' : 'text-danger' }}">
+                                                {{ ucfirst($value->status) }}
+                                            </td>
+                                            <td>{{ $value->examType->exam_type_name }}</td>
+                                            <td>{{ $value->syllabus->syllabus_name }}</td>
+                                            <td>{{ $value->academicYear->academic_year_name }}</td>
+                                            <td>{{ date('d-m-Y', strtotime($value->start_date)) }}</td>
+                                            <td>{{ date('d-m-Y', strtotime($value->end_date)) }}</td>
+                                            <td>
+                                                <a href="{{ route('examManagement.edit', $value->id) }}"
+                                                    class="btn btn-primary">Edit</a>
+                                                <a href="{{ route('examManagement.delete', $value->id) }}"
+                                                    class="btn btn-danger"
+                                                    onclick="return confirm('Are you sure you want to delete this examination? This action cannot be undone.');">Delete</a>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
 
                             <div style="padding: 10px; float: right;">
                                 {!! $get_record->appends(Illuminate\Support\Facades\Request::except('page'))->links()
