@@ -36,21 +36,36 @@
                         <div class="card-header">
                             <h3 class="card-title">Search Examination</h3>
                         </div>
-                        <!-- /.card-header -->
                         <!-- form start -->
                         <form method="get" action="">
                             <div class="card-body">
                                 <div class="row">
                                     <!-- Examination Name -->
-                                    <div class="form-group col-md-3">
+                                    <div class="form-group col-md-2">
                                         <label>Examination Name</label>
                                         <input type="text" name="exam_name" class="form-control"
                                             placeholder="Enter examination name"
                                             value="{{ Request::get('exam_name') }}">
                                     </div>
 
+                                    <!-- Academic Year -->
+                                    <div class="form-group col-md-2">
+                                        <label>Academic Year</label>
+                                        <select class="form-control" name="academic_year_id">
+                                            <option value="" disabled selected>-- Select Academic Year --</option>
+                                            @foreach($academic_years as $academic_year)
+                                            <option value="{{ $academic_year->id }}" {{
+                                                Request::get('academic_year_id')==$academic_year->id ? 'selected' : ''
+                                                }}>
+                                                {{ $academic_year->academic_year_name }}
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+
                                     <!-- Exam Type -->
-                                    <div class="form-group col-md-3">
+                                    <div class="form-group col-md-2">
                                         <label>Exam Type</label>
                                         <select class="form-control" name="exam_type_id">
                                             <option value="" disabled selected>-- Select Exam Type --</option>
@@ -64,7 +79,7 @@
                                     </div>
 
                                     <!-- Syllabus -->
-                                    <div class="form-group col-md-3">
+                                    <div class="form-group col-md-2">
                                         <label>Syllabus</label>
                                         <select class="form-control" name="syllabus_id">
                                             <option value="" disabled selected>-- Select Syllabus --</option>
