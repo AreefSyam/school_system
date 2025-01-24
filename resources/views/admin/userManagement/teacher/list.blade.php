@@ -80,7 +80,6 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    @include('messages.alert')
                     <div class="card">
                         <div class="card-header">
                             <h3 class="card-title">Teacher List (Total : {{ $get_record->total() }})</h3>
