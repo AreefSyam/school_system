@@ -164,7 +164,7 @@ class SubjectController extends Controller
                 ->whereNotIn('grade_level_id', $request->grade_level_id) // Exclude currently active grades
                 ->pluck('grade_level_id');
 
-            Log::info('Deactivated Grade IDs:', $deactivatedGradeIds->toArray());
+            // Log::info('Deactivated Grade IDs:', $deactivatedGradeIds->toArray());
 
             // Update the active status for deactivated grades
             // Mark the deactivated grades as inactive in the `subject_grade` table
@@ -173,7 +173,7 @@ class SubjectController extends Controller
                 ->whereIn('grade_level_id', $deactivatedGradeIds)
                 ->update(['active' => 0]);
 
-            Log::info('Deactivated grades successfully updated.');
+            // Log::info('Deactivated grades successfully updated.');
 
             // Retrieve class IDs corresponding to the deactivated grade levels
             $deactivatedClassIds = DB::table('class')
@@ -182,7 +182,7 @@ class SubjectController extends Controller
                 ->whereIn('subject_grade.grade_level_id', $deactivatedGradeIds)
                 ->pluck('class.id');
 
-            Log::info('Deactivated Class IDs:', $deactivatedClassIds->toArray());
+            // Log::info('Deactivated Class IDs:', $deactivatedClassIds->toArray());
 
             // Fetch marks to delete
             // Retrieve marks associated with the deactivated classes for cleanup
@@ -193,7 +193,7 @@ class SubjectController extends Controller
                 ->where('academic_year_id', $request->academic_year_id)
                 ->get();
 
-            Log::info('Marks to be deleted:', $marksToDelete->toArray());
+            // Log::info('Marks to be deleted:', $marksToDelete->toArray());
 
             // Delete marks if any are found
             if ($marksToDelete->isNotEmpty()) {
