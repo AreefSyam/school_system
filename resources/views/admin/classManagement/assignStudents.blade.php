@@ -7,7 +7,8 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-12">
-                    <h1>Assign Students to Class: {{ $class->name }} - {{ $class->academicYear->academic_year_name ?? 'N/A' }}</h1>
+                    <h1>Assign Students to Class: {{ $class->name }} - {{ $class->academicYear->academic_year_name ??
+                        'N/A' }}</h1>
                 </div>
             </div>
         </div><!-- /.container-fluid -->
@@ -125,7 +126,6 @@
     <section class="content">
         <div class="container-fluid">
             <div class="card">
-                @include('messages.alert')
                 <div class="card-header">
                     <h3 class="card-title">Students Assigned to Class</h3>
                 </div>
@@ -140,7 +140,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($class->students as $index => $student)
+                                @foreach ($assignedStudents as $index => $student)
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
                                     <td>{{ $student->full_name }}</td>
@@ -162,6 +162,7 @@
             </div>
         </div>
     </section>
+
 </div>
 
 <!-- Select All Script -->

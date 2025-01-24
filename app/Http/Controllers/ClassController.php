@@ -150,10 +150,14 @@ class ClassController extends Controller
      */
     public function assignStudents($classId)
     {
-        $class         = ClassModel::with('students')->findOrFail($classId);
+        $class = ClassModel::with('students')->findOrFail($classId); // Load all assigned students
+
         $academicYears = AcademicYearModel::all();
         $students      = StudentModel::searchStudents(request('student_name'), 10);
-        return view('admin.classManagement.assignStudents', compact('class', 'students', 'academicYears'));
+
+        // Get all assigned students without pagination
+        $assignedStudents = $class->students;
+        return view('admin.classManagement.assignStudents', compact('class', 'students', 'academicYears', 'assignedStudents'));
     }
 
     /**
