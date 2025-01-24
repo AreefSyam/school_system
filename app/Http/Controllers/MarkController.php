@@ -50,6 +50,7 @@ class MarkController extends Controller
 
         $subjects = DB::table('subject')
             ->join('subject_grade', 'subject.id', '=', 'subject_grade.subject_id')
+            ->where('subject_grade.active', 1) // Fetch only active records
             ->where('academic_year_id', $yearId)
             ->where('subject.syllabus_id', $syllabusId)
             ->where('subject_grade.grade_level_id', $class->grade_level_id)
@@ -80,6 +81,7 @@ class MarkController extends Controller
         // Fetch subjects for the syllabus and grade level
         $subjects = DB::table('subject')
             ->join('subject_grade', 'subject.id', '=', 'subject_grade.subject_id')
+            ->where('subject_grade.active', 1) // Fetch only active records
             ->where('academic_year_id', $yearId)
             ->where('subject.syllabus_id', $syllabusId)
             ->where('subject_grade.grade_level_id', $class->grade_level_id)
@@ -126,6 +128,7 @@ class MarkController extends Controller
             ->join('subject_grade', 'subject.id', '=', 'subject_grade.subject_id')
             ->where('subject.syllabus_id', $syllabusId)
             ->where('subject_grade.grade_level_id', $class->grade_level_id)
+            ->where('subject.academic_year_id', $yearId) // Filter by academic year
             ->select('subject.id as subject_id', 'subject.subject_name')
             ->get();
         // Fetch the student summary
