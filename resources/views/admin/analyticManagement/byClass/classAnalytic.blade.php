@@ -164,21 +164,6 @@
                                     <th>Total TH</th> <!-- New column for absent students -->
                                 </tr>
                             </thead>
-                            {{-- <tbody>
-                                @foreach($data as $row)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $row->academic_year_name }}</td>
-                                    <td>{{ $row->class_name }}</td> <!-- Display class name -->
-                                    <td>{{ $row->subject_name }}</td>
-                                    <td>{{ $row->count_A }}</td>
-                                    <td>{{ $row->count_B }}</td>
-                                    <td>{{ $row->count_C }}</td>
-                                    <td>{{ $row->count_D }}</td>
-                                    <td>{{ $row->count_TH }}</td> <!-- Display absent count -->
-                                </tr>
-                                @endforeach
-                            </tbody> --}}
                             <tbody>
                                 @foreach($data as $row)
                                 <tr>

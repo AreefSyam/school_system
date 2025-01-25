@@ -127,7 +127,7 @@ class AnalyticController extends Controller
                     'ay.academic_year_name', // Fetch academic year name
                     'c.name as class_name',  // Fetch class name
                     's.subject_name',        // Fetch subject name
-                    // Count for A, B, C, D, TH
+                                             // Count for A, B, C, D, TH
                     DB::raw('COUNT(CASE WHEN m.mark >= 80 THEN 1 END) as count_A'),
                     DB::raw('COUNT(CASE WHEN m.mark >= 60 AND m.mark < 80 THEN 1 END) as count_B'),
                     DB::raw('COUNT(CASE WHEN m.mark >= 40 AND m.mark < 60 THEN 1 END) as count_C'),
@@ -543,15 +543,23 @@ class AnalyticController extends Controller
                 ->join('subject as s', 'm.subject_id', '=', 's.id')               // Join subject for subject name
                 ->join('academic_year as ay', 'm.academic_year_id', '=', 'ay.id') // Join academic year for year name
                 ->join('class as c', 'm.class_id', '=', 'c.id')                   // Join class table for class name
+                ->join('student as st', 'm.student_id', '=', 'st.id')
                 ->select(
                     'ay.academic_year_name', // Fetch academic year name
                     'c.name as class_name',  // Fetch class name
                     's.subject_name',        // Fetch subject name
+                    // Count for A, B, C, D, TH
                     DB::raw('COUNT(CASE WHEN m.mark >= 80 THEN 1 END) as count_A'),
                     DB::raw('COUNT(CASE WHEN m.mark >= 60 AND m.mark < 80 THEN 1 END) as count_B'),
                     DB::raw('COUNT(CASE WHEN m.mark >= 40 AND m.mark < 60 THEN 1 END) as count_C'),
                     DB::raw('COUNT(CASE WHEN m.mark < 40 AND m.status = "present" THEN 1 END) as count_D'),
-                    DB::raw('COUNT(CASE WHEN m.mark = 0 AND m.status = "absent" THEN 1 END) as count_TH') // Count for absent students
+                    DB::raw('COUNT(CASE WHEN m.mark = 0 AND m.status = "absent" THEN 1 END) as count_TH'),
+                    // Get the student name list based on the count group
+                    DB::raw('GROUP_CONCAT(CASE WHEN m.mark >= 80 THEN st.full_name END SEPARATOR ", ") as list_A'),
+                    DB::raw('GROUP_CONCAT(CASE WHEN m.mark >= 60 AND m.mark < 80 THEN st.full_name END SEPARATOR ", ") as list_B'),
+                    DB::raw('GROUP_CONCAT(CASE WHEN m.mark >= 40 AND m.mark < 60 THEN st.full_name END SEPARATOR ", ") as list_C'),
+                    DB::raw('GROUP_CONCAT(CASE WHEN m.mark < 40 AND m.status = "present" THEN st.full_name END SEPARATOR ", ") as list_D'),
+                    DB::raw('GROUP_CONCAT(CASE WHEN m.mark = 0 AND m.status = "absent" THEN st.full_name END SEPARATOR ", ") as list_TH'),
                 )
                 ->where('m.class_id', $class->id) // Restrict to the teacher's assigned class
                 ->where('m.academic_year_id', $yearId)
