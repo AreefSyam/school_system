@@ -203,6 +203,42 @@ class SubjectController extends Controller
                     ->where('syllabus_id', $request->syllabus_id)
                     ->where('academic_year_id', $request->academic_year_id)
                     ->delete();
+
+                // Log::info('Marks successfully deleted.');
+            }
+
+            // Delete teacher assignments for the deactivated classes
+            $teacherAssignmentsToDelete = DB::table('teacherassignclasses')
+                ->where('subject_id', $subject->id)
+                ->whereIn('class_id', $deactivatedClassIds)
+                ->where('syllabus_id', $request->syllabus_id)
+                ->where('academic_year_id', $request->academic_year_id)
+                ->get();
+
+            if ($teacherAssignmentsToDelete->isNotEmpty()) {
+                // Log the teacher assignments targeted for deletion
+                // Log::info('Teacher assignments to be deleted:', $teacherAssignmentsToDelete->toArray());
+
+                DB::table('teacherassignclasses')
+                    ->where('subject_id', $subject->id)
+                    ->whereIn('class_id', $deactivatedClassIds)
+                    ->where('syllabus_id', $request->syllabus_id)
+                    ->where('academic_year_id', $request->academic_year_id)
+                    ->delete();
+
+                // Log::info('Teacher assignments successfully deleted.', [
+                //     'subject_id'       => $subject->id,
+                //     'class_ids'        => $deactivatedClassIds,
+                //     'syllabus_id'      => $request->syllabus_id,
+                //     'academic_year_id' => $request->academic_year_id,
+                // ]);
+            } else {
+                // Log::info('No teacher assignments found for deletion.', [
+                //     'subject_id'       => $subject->id,
+                //     'class_ids'        => $deactivatedClassIds,
+                //     'syllabus_id'      => $request->syllabus_id,
+                //     'academic_year_id' => $request->academic_year_id,
+                // ]);
             }
 
             return redirect()->route('subjectManagement.list')->with('success', 'Subject details updated successfully.');
