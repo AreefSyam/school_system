@@ -582,6 +582,7 @@ class MarkController extends Controller
             ->where('academic_year_id', $yearId)
             ->where('subject.syllabus_id', $syllabusId)
             ->where('subject_grade.grade_level_id', $class->grade_level_id)
+            ->where('subject_grade.active', 1) // Fetch only active records
             ->select('subject.id as subject_id', 'subject.subject_name')
             ->get();
 
