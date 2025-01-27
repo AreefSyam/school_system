@@ -72,17 +72,10 @@ class AnalyticController extends Controller
                 ->when($examType, function ($query, $examType) {
                     $query->where('m.exam_type_id', $examType);
                 })
-                ->groupBy('m.academic_year_id', 'g.grade_name', 's.subject_name')
+                ->groupBy('ay.academic_year_id', 'g.grade_name', 's.subject_name')
                 ->paginate(6);
         }
 
-        /**
-         * Displays class performance for selected filters.
-         * Filters performance data by academic year, class, exam type, and syllabus.
-         *
-         * @param  \Illuminate\Http\Request  $request
-         * @return \Illuminate\View\View
-         */
         // Fetch all filter options for the dropdowns
         $subjects      = SubjectModel::select('id', 'subject_name')->get();
         $gradeLevels   = GradeLevelModel::select('id', 'grade_name')->get();
