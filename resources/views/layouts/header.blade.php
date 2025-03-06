@@ -129,7 +129,6 @@
         });
     });
 });
-
 </script>
 
 <!-- JavaScript to auto-dismiss alerts after 3 seconds -->

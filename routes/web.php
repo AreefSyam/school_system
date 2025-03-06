@@ -204,8 +204,8 @@ Route::group(['middleware' => 'auth'], function () {
         // Dashboard
         Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('teacher.dashboard');
         // Set Academic Year on Navigation bar
-        Route::get('/set-academic-year/{id}', [NavBarController::class, 'setAcademicYear'])->name('navBar.setAcademicYear');
-        Route::post('/set-academic-year/{id}', [NavBarController::class, 'setAcademicYear'])->name('navBar.setAcademicYear');
+        Route::get('/get-academic-year/{id}', [NavBarController::class, 'setAcademicYear'])->name('navBar.setAcademicYear');
+        Route::post('/set-academic-year/{id}', [NavBarController::class, 'setAcademicYear'])->name('navBar.setAcademicYear.post');
 
         Route::prefix('examData')->group(function () {
             // Step 1: Display exam types
